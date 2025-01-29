@@ -91,12 +91,12 @@
       </div>
       <div class="attribute-item">
         <h4>Monthly Out-of-Pocket Cost (USD)</h4>
-        <p>The amount patients are required to pay each month for the T2DM treatments.</p>
+        <p>This refers to the total amount patients pay for the T2D treatments.</p>
         <ul>
           <li>$0</li>
-          <li>$10</li>
-          <li>$20</li>
-          <li>... (increments of $10 up to $1000)</li>
+          <li>$200</li>
+          <li>$500</li>
+          <li>$1000</li>
         </ul>
       </div>
     </div>
@@ -159,7 +159,7 @@
             value="200"
             oninput="updateCostDisplay(this.value)" 
           />
-          <span id="costValue">200</span>
+          <span id="costValue">$200</span>
         </div>
 
         <!-- Additional Attributes for Experiment 3 -->
@@ -197,7 +197,7 @@
             value="200"
             oninput="updateCostOthersDisplay(this.value)" 
           />
-          <span id="costOthersValue">200</span>
+          <span id="costOthersValue">$200</span>
         </div>
       </div>
       <div class="buttons-row">
@@ -266,7 +266,7 @@
       Save your scenario from <strong>Inputs</strong> and compare or export multiple configurations, including WTP and uptake probability charts, to PDF.
     </p>
     <div class="buttons-row">
-      <button onclick="openComparison()">Compare All Scenarios</button>
+      <button onclick="compareAllScenarios()">Compare All Scenarios</button>
       <button onclick="exportToPDF()">Export Comparison to PDF</button>
     </div>
     <table id="scenarioTable">
