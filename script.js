@@ -6,7 +6,7 @@
  * 4) WTP data for all features with error bars (p-values, SE)
  * 5) Health Plan Uptake Probability bar chart
  * 6) Scenario saving & PDF export
- * 7) Cost-benefit analysis based on literature-reviewed costs
+ * 7) Cost-benefit analysis based on targeted literature-reviewed costs
  * 8) Dynamic attribute display based on experiment selection
  * 9) WTP comparison across experiments
  * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
