@@ -4,16 +4,19 @@
  * 2) Range slider label updates
  * 3) Main DCE coefficients for Experiments 1, 2, 3
  * 4) WTP data for all features with error bars (p-values, SE)
- * 5) Programme Uptake Probability bar chart
+ * 5) Health Plan Uptake Probability bar chart
  * 6) Scenario saving & PDF export
  * 7) Realistic cost & QALY-based benefit logic
  * 8) Selection constraints and dynamic attribute display
  * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
  ****************************************************************************/
 
-/** On page load, default to introduction tab */
+/** On page load, default to introduction tab and load saved scenarios */
 window.onload = function() {
   openTab('introTab', document.querySelector('.tablink.active'));
+  loadSavedResults();
+  // Display dynamic attributes for Experiment 3
+  document.getElementById("experimentSelect").addEventListener("change", toggleExperimentAttributes);
 };
 
 /** Tab switching function */
@@ -89,73 +92,88 @@ const coefficients = {
 };
 
 /***************************************************************************
- * DEMOGRAPHIC INFLUENCE COEFFICIENTS
- * Placeholder for actual demographic influence model
- ***************************************************************************/
-function getDemographicInfluence(age, gender, race, income, degree, goodHealth) {
-  // Example factors based on hypothetical influence
-  let factor = 1;
-
-  // Age: Younger individuals may have higher WTP
-  if (age < 30) factor += 0.15;
-  else if (age > 60) factor -= 0.1;
-
-  // Gender: Assume females have slightly higher WTP
-  if (gender === 'female') factor += 0.05;
-
-  // Race: Assume no significant effect for simplicity
-
-  // Income: High income increases WTP significantly
-  if (income === 'high') factor += 0.25;
-  else factor -= 0.15;
-
-  // Degree: Higher education increases WTP
-  if (degree === 'yes') factor += 0.1;
-
-  // Good Health: Better health might reduce WTP for risk reduction
-  if (goodHealth === 'yes') factor -= 0.1;
-  else factor += 0.1;
-
-  // Ensure factor stays within reasonable bounds
-  factor = Math.max(0.5, Math.min(factor, 1.5));
-
-  return factor;
-}
-
-/***************************************************************************
  * WTP DATA FOR ALL ATTRIBUTES
  ***************************************************************************/
 const wtpData = {
   '1': [ // Experiment 1
-    { attribute: "Efficacy 50%", wtp: 0.855 / (-0.123), pVal: 0.000, se: 0.074 / 0.123 },
-    { attribute: "Efficacy 90%", wtp: 1.558 / (-0.123), pVal: 0.000, se: 0.078 / 0.123 },
-    { attribute: "Risk 8%", wtp: -0.034 / (-0.123), pVal: 0.689, se: 0.085 / 0.123 },
-    { attribute: "Risk 16%", wtp: -0.398 / (-0.123), pVal: 0.000, se: 0.086 / 0.123 },
-    { attribute: "Risk 30%", wtp: -0.531 / (-0.123), pVal: 0.000, se: 0.090 / 0.123 },
-    { attribute: "Monthly out-of-pocket cost", wtp: 1 / 1, pVal: 0.000, se: 0.0 } // Reference
+    { attribute: "Efficacy 50%", wtp: 0.855 / (-coefficients['1'].cost), pVal: 0.000, se: 0.074 / coefficients['1'].cost },
+    { attribute: "Efficacy 90%", wtp: 1.558 / (-coefficients['1'].cost), pVal: 0.000, se: 0.078 / coefficients['1'].cost },
+    { attribute: "Risk 8%", wtp: (-0.034) / (-coefficients['1'].cost), pVal: 0.689, se: 0.085 / coefficients['1'].cost },
+    { attribute: "Risk 16%", wtp: (-0.398) / (-coefficients['1'].cost), pVal: 0.000, se: 0.086 / coefficients['1'].cost },
+    { attribute: "Risk 30%", wtp: (-0.531) / (-coefficients['1'].cost), pVal: 0.000, se: 0.090 / coefficients['1'].cost }
   ],
   '2': [ // Experiment 2
-    { attribute: "Efficacy 50%", wtp: 1.031 / (-0.140), pVal: 0.000, se: 0.078 / 0.140 },
-    { attribute: "Efficacy 90%", wtp: 1.780 / (-0.140), pVal: 0.000, se: 0.084 / 0.140 },
-    { attribute: "Risk 8%", wtp: -0.054 / (-0.140), pVal: 0.550, se: 0.090 / 0.140 },
-    { attribute: "Risk 16%", wtp: -0.305 / (-0.140), pVal: 0.001, se: 0.089 / 0.140 },
-    { attribute: "Risk 30%", wtp: -0.347 / (-0.140), pVal: 0.000, se: 0.094 / 0.140 },
-    { attribute: "Monthly out-of-pocket cost", wtp: 1 / 1, pVal: 0.000, se: 0.0 } // Reference
+    { attribute: "Efficacy 50%", wtp: 1.031 / (-coefficients['2'].cost), pVal: 0.000, se: 0.078 / coefficients['2'].cost },
+    { attribute: "Efficacy 90%", wtp: 1.780 / (-coefficients['2'].cost), pVal: 0.000, se: 0.084 / coefficients['2'].cost },
+    { attribute: "Risk 8%", wtp: (-0.054) / (-coefficients['2'].cost), pVal: 0.550, se: 0.090 / coefficients['2'].cost },
+    { attribute: "Risk 16%", wtp: (-0.305) / (-coefficients['2'].cost), pVal: 0.001, se: 0.089 / coefficients['2'].cost },
+    { attribute: "Risk 30%", wtp: (-0.347) / (-coefficients['2'].cost), pVal: 0.000, se: 0.094 / coefficients['2'].cost }
   ],
   '3': [ // Experiment 3
-    { attribute: "Efficacy 50%", wtp: 0.604 / (-0.070), pVal: 0.000, se: 0.081 / 0.070 },
-    { attribute: "Efficacy 90%", wtp: 1.267 / (-0.070), pVal: 0.000, se: 0.075 / 0.070 },
-    { attribute: "Risk 8%", wtp: -0.108 / (-0.070), pVal: 0.200, se: 0.084 / 0.070 },
-    { attribute: "Risk 16%", wtp: -0.218 / (-0.070), pVal: 0.013, se: 0.088 / 0.070 },
-    { attribute: "Risk 30%", wtp: -0.339 / (-0.070), pVal: 0.000, se: 0.085 / 0.070 },
-    { attribute: "Efficacy Others 50%", wtp: 0.272 / (-0.070), pVal: 0.000, se: 0.075 / 0.070 },
-    { attribute: "Efficacy Others 90%", wtp: 0.370 / (-0.070), pVal: 0.000, se: 0.076 / 0.070 },
-    { attribute: "Risk Others 8%", wtp: -0.111 / (-0.070), pVal: 0.190, se: 0.085 / 0.070 },
-    { attribute: "Risk Others 16%", wtp: -0.103 / (-0.070), pVal: 0.227, se: 0.085 / 0.070 },
-    { attribute: "Risk Others 30%", wtp: -0.197 / (-0.070), pVal: 0.017, se: 0.083 / 0.070 },
-    { attribute: "Monthly out-of-pocket cost", wtp: 1 / 1, pVal: 0.000, se: 0.0 }, // Reference
-    { attribute: "Monthly out-of-pocket cost Others", wtp: 1 / 1, pVal: 0.000, se: 0.0 } // Reference
+    { attribute: "Efficacy 50%", wtp: 0.604 / (-coefficients['3'].cost), pVal: 0.000, se: 0.081 / coefficients['3'].cost },
+    { attribute: "Efficacy 90%", wtp: 1.267 / (-coefficients['3'].cost), pVal: 0.000, se: 0.075 / coefficients['3'].cost },
+    { attribute: "Risk 8%", wtp: (-0.108) / (-coefficients['3'].cost), pVal: 0.200, se: 0.084 / coefficients['3'].cost },
+    { attribute: "Risk 16%", wtp: (-0.218) / (-coefficients['3'].cost), pVal: 0.013, se: 0.088 / coefficients['3'].cost },
+    { attribute: "Risk 30%", wtp: (-0.339) / (-coefficients['3'].cost), pVal: 0.000, se: 0.085 / coefficients['3'].cost },
+    { attribute: "Efficacy Others 50%", wtp: 0.272 / (-coefficients['3'].cost), pVal: 0.000, se: 0.075 / coefficients['3'].cost },
+    { attribute: "Efficacy Others 90%", wtp: 0.370 / (-coefficients['3'].cost), pVal: 0.000, se: 0.076 / coefficients['3'].cost },
+    { attribute: "Risk Others 8%", wtp: (-0.111) / (-coefficients['3'].cost), pVal: 0.190, se: 0.085 / coefficients['3'].cost },
+    { attribute: "Risk Others 16%", wtp: (-0.103) / (-coefficients['3'].cost), pVal: 0.227, se: 0.085 / coefficients['3'].cost },
+    { attribute: "Risk Others 30%", wtp: (-0.197) / (-coefficients['3'].cost), pVal: 0.017, se: 0.083 / coefficients['3'].cost }
   ]
+};
+
+/***************************************************************************
+ * COST-OF-PROVIDING T2DM TREATMENTS
+ * These costs are based on literature estimates.
+ ***************************************************************************/
+const costComponents = [
+  {
+    item: "Medication Costs (Insulin, Oral Hypoglycemics)",
+    unitCost: 300, // USD per month
+    quantity: 1,
+    totalCost: 300
+  },
+  {
+    item: "Blood Glucose Monitoring",
+    unitCost: 50, // USD per month
+    quantity: 1,
+    totalCost: 50
+  },
+  {
+    item: "Healthcare Provider Visits",
+    unitCost: 100, // USD per visit
+    quantity: 4, // per year
+    totalCost: 400
+  },
+  {
+    item: "Hospitalization for Complications",
+    unitCost: 2000, // USD per hospitalization
+    quantity: 0.1, // per year (assumed)
+    totalCost: 200
+  },
+  {
+    item: "Patient Time and Travel Costs",
+    unitCost: 20, // USD per visit
+    quantity: 4, // per year
+    totalCost: 80
+  },
+  {
+    item: "Administrative and Training Costs",
+    unitCost: 500, // USD per year
+    quantity: 1,
+    totalCost: 500
+  }
+];
+
+const FIXED_COSTS = {
+  advertisement: 5000, // USD
+  training: 3000 // USD
+};
+
+const VARIABLE_COSTS = {
+  delivery: 1000, // USD per month
+  participantTimeTravel: 500 // USD per year
 };
 
 /***************************************************************************
@@ -260,7 +278,7 @@ function renderWTPChart() {
 }
 
 /***************************************************************************
- * PREDICT PLAN UPTAKE PROBABILITY
+ * PREDICT HEALTH PLAN UPTAKE PROBABILITY
  ***************************************************************************/
 function predictUptake() {
   const scenario = buildScenarioFromInputs();
@@ -272,7 +290,6 @@ function predictUptake() {
   // Compute utility
   let utility = 0;
   if (experiment === '1' || experiment === '2') {
-    utility += coefs.ASC_mean ? coefs.ASC_mean : coefs.ASC;
     if (experiment === '2') {
       utility += coefs.ASC_mean;
     } else {
@@ -349,8 +366,6 @@ function buildScenarioFromInputs() {
   const age = parseInt(document.getElementById("age").value, 10);
   const gender = document.getElementById("gender").value;
   const race = document.getElementById("race").value;
-  const income = document.getElementById("income").value;
-  const degree = document.getElementById("degree").value;
   const goodHealth = document.getElementById("goodHealth").value;
 
   const efficacy = document.getElementById("efficacy").value;
@@ -358,8 +373,8 @@ function buildScenarioFromInputs() {
   const cost = parseInt(document.getElementById("cost").value, 10);
 
   // For Experiment 3, additional attributes
-  let efficacyOthers = "10"; // default reference
-  let riskOthers = "0"; // default reference
+  let efficacyOthers = "N/A"; // default reference
+  let riskOthers = "N/A"; // default reference
   let costOthers = 0; // default
 
   if (experiment === '3') {
@@ -387,8 +402,6 @@ function buildScenarioFromInputs() {
     age,
     gender,
     race,
-    income,
-    degree,
     goodHealth,
     efficacy,
     risk,
@@ -400,7 +413,7 @@ function buildScenarioFromInputs() {
 }
 
 /***************************************************************************
- * DISPLAY UPTAKE PROBABILITY
+ * DISPLAY HEALTH PLAN UPTAKE PROBABILITY
  ***************************************************************************/
 let probChartInstance = null;
 function displayUptakeProbability(uptakeProbability) {
@@ -413,16 +426,16 @@ function displayUptakeProbability(uptakeProbability) {
   probChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ["Programme Uptake Probability"],
+      labels: ["Health Plan Uptake Probability"],
       datasets: [{
         label: 'Probability (%)',
         data: [uptakeProbability],
         backgroundColor: uptakeProbability < 30 ? 'rgba(231,76,60,0.6)'
                          : uptakeProbability < 70 ? 'rgba(241,196,15,0.6)'
-                         : 'rgba(39,174,96,0.6)',
+                                 : 'rgba(39,174,96,0.6)',
         borderColor: uptakeProbability < 30 ? 'rgba(231,76,60,1)'
                       : uptakeProbability < 70 ? 'rgba(241,196,15,1)'
-                      : 'rgba(39,174,96,1)',
+                              : 'rgba(39,174,96,1)',
         borderWidth: 1
       }]
     },
@@ -439,7 +452,7 @@ function displayUptakeProbability(uptakeProbability) {
         legend: { display: false },
         title: {
           display: true,
-          text: `Programme Uptake Probability = ${uptakeProbability.toFixed(2)}%`,
+          text: `Health Plan Uptake Probability = ${uptakeProbability.toFixed(2)}%`,
           font: { size: 16 }
         }
       }
@@ -459,335 +472,34 @@ function displayUptakeProbability(uptakeProbability) {
 }
 
 /***************************************************************************
- * UPDATE WTP CHART WITH DEMOGRAPHICS
- ***************************************************************************/
-function updateWTChartWithDemographics(scenario, uptakeProbability) {
-  const age = scenario.age;
-  const gender = scenario.gender;
-  const race = scenario.race;
-  const income = scenario.income;
-  const degree = scenario.degree;
-  const goodHealth = scenario.goodHealth;
-
-  const demographicFactor = getDemographicInfluence(age, gender, race, income, degree, goodHealth);
-
-  const experiment = scenario.experiment;
-  const wtp = wtpData[experiment].map(item => {
-    return {
-      attribute: item.attribute,
-      wtp: item.wtp * demographicFactor,
-      se: item.se * demographicFactor,
-      pVal: item.pVal
-    };
-  });
-
-  const ctx = document.getElementById("wtpChartMain").getContext("2d");
-
-  if (wtpChartInstance) {
-    wtpChartInstance.destroy();
-  }
-
-  const labels = wtp.map(item => item.attribute);
-  const values = wtp.map(item => item.wtp);
-  const errors = wtp.map(item => item.se);
-  const colors = wtp.map(item => item.wtp >=0 ? 'rgba(39,174,96,0.6)' : 'rgba(231,76,60,0.6)');
-
-  const dataConfig = {
-    labels: labels,
-    datasets: [{
-      label: "WTP (USD)",
-      data: values,
-      backgroundColor: colors,
-      borderColor: values.map(v => v >=0 ? 'rgba(39,174,96,1)' : 'rgba(231,76,60,1)'),
-      borderWidth: 1,
-      error: errors
-    }]
-  };
-
-  wtpChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: dataConfig,
-    options: {
-      responsive: true,
-      scales: {
-        y: { beginAtZero: true }
-      },
-      plugins: {
-        legend: { display: false },
-        title: {
-          display: true,
-          text: `Adjusted Willingness to Pay (USD) for Attributes - Experiment ${experiment}`,
-          font: { size: 16 }
-        },
-        tooltip: {
-          callbacks: {
-            afterBody: function(context) {
-              const index = context[0].dataIndex;
-              const se = data[index].se.toFixed(2);
-              const pVal = data[index].pVal;
-              return `SE: ${se}, p-value: ${pVal}`;
-            }
-          }
-        }
-      }
-    },
-    plugins: [{
-      // Draw vertical error bars
-      id: 'errorbars',
-      afterDraw: chart => {
-        const {
-          ctx,
-          scales: { x, y }
-        } = chart;
-
-        chart.getDatasetMeta(0).data.forEach((bar, i) => {
-          const centerX = bar.x;
-          const value = values[i];
-          const se = errors[i];
-          if (se && typeof se === 'number') {
-            const topY = y.getPixelForValue(value + se);
-            const bottomY = y.getPixelForValue(value - se);
-
-            ctx.save();
-            ctx.beginPath();
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 1;
-            // main line
-            ctx.moveTo(centerX, topY);
-            ctx.lineTo(centerX, bottomY);
-            // top cap
-            ctx.moveTo(centerX - 5, topY);
-            ctx.lineTo(centerX + 5, topY);
-            // bottom cap
-            ctx.moveTo(centerX - 5, bottomY);
-            ctx.lineTo(centerX + 5, bottomY);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-      }
-    }]
-  });
-}
-
-/***************************************************************************
- * SAVE CURRENT RESULT
- ***************************************************************************/
-let savedResults = [];
-
-function saveCurrentResult() {
-  const scenario = buildScenarioFromInputs();
-  if (!scenario) return;
-
-  const experiment = scenario.experiment;
-  const experimentName = `Experiment ${experiment}`;
-
-  const uptakeMatch = document.getElementById("probChartMain").getContext("2d").canvas.parentElement.querySelector('h3').textContent.match(/= (\d+(\.\d+)?)%/);
-  const uptake = uptakeMatch ? parseFloat(uptakeMatch[1]) : 0;
-
-  const savedResult = {
-    name: `Scenario ${savedResults.length + 1}`,
-    experiment: experimentName,
-    age: scenario.age,
-    gender: scenario.gender,
-    race: scenario.race,
-    income: scenario.income,
-    degree: scenario.degree,
-    goodHealth: scenario.goodHealth,
-    efficacy: scenario.efficacy,
-    risk: scenario.risk,
-    cost: scenario.cost,
-    efficacyOthers: scenario.efficacyOthers || 'N/A',
-    riskOthers: scenario.riskOthers || 'N/A',
-    uptake: uptake
-  };
-
-  savedResults.push(savedResult);
-  localStorage.setItem('savedResults', JSON.stringify(savedResults));
-
-  // Update the table
-  addScenarioToTable(savedResult);
-  alert(`"${savedResult.name}" has been saved successfully.`);
-}
-
-/***************************************************************************
- * LOAD SAVED RESULTS ON PAGE LOAD
- ***************************************************************************/
-window.onload = function() {
-  openTab('introTab', document.querySelector('.tablink.active'));
-  loadSavedResults();
-  // Display dynamic attributes for Experiment 3
-  document.getElementById("experimentSelect").addEventListener("change", toggleExperimentAttributes);
-};
-
-/***************************************************************************
- * ADD SAVED RESULT TO TABLE
- ***************************************************************************/
-function addScenarioToTable(result) {
-  const tableBody = document.querySelector("#scenarioTable tbody");
-  const row = document.createElement("tr");
-
-  row.innerHTML = `
-    <td>${result.name}</td>
-    <td>${result.experiment}</td>
-    <td>${result.age}</td>
-    <td>${capitalizeFirstLetter(result.gender)}</td>
-    <td>${capitalizeFirstLetter(result.race)}</td>
-    <td>${capitalizeFirstLetter(result.income)}</td>
-    <td>${capitalizeFirstLetter(result.degree)}</td>
-    <td>${capitalizeFirstLetter(result.goodHealth)}</td>
-    <td>${result.efficacy}</td>
-    <td>${result.risk}</td>
-    <td>$${result.cost}</td>
-    <td>${result.efficacyOthers}</td>
-    <td>${result.riskOthers}</td>
-  `;
-
-  tableBody.appendChild(row);
-}
-
-/***************************************************************************
- * LOAD SAVED RESULTS FROM LOCAL STORAGE
- ***************************************************************************/
-function loadSavedResults() {
-  const storedResults = JSON.parse(localStorage.getItem('savedResults')) || [];
-  storedResults.forEach(result => {
-    addScenarioToTable(result);
-  });
-}
-
-/***************************************************************************
- * TOGGLE ADDITIONAL ATTRIBUTES FOR EXPERIMENT 3
- ***************************************************************************/
-function toggleExperimentAttributes() {
-  const experiment = document.getElementById("experimentSelect").value;
-  if (experiment === '3') {
-    document.getElementById("efficacyOthersDiv").style.display = "block";
-    document.getElementById("riskOthersDiv").style.display = "block";
-  } else {
-    document.getElementById("efficacyOthersDiv").style.display = "none";
-    document.getElementById("riskOthersDiv").style.display = "none";
-  }
-}
-
-/***************************************************************************
- * DISPLAY DEMOGRAPHIC-INFLUENCED WTP CHART
+ * WTP CHART WITH DEMOGRAPHICS
  ***************************************************************************/
 let wtpChartWithDemoInstance = null;
 function updateWTChartWithDemographics(scenario, uptakeProbability) {
-  const age = scenario.age;
-  const gender = scenario.gender;
-  const race = scenario.race;
-  const income = scenario.income;
-  const degree = scenario.degree;
-  const goodHealth = scenario.goodHealth;
+  // Currently, WTP is already adjusted based on coefficients
+  // Further demographic adjustments can be applied here if needed
+  // As socioeconomic characteristics are removed, this might not be necessary
 
-  const demographicFactor = getDemographicInfluence(age, gender, race, income, degree, goodHealth);
+  // For now, no demographic adjustments since we removed socioeconomic characteristics
+  // Thus, this function can be simplified or left as is
 
-  const experiment = scenario.experiment;
-  const baseWTP = wtpData[experiment].map(item => {
-    return {
-      attribute: item.attribute,
-      wtp: item.wtp * demographicFactor,
-      se: item.se * demographicFactor,
-      pVal: item.pVal
-    };
-  });
-
-  const ctx = document.getElementById("wtpChartMain").getContext("2d");
-
-  if (wtpChartWithDemoInstance) {
-    wtpChartWithDemoInstance.destroy();
-  }
-
-  const labels = baseWTP.map(item => item.attribute);
-  const values = baseWTP.map(item => item.wtp);
-  const errors = baseWTP.map(item => item.se);
-  const colors = baseWTP.map(item => item.wtp >=0 ? 'rgba(39,174,96,0.6)' : 'rgba(231,76,60,0.6)');
-
-  const dataConfig = {
-    labels: labels,
-    datasets: [{
-      label: "WTP (USD)",
-      data: values,
-      backgroundColor: colors,
-      borderColor: values.map(v => v >=0 ? 'rgba(39,174,96,1)' : 'rgba(231,76,60,1)'),
-      borderWidth: 1,
-      error: errors
-    }]
-  };
-
-  wtpChartWithDemoInstance = new Chart(ctx, {
-    type: 'bar',
-    data: dataConfig,
-    options: {
-      responsive: true,
-      scales: {
-        y: { beginAtZero: true }
-      },
-      plugins: {
-        legend: { display: false },
-        title: {
-          display: true,
-          text: `Adjusted Willingness to Pay (USD) for Attributes - Experiment ${experiment}`,
-          font: { size: 16 }
-        },
-        tooltip: {
-          callbacks: {
-            afterBody: function(context) {
-              const index = context[0].dataIndex;
-              const se = data[index].se.toFixed(2);
-              const pVal = data[index].pVal;
-              return `SE: ${se}, p-value: ${pVal}`;
-            }
-          }
-        }
-      }
-    },
-    plugins: [{
-      // Draw vertical error bars
-      id: 'errorbars',
-      afterDraw: chart => {
-        const {
-          ctx,
-          scales: { x, y }
-        } = chart;
-
-        chart.getDatasetMeta(0).data.forEach((bar, i) => {
-          const centerX = bar.x;
-          const value = values[i];
-          const se = errors[i];
-          if (se && typeof se === 'number') {
-            const topY = y.getPixelForValue(value + se);
-            const bottomY = y.getPixelForValue(value - se);
-
-            ctx.save();
-            ctx.beginPath();
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 1;
-            // main line
-            ctx.moveTo(centerX, topY);
-            ctx.lineTo(centerX, bottomY);
-            // top cap
-            ctx.moveTo(centerX - 5, topY);
-            ctx.lineTo(centerX + 5, topY);
-            // bottom cap
-            ctx.moveTo(centerX - 5, bottomY);
-            ctx.lineTo(centerX + 5, bottomY);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-      }
-    }]
-  });
+  // Re-render WTP Chart if needed
+  renderWTPChart();
 }
 
 /***************************************************************************
- * DISPLAY COSTS & BENEFITS
+ * COSTS & BENEFITS ANALYSIS
  ***************************************************************************/
 let costsChartInstance = null;
 let benefitsChartInstance = null;
+
+const QALY_SCENARIOS_VALUES = {
+  low: 0.02,
+  moderate: 0.05,
+  high: 0.1
+};
+
+const VALUE_PER_QALY = 50000; // USD 50,000
 
 function renderCostsBenefits() {
   const scenario = buildScenarioFromInputs();
@@ -796,34 +508,47 @@ function renderCostsBenefits() {
   const experiment = scenario.experiment;
   const coefs = coefficients[experiment];
 
-  // Compute total cost based on coefficients
-  let totalCost = 0;
-  // Efficacy and Risk do not directly influence cost in the model; only "Monthly out-of-pocket cost"
-  totalCost = scenario.cost;
-
-  if (experiment === '3') {
-    totalCost += scenario.costOthers;
-  }
-
-  // Get Uptake Probability
+  // Compute total cost based on coefficients and cost components
+  let totalCost = FIXED_COSTS.advertisement + FIXED_COSTS.training;
+  
+  // Add variable costs based on uptake probability
   const uptakeMatch = document.getElementById("probChartMain").getContext("2d").canvas.parentElement.querySelector('h3').textContent.match(/= (\d+(\.\d+)?)%/);
   const uptake = uptakeMatch ? parseFloat(uptakeMatch[1]) : 0;
+  const uptakeFraction = uptake / 100;
 
-  // Calculate QALY Gains
+  // Add variable costs scaled by uptake
+  totalCost += VARIABLE_COSTS.delivery * uptakeFraction;
+  totalCost += VARIABLE_COSTS.participantTimeTravel * uptakeFraction;
+
+  // Add cost components per participant scaled by uptake
+  costComponents.forEach(component => {
+    totalCost += component.totalCost * uptakeFraction;
+  });
+
+  // Get QALY Scenario
   const qalyScenario = document.getElementById("qalySelect").value;
   const qalyPerParticipant = QALY_SCENARIOS_VALUES[qalyScenario];
-  const numberOfParticipants = 250 * (uptake / 100);
+  
+  // Number of participants
+  const numberOfParticipants = 250 * uptakeFraction;
+
+  // Total QALY Gains
   const totalQALY = numberOfParticipants * qalyPerParticipant;
+
+  // Monetised Benefits
   const monetizedBenefits = totalQALY * VALUE_PER_QALY;
 
-  // Prepare Cost Components (Placeholder - adjust based on actual cost items)
-  const costComponents = [
-    { item: "Monthly out-of-pocket cost", value: scenario.cost, quantity: 1, unitCost: scenario.cost, totalCost: scenario.cost },
-  ];
+  // Net Benefit
+  const netBenefit = monetizedBenefits - totalCost;
 
-  if (experiment === '3') {
-    costComponents.push({ item: "Monthly out-of-pocket cost Others", value: scenario.costOthers, quantity: 1, unitCost: scenario.costOthers, totalCost: scenario.costOthers });
-  }
+  // Prepare Cost Components Display
+  const costComponentsDisplay = [
+    { item: "Advertisement", value: FIXED_COSTS.advertisement },
+    { item: "Training", value: FIXED_COSTS.training },
+    { item: "Delivery Variable Costs", value: VARIABLE_COSTS.delivery * uptakeFraction },
+    { item: "Participant Time and Travel Costs", value: VARIABLE_COSTS.participantTimeTravel * uptakeFraction },
+    ...costComponents.map(c => ({ item: c.item, value: c.totalCost * uptakeFraction }))
+  ];
 
   // Display in Costs & Benefits Tab
   const costsTab = document.getElementById("costsBenefitsResults");
@@ -836,20 +561,14 @@ function renderCostsBenefits() {
     <thead>
       <tr>
         <th>Cost Item</th>
-        <th>Value (USD)</th>
-        <th>Quantity</th>
-        <th>Unit Cost (USD)</th>
-        <th>Total Cost (USD)</th>
+        <th>Cost (USD)</th>
       </tr>
     </thead>
     <tbody>
-      ${costComponents.map(c => `
+      ${costComponentsDisplay.map(c => `
         <tr>
           <td>${c.item}</td>
           <td>$${c.value.toFixed(2)}</td>
-          <td>${c.quantity}</td>
-          <td>$${c.unitCost.toFixed(2)}</td>
-          <td>$${c.totalCost.toFixed(2)}</td>
         </tr>
       `).join('')}
     </tbody>
@@ -861,11 +580,12 @@ function renderCostsBenefits() {
   summaryDiv.id = "summaryCalculations";
   summaryDiv.innerHTML = `
     <h3>Cost &amp; Benefits Analysis</h3>
-    <p><strong>Programme Uptake Probability:</strong> ${uptake.toFixed(2)}%</p>
+    <p><strong>Health Plan Uptake Probability:</strong> ${uptake.toFixed(2)}%</p>
     <p><strong>Number of Participants:</strong> ${numberOfParticipants.toFixed(0)}</p>
     <p><strong>Total Intervention Cost:</strong> $${totalCost.toFixed(2)}</p>
+    <p><strong>Total QALY Gains:</strong> ${totalQALY.toFixed(2)} QALYs</p>
     <p><strong>Monetised Benefits:</strong> $${monetizedBenefits.toLocaleString()}</p>
-    <p><strong>Net Benefit:</strong> $${(monetizedBenefits - totalCost).toLocaleString()}</p>
+    <p><strong>Net Benefit:</strong> $${netBenefit.toLocaleString()}</p>
   `;
   costsTab.appendChild(summaryDiv);
 
@@ -963,6 +683,8 @@ function renderCostsBenefits() {
 /***************************************************************************
  * SAVE SCENARIO
  ***************************************************************************/
+let savedResults = [];
+
 function saveScenario() {
   const scenario = buildScenarioFromInputs();
   if (!scenario) return;
@@ -975,12 +697,10 @@ function saveScenario() {
 
   const savedResult = {
     name: `Scenario ${savedResults.length + 1}`,
-    experiment: experimentName,
+    experiment: `Experiment ${experiment}`,
     age: scenario.age,
     gender: scenario.gender,
     race: scenario.race,
-    income: scenario.income,
-    degree: scenario.degree,
     goodHealth: scenario.goodHealth,
     efficacy: scenario.efficacy,
     risk: scenario.risk,
@@ -1011,38 +731,20 @@ function addScenarioToTable(result) {
     <td>${result.age}</td>
     <td>${capitalizeFirstLetter(result.gender)}</td>
     <td>${capitalizeFirstLetter(result.race)}</td>
-    <td>${capitalizeFirstLetter(result.income)}</td>
-    <td>${capitalizeFirstLetter(result.degree)}</td>
     <td>${capitalizeFirstLetter(result.goodHealth)}</td>
     <td>${result.efficacy}</td>
     <td>${result.risk}</td>
     <td>$${result.cost}</td>
     <td>${result.efficacyOthers}</td>
     <td>${result.riskOthers}</td>
+    <td>${result.uptake.toFixed(2)}</td>
   `;
 
   tableBody.appendChild(row);
 }
 
 /***************************************************************************
- * CAPITALIZE FIRST LETTER
- ***************************************************************************/
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-/***************************************************************************
- * LOAD SAVED RESULTS FROM LOCAL STORAGE ON PAGE LOAD
- ***************************************************************************/
-window.onload = function() {
-  openTab('introTab', document.querySelector('.tablink.active'));
-  loadSavedResults();
-  // Display dynamic attributes for Experiment 3
-  document.getElementById("experimentSelect").addEventListener("change", toggleExperimentAttributes);
-};
-
-/***************************************************************************
- * LOAD SAVED RESULTS
+ * LOAD SAVED RESULTS FROM LOCAL STORAGE
  ***************************************************************************/
 function loadSavedResults() {
   const storedResults = JSON.parse(localStorage.getItem('savedResults')) || [];
@@ -1052,118 +754,17 @@ function loadSavedResults() {
 }
 
 /***************************************************************************
- * OPEN COMPARISON WINDOW
+ * TOGGLE ADDITIONAL ATTRIBUTES FOR EXPERIMENT 3
  ***************************************************************************/
-function openComparison() {
-  if (savedResults.length < 2) {
-    alert("Please save at least two scenarios to compare.");
-    return;
+function toggleExperimentAttributes() {
+  const experiment = document.getElementById("experimentSelect").value;
+  if (experiment === '3') {
+    document.getElementById("efficacyOthersDiv").style.display = "block";
+    document.getElementById("riskOthersDiv").style.display = "block";
+  } else {
+    document.getElementById("efficacyOthersDiv").style.display = "none";
+    document.getElementById("riskOthersDiv").style.display = "none";
   }
-
-  // Create a new window for comparison
-  const comparisonWindow = window.open("", "Comparison", "width=1400,height=1000");
-  comparisonWindow.document.write(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8"/>
-      <title>Scenarios Comparison</title>
-      <link rel="stylesheet" href="styles.css"/>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    </head>
-    <body>
-      <div class="container">
-        <h2>Scenarios Comparison</h2>
-        <div class="chart-grid">
-          <div class="chart-box">
-            <h3>Programme Uptake Probability</h3>
-            <canvas id="compProbChart"></canvas>
-          </div>
-          <div class="chart-box">
-            <h3>Monetised QALY Benefits</h3>
-            <canvas id="compBenefitChart"></canvas>
-          </div>
-        </div>
-      </div>
-      <script>
-        const savedScenarios = ${JSON.stringify(savedResults)};
-
-        const labels = savedScenarios.map(s => s.name);
-        const uptakeData = savedScenarios.map(s => s.uptake);
-
-        // Programme Uptake Probability Chart
-        const ctxProb = document.getElementById("compProbChart").getContext("2d");
-        new Chart(ctxProb, {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Programme Uptake (%)',
-              data: uptakeData,
-              backgroundColor: uptakeData.map(p => p < 30 ? 'rgba(231,76,60,0.6)'
-                                     : p < 70 ? 'rgba(241,196,15,0.6)'
-                                             : 'rgba(39,174,96,0.6)'),
-              borderColor: uptakeData.map(p => p < 30 ? 'rgba(231,76,60,1)'
-                                     : p < 70 ? 'rgba(241,196,15,1)'
-                                             : 'rgba(39,174,96,1)'),
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { display: false },
-              title: {
-                display: true,
-                text: 'Programme Uptake Probability',
-                font: { size: 16 }
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                max: 100
-              }
-            }
-          }
-        });
-
-        // Monetised QALY Benefits Chart
-        const ctxBenefit = document.getElementById("compBenefitChart").getContext("2d");
-        new Chart(ctxBenefit, {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Monetised Benefits (USD)',
-              data: savedScenarios.map(s => s.uptake * 50000), // Placeholder calculation
-              backgroundColor: 'rgba(39,174,96,0.6)',
-              borderColor: 'rgba(27, 163, 156,1)',
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { display: false },
-              title: {
-                display: true,
-                text: 'Monetised QALY Benefits',
-                font: { size: 16 }
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      </script>
-    </body>
-    </html>
-  `);
-  comparisonWindow.document.close();
 }
 
 /***************************************************************************
@@ -1205,23 +806,19 @@ function exportToPDF() {
     currentY += 5;
     doc.text(`Race/Ethnicity: ${capitalizeFirstLetter(scenario.race)}`, margin, currentY);
     currentY += 5;
-    doc.text(`Income Group: ${capitalizeFirstLetter(scenario.income)}`, margin, currentY);
-    currentY += 5;
-    doc.text(`Educational Qualification: ${capitalizeFirstLetter(scenario.degree)}`, margin, currentY);
-    currentY += 5;
     doc.text(`Self-Reported Health Status: ${capitalizeFirstLetter(scenario.goodHealth)}`, margin, currentY);
     currentY += 5;
-    doc.text(`Chance of reaching target A1C: ${scenario.efficacy}%`, margin, currentY);
+    doc.text(`Chance of Reaching Target A1C: ${scenario.efficacy}%`, margin, currentY);
     currentY += 5;
-    doc.text(`Chance of side effects: ${scenario.risk}%`, margin, currentY);
+    doc.text(`Chance of Side Effects: ${scenario.risk}%`, margin, currentY);
     currentY += 5;
-    doc.text(`Monthly out-of-pocket cost: $${scenario.cost}`, margin, currentY);
+    doc.text(`Monthly Out-of-Pocket Cost: $${scenario.cost}`, margin, currentY);
     currentY += 5;
-    doc.text(`Chance of reaching target A1C for Others: ${scenario.efficacyOthers}%`, margin, currentY);
+    doc.text(`Chance of Reaching Target A1C for Others: ${scenario.efficacyOthers}%`, margin, currentY);
     currentY += 5;
-    doc.text(`Chance of side effects for Others: ${scenario.riskOthers}%`, margin, currentY);
+    doc.text(`Chance of Side Effects for Others: ${scenario.riskOthers}%`, margin, currentY);
     currentY += 5;
-    doc.text(`Programme Uptake Probability: ${scenario.uptake.toFixed(2)}%`, margin, currentY);
+    doc.text(`Health Plan Uptake Probability: ${scenario.uptake.toFixed(2)}%`, margin, currentY);
     currentY += 10;
   });
 
@@ -1233,4 +830,105 @@ function exportToPDF() {
  ***************************************************************************/
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+/***************************************************************************
+ * WTP CHART WITH ERROR BARS
+ ***************************************************************************/
+let wtpChartInstance = null;
+function renderWTPChart() {
+  const experiment = document.getElementById("experimentSelect").value;
+  if (!experiment) {
+    alert("Please select an experiment in the Inputs tab.");
+    return;
+  }
+
+  const ctx = document.getElementById("wtpChartMain").getContext("2d");
+  const data = wtpData[experiment];
+
+  if (wtpChartInstance) {
+    wtpChartInstance.destroy();
+  }
+
+  const labels = data.map(item => item.attribute);
+  const values = data.map(item => item.wtp);
+  const errors = data.map(item => item.se);
+  const colors = data.map(item => item.wtp >=0 ? 'rgba(39,174,96,0.6)' : 'rgba(231,76,60,0.6)');
+
+  const dataConfig = {
+    labels: labels,
+    datasets: [{
+      label: "WTP (USD)",
+      data: values,
+      backgroundColor: colors,
+      borderColor: values.map(v => v >=0 ? 'rgba(39,174,96,1)' : 'rgba(231,76,60,1)'),
+      borderWidth: 1,
+      error: errors
+    }]
+  };
+
+  wtpChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: dataConfig,
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      },
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: `Willingness to Pay (USD) for Attributes - Experiment ${experiment}`,
+          font: { size: 16 }
+        },
+        tooltip: {
+          callbacks: {
+            afterBody: function(context) {
+              const index = context[0].dataIndex;
+              const se = data[index].se.toFixed(2);
+              const pVal = data[index].pVal;
+              return `SE: ${se}, p-value: ${pVal}`;
+            }
+          }
+        }
+      }
+    },
+    plugins: [{
+      // Draw vertical error bars
+      id: 'errorbars',
+      afterDraw: chart => {
+        const {
+          ctx,
+          scales: { x, y }
+        } = chart;
+
+        chart.getDatasetMeta(0).data.forEach((bar, i) => {
+          const centerX = bar.x;
+          const value = values[i];
+          const se = errors[i];
+          if (se && typeof se === 'number') {
+            const topY = y.getPixelForValue(value + se);
+            const bottomY = y.getPixelForValue(value - se);
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 1;
+            // main line
+            ctx.moveTo(centerX, topY);
+            ctx.lineTo(centerX, bottomY);
+            // top cap
+            ctx.moveTo(centerX - 5, topY);
+            ctx.lineTo(centerX + 5, topY);
+            // bottom cap
+            ctx.moveTo(centerX - 5, bottomY);
+            ctx.lineTo(centerX + 5, bottomY);
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+      }
+    }]
+  });
 }
