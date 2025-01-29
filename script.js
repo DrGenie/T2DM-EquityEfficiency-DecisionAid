@@ -6,11 +6,14 @@
  * 4) WTP data for all features with error bars (p-values, SE)
  * 5) Health Plan Uptake Probability bar chart
  * 6) Scenario saving & PDF export
- * 7) Cost-benefit analysis based on targeted literature-reviewed costs
+ * 7) Cost-benefit analysis based on literature-reviewed costs
  * 8) Dynamic attribute display based on experiment selection
  * 9) WTP comparison across experiments
  * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
  *****************************************************************************/
+
+/** Global variable to store current uptake probability */
+let currentUptakeProbability = 0;
 
 /** On page load, default to introduction tab and load saved scenarios */
 window.onload = function() {
@@ -194,7 +197,7 @@ const wtpData = {
 };
 
 /***************************************************************************
- * HEALTH PLAN UPLOAD PROBABILITY CALCULATION
+ * HEALTH PLAN UPTAKE PROBABILITY CALCULATION
  ***************************************************************************/
 function predictUptake() {
   const scenario = buildScenarioFromInputs();
@@ -261,6 +264,9 @@ function predictUptake() {
   const exp_optout = Math.exp(coefs.ASC_optout);
   const uptakeProbability = exp_utility / (exp_utility + exp_optout) * 100;
 
+  // Store the uptake probability globally
+  currentUptakeProbability = uptakeProbability;
+
   // Display results
   displayUptakeProbability(uptakeProbability);
 }
@@ -287,7 +293,7 @@ function buildScenarioFromInputs() {
   if (experiment === '3') {
     efficacyOthers = document.getElementById("efficacyOthers").value;
     riskOthers = document.getElementById("riskOthers").value;
-    costOthers = document.getElementById("costOthers").value;
+    costOthers = parseInt(document.getElementById("costOthers").value, 10);
   }
 
   // Basic validation
@@ -298,7 +304,7 @@ function buildScenarioFromInputs() {
 
   // Additional validation for Experiment 3
   if (experiment === '3') {
-    if (!efficacyOthers || !riskOthers || costOthers === "N/A") {
+    if (!efficacyOthers || !riskOthers || isNaN(costOthers)) {
       alert("Please select Efficacy, Risk, and Cost for Others.");
       return null;
     }
@@ -509,8 +515,7 @@ function renderCostsBenefits() {
   });
 
   // Compute uptake probability to determine variable costs
-  const uptakeMatch = document.getElementById("probChartMain").getContext("2d").canvas.parentElement.querySelector('h3').textContent.match(/= (\d+(\.\d+)?)%/);
-  const uptake = uptakeMatch ? parseFloat(uptakeMatch[1]) : 0;
+  const uptake = currentUptakeProbability;
   const uptakeFraction = uptake / 100;
 
   // Variable costs based on uptake probability
@@ -684,8 +689,7 @@ function saveScenario() {
   if (!scenario) return;
 
   // Ensure uptake has been predicted
-  const uptakeMatch = document.getElementById("probChartMain").getContext("2d").canvas.parentElement.querySelector('h3').textContent.match(/= (\d+(\.\d+)?)%/);
-  const uptake = uptakeMatch ? parseFloat(uptakeMatch[1]) : null;
+  const uptake = currentUptakeProbability;
 
   if (uptake === null || uptake === 0) {
     alert("Please predict the Health Plan Uptake Probability before saving the scenario.");
