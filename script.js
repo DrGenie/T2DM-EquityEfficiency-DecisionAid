@@ -44,11 +44,11 @@ function openTab(tabId, btn) {
 
 /** Range slider label updates */
 function updateCostDisplay(val) {
-  document.getElementById("costValue").textContent = val;
+  document.getElementById("costValue").textContent = `$${val}`;
 }
 
 function updateCostOthersDisplay(val) {
-  document.getElementById("costOthersValue").textContent = val;
+  document.getElementById("costOthersValue").textContent = `$${val}`;
 }
 
 /***************************************************************************
@@ -64,7 +64,7 @@ const coefficients = {
     risk_8: -0.034,
     risk_16: -0.398,
     risk_30: -0.531,
-    cost: -0.000123, // -0.0123 / 100
+    cost: -0.0123 / 100, // -0.000123
     ASC_sd: 0.987
   },
   '2': { // Experiment 2
@@ -75,7 +75,7 @@ const coefficients = {
     risk_8: -0.054,
     risk_16: -0.305,
     risk_30: -0.347,
-    cost: -0.00014, // -0.0140 / 100
+    cost: -0.0140 / 100, // -0.00014
     ASC_sd: 1.196
   },
   '3': { // Experiment 3
@@ -91,14 +91,14 @@ const coefficients = {
     riskOthers_8: -0.111,
     riskOthers_16: -0.103,
     riskOthers_30: -0.197,
-    cost: -0.0007, // -0.070 / 100
-    costOthers: -0.00041, // -0.041 / 100
+    cost: -0.070 / 100, // -0.0007
+    costOthers: -0.041 / 100, // -0.00041
     ASC_sd: 1.033
   }
 };
 
 /***************************************************************************
- * COST COMPONENTS BASED ON LITERATURE REVIEW IN THE USA
+ * COST COMPONENTS BASED ON TARGETED LITERATURE REVIEW IN THE USA
  ***************************************************************************/
 const costComponents = [
   {
@@ -282,28 +282,24 @@ function buildScenarioFromInputs() {
   // For Experiment 3, additional attributes
   let efficacyOthers = "N/A"; // default reference
   let riskOthers = "N/A"; // default reference
-  let costOthers = 0; // default
+  let costOthers = "N/A"; // default
 
   if (experiment === '3') {
     efficacyOthers = document.getElementById("efficacyOthers").value;
     riskOthers = document.getElementById("riskOthers").value;
-    costOthers = parseInt(document.getElementById("costOthers").value, 10);
+    costOthers = document.getElementById("costOthers").value;
   }
 
   // Basic validation
   if (isNaN(cost) || cost < 0 || cost > 1000) {
-    alert("Please select a valid Monthly Out-of-Pocket Cost between $0 and $1000.");
+    alert("Please select a valid Monthly Out-of-Pocket Cost.");
     return null;
   }
 
   // Additional validation for Experiment 3
   if (experiment === '3') {
-    if (!efficacyOthers || !riskOthers) {
-      alert("Please select Efficacy and Risk for Others.");
-      return null;
-    }
-    if (isNaN(costOthers) || costOthers < 0 || costOthers > 1000) {
-      alert("Please select a valid Monthly Out-of-Pocket Cost for Others between $0 and $1000.");
+    if (!efficacyOthers || !riskOthers || costOthers === "N/A") {
+      alert("Please select Efficacy, Risk, and Cost for Others.");
       return null;
     }
   }
@@ -413,8 +409,7 @@ function renderWTPChart() {
       data: values,
       backgroundColor: colors,
       borderColor: values.map(v => v >=0 ? 'rgba(39,174,96,1)' : 'rgba(231,76,60,1)'),
-      borderWidth: 1,
-      error: errors
+      borderWidth: 1
     }]
   };
 
@@ -919,18 +914,13 @@ function renderWTPConclusion(avgWTP) {
   const exp3 = avgWTP["Experiment 3"] || "N/A";
 
   conclusion.innerHTML = `
-    <strong>Conclusion:</strong> Across experiments, risk aversion progressively declined when equity considerations were introduced. In a self-focused setup (Experiment 1), respondents showed strong risk aversion with an average WTP of $${exp1}. This aversion decreased notably as the experiments incorporated equity considerations, particularly in Experiment 2, where health outcomes were equal between respondents (“self”) and others with poorer health conditions, resulting in an average WTP of $${exp2}. This reduction in risk aversion suggests a greater tolerance for potential risk of side effects when the health needs of others with poorer health conditions are also considered, which aligns with studies that emphasize broader ethical considerations in decision-making under risk (Arrieta et al., 2017). However, the reduction in risk aversion was less pronounced moving from Experiment 1 to Experiment 3, where health outcomes were unequal between the “self” and “others”, with an average WTP of $${exp3}. This suggests that disparities in health outcomes may reduce respondents’ willingness to accept personal risks.
+    <strong>Conclusion:</strong> Across experiments, risk aversion progressively declined when equity considerations were introduced. In a self-focused setup (Experiment 1), respondents showed strong risk aversion with an average WTP of $${exp1}. This aversion decreased notably as the experiments incorporated equity considerations, particularly in Experiment 2, where health outcomes were equal between respondents (“self”) and others with poorer health conditions, resulting in an average WTP of $${exp2}. This reduction in risk aversion suggests a greater tolerance for potential risk of side effects when the health needs of others with poorer health conditions are also considered, which aligns with studies that emphasize broader ethical considerations in decision-making under risk (Arrieta et al., 2017). However, the reduction in risk aversion was less pronounced moving from Experiment 2 to Experiment 3, where health outcomes were unequal between the “self” and “others”, with an average WTP of $${exp3}. This suggests that disparities in health outcomes may reduce respondents’ willingness to accept personal risks.
   `;
 }
 
 /***************************************************************************
  * Scenario Comparison (Display Saved Scenarios and WTP Comparison)
  * This functionality is handled within the Scenarios Tab and WTP Comparison Chart
- ***************************************************************************/
-
-/***************************************************************************
- * Scenario Comparison is integrated within the Scenarios Tab using the WTP Comparison Chart
- * The conclusion is displayed below the chart
  ***************************************************************************/
 
 /***************************************************************************
