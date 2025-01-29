@@ -349,8 +349,8 @@ function predictUptake() {
   // Display results
   displayUptakeProbability(uptakeProbability);
 
-  // Update WTP Charts with Demographics
-  updateWTChartWithDemographics(scenario, uptakeProbability);
+  // Update WTP Charts (No demographic adjustments as demographics are removed)
+  renderWTPChart();
 }
 
 /***************************************************************************
@@ -362,11 +362,6 @@ function buildScenarioFromInputs() {
     alert("Please select an experiment.");
     return null;
   }
-
-  const age = parseInt(document.getElementById("age").value, 10);
-  const gender = document.getElementById("gender").value;
-  const race = document.getElementById("race").value;
-  const goodHealth = document.getElementById("goodHealth").value;
 
   const efficacy = document.getElementById("efficacy").value;
   const risk = document.getElementById("risk").value;
@@ -384,8 +379,8 @@ function buildScenarioFromInputs() {
   }
 
   // Basic validation
-  if (isNaN(age) || age < 18 || age > 120) {
-    alert("Please enter a valid age between 18 and 120.");
+  if (isNaN(cost) || cost < 0 || cost > 1000) {
+    alert("Please select a valid monthly out-of-pocket cost.");
     return null;
   }
 
@@ -399,10 +394,6 @@ function buildScenarioFromInputs() {
 
   return {
     experiment,
-    age,
-    gender,
-    race,
-    goodHealth,
     efficacy,
     risk,
     cost,
@@ -469,22 +460,6 @@ function displayUptakeProbability(uptakeProbability) {
     interpretation = "Uptake is high. Maintaining these attributes is recommended.";
   }
   alert(`Predicted probability: ${uptakeProbability.toFixed(2)}%. ${interpretation}`);
-}
-
-/***************************************************************************
- * WTP CHART WITH DEMOGRAPHICS
- ***************************************************************************/
-let wtpChartWithDemoInstance = null;
-function updateWTChartWithDemographics(scenario, uptakeProbability) {
-  // Currently, WTP is already adjusted based on coefficients
-  // Further demographic adjustments can be applied here if needed
-  // As socioeconomic characteristics are removed, this might not be necessary
-
-  // For now, no demographic adjustments since we removed socioeconomic characteristics
-  // Thus, this function can be simplified or left as is
-
-  // Re-render WTP Chart if needed
-  renderWTPChart();
 }
 
 /***************************************************************************
@@ -698,10 +673,6 @@ function saveScenario() {
   const savedResult = {
     name: `Scenario ${savedResults.length + 1}`,
     experiment: `Experiment ${experiment}`,
-    age: scenario.age,
-    gender: scenario.gender,
-    race: scenario.race,
-    goodHealth: scenario.goodHealth,
     efficacy: scenario.efficacy,
     risk: scenario.risk,
     cost: scenario.cost,
@@ -728,10 +699,6 @@ function addScenarioToTable(result) {
   row.innerHTML = `
     <td>${result.name}</td>
     <td>${result.experiment}</td>
-    <td>${result.age}</td>
-    <td>${capitalizeFirstLetter(result.gender)}</td>
-    <td>${capitalizeFirstLetter(result.race)}</td>
-    <td>${capitalizeFirstLetter(result.goodHealth)}</td>
     <td>${result.efficacy}</td>
     <td>${result.risk}</td>
     <td>$${result.cost}</td>
@@ -800,14 +767,198 @@ function exportToPDF() {
     currentY += 7;
 
     doc.setFontSize(12);
-    doc.text(`Age: ${scenario.age}`, margin, currentY);
+    doc.text(`Chance of Reaching Target A1C: ${scenario.efficacy}%`, margin, currentY);
     currentY += 5;
-    doc.text(`Gender: ${capitalizeFirstLetter(scenario.gender)}`, margin, currentY);
+    doc.text(`Chance of Side Effects: ${scenario.risk}%`, margin, currentY);
     currentY += 5;
-    doc.text(`Race/Ethnicity: ${capitalizeFirstLetter(scenario.race)}`, margin, currentY);
+    doc.text(`Monthly Out-of-Pocket Cost: $${scenario.cost}`, margin, currentY);
     currentY += 5;
-    doc.text(`Self-Reported Health Status: ${capitalizeFirstLetter(scenario.goodHealth)}`, margin, currentY);
+    doc.text(`Chance of Reaching Target A1C for Others: ${scenario.efficacyOthers}%`, margin, currentY);
     currentY += 5;
+    doc.text(`Chance of Side Effects for Others: ${scenario.riskOthers}%`, margin, currentY);
+    currentY += 5;
+    doc.text(`Health Plan Uptake Probability: ${scenario.uptake.toFixed(2)}%`, margin, currentY);
+    currentY += 10;
+  });
+
+  doc.save("Scenarios_Comparison.pdf");
+}
+
+/***************************************************************************
+ * OPEN COMPARISON WINDOW
+ ***************************************************************************/
+function openComparison() {
+  if (savedResults.length < 2) {
+    alert("Please save at least two scenarios to compare.");
+    return;
+  }
+
+  // Create a new window for comparison
+  const comparisonWindow = window.open("", "Comparison", "width=1400,height=1000");
+  comparisonWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8"/>
+      <title>Scenarios Comparison</title>
+      <link rel="stylesheet" href="styles.css"/>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; }
+        h2 { text-align: center; }
+        .chart-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+          gap: 20px;
+          margin-top: 20px;
+        }
+        .chart-box {
+          background: #fdfdfd;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          padding: 15px;
+          text-align: center;
+        }
+        .chart-box canvas {
+          width: 100%;
+          height: 300px;
+        }
+      </style>
+    </head>
+    <body>
+      <h2>Scenarios Comparison</h2>
+      <div class="chart-grid">
+        <div class="chart-box">
+          <h3>Health Plan Uptake Probability</h3>
+          <canvas id="compProbChart"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3>Monetised QALY Benefits</h3>
+          <canvas id="compBenefitChart"></canvas>
+        </div>
+      </div>
+      <script>
+        const savedScenarios = ${JSON.stringify(savedResults)};
+
+        const labels = savedScenarios.map(s => s.name);
+        const uptakeData = savedScenarios.map(s => s.uptake);
+
+        // Health Plan Uptake Probability Chart
+        const ctxProb = document.getElementById("compProbChart").getContext("2d");
+        new Chart(ctxProb, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Health Plan Uptake (%)',
+              data: uptakeData,
+              backgroundColor: uptakeData.map(p => p < 30 ? 'rgba(231,76,60,0.6)'
+                                     : p < 70 ? 'rgba(241,196,15,0.6)'
+                                             : 'rgba(39,174,96,0.6)'),
+              borderColor: uptakeData.map(p => p < 30 ? 'rgba(231,76,60,1)'
+                                     : p < 70 ? 'rgba(241,196,15,1)'
+                                             : 'rgba(39,174,96,1)'),
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                text: 'Health Plan Uptake Probability',
+                font: { size: 16 }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100
+              }
+            }
+          }
+        });
+
+        // Monetised QALY Benefits Chart
+        const ctxBenefit = document.getElementById("compBenefitChart").getContext("2d");
+        new Chart(ctxBenefit, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Monetised Benefits (USD)',
+              data: savedScenarios.map(s => {
+                // Assuming each participant gains QALYs based on their scenario
+                // This is a placeholder calculation; adjust based on actual QALY data
+                let qalyPerParticipant;
+                if (s.efficacy === '10') qalyPerParticipant = 0.02;
+                else if (s.efficacy === '50') qalyPerParticipant = 0.05;
+                else qalyPerParticipant = 0.1;
+                return (250 * (s.uptake / 100) * qalyPerParticipant) * 50000;
+              }),
+              backgroundColor: 'rgba(39,174,96,0.6)',
+              borderColor: 'rgba(27, 163, 156,1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                text: 'Monetised QALY Benefits',
+                font: { size: 16 }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      </script>
+    </body>
+    </html>
+  `);
+  comparisonWindow.document.close();
+}
+
+/***************************************************************************
+ * EXPORT TO PDF FUNCTION
+ ***************************************************************************/
+function exportToPDF() {
+  if (savedResults.length < 1) {
+    alert("No scenarios saved to export.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 15;
+  let currentY = margin;
+
+  doc.setFontSize(16);
+  doc.text("T2DM Equity-Efficiency Decision Aid Tool - Scenarios Comparison", pageWidth / 2, currentY, { align: 'center' });
+  currentY += 10;
+
+  savedResults.forEach((scenario, index) => {
+    // Check if adding this scenario exceeds the page height
+    if (currentY + 80 > pageHeight - margin) {
+      doc.addPage();
+      currentY = margin;
+    }
+
+    doc.setFontSize(14);
+    doc.text(`${scenario.name}: ${scenario.experiment}`, margin, currentY);
+    currentY += 7;
+
+    doc.setFontSize(12);
     doc.text(`Chance of Reaching Target A1C: ${scenario.efficacy}%`, margin, currentY);
     currentY += 5;
     doc.text(`Chance of Side Effects: ${scenario.risk}%`, margin, currentY);
@@ -833,102 +984,32 @@ function capitalizeFirstLetter(string) {
 }
 
 /***************************************************************************
- * WTP CHART WITH ERROR BARS
+ * ADD SCENARIO TO TABLE
  ***************************************************************************/
-let wtpChartInstance = null;
-function renderWTPChart() {
-  const experiment = document.getElementById("experimentSelect").value;
-  if (!experiment) {
-    alert("Please select an experiment in the Inputs tab.");
-    return;
-  }
+function addScenarioToTable(result) {
+  const tableBody = document.querySelector("#scenarioTable tbody");
+  const row = document.createElement("tr");
 
-  const ctx = document.getElementById("wtpChartMain").getContext("2d");
-  const data = wtpData[experiment];
+  row.innerHTML = `
+    <td>${result.name}</td>
+    <td>${result.experiment}</td>
+    <td>${result.efficacy}</td>
+    <td>${result.risk}</td>
+    <td>$${result.cost}</td>
+    <td>${result.efficacyOthers}</td>
+    <td>${result.riskOthers}</td>
+    <td>${result.uptake.toFixed(2)}</td>
+  `;
 
-  if (wtpChartInstance) {
-    wtpChartInstance.destroy();
-  }
+  tableBody.appendChild(row);
+}
 
-  const labels = data.map(item => item.attribute);
-  const values = data.map(item => item.wtp);
-  const errors = data.map(item => item.se);
-  const colors = data.map(item => item.wtp >=0 ? 'rgba(39,174,96,0.6)' : 'rgba(231,76,60,0.6)');
-
-  const dataConfig = {
-    labels: labels,
-    datasets: [{
-      label: "WTP (USD)",
-      data: values,
-      backgroundColor: colors,
-      borderColor: values.map(v => v >=0 ? 'rgba(39,174,96,1)' : 'rgba(231,76,60,1)'),
-      borderWidth: 1,
-      error: errors
-    }]
-  };
-
-  wtpChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: dataConfig,
-    options: {
-      responsive: true,
-      scales: {
-        y: { beginAtZero: true }
-      },
-      plugins: {
-        legend: { display: false },
-        title: {
-          display: true,
-          text: `Willingness to Pay (USD) for Attributes - Experiment ${experiment}`,
-          font: { size: 16 }
-        },
-        tooltip: {
-          callbacks: {
-            afterBody: function(context) {
-              const index = context[0].dataIndex;
-              const se = data[index].se.toFixed(2);
-              const pVal = data[index].pVal;
-              return `SE: ${se}, p-value: ${pVal}`;
-            }
-          }
-        }
-      }
-    },
-    plugins: [{
-      // Draw vertical error bars
-      id: 'errorbars',
-      afterDraw: chart => {
-        const {
-          ctx,
-          scales: { x, y }
-        } = chart;
-
-        chart.getDatasetMeta(0).data.forEach((bar, i) => {
-          const centerX = bar.x;
-          const value = values[i];
-          const se = errors[i];
-          if (se && typeof se === 'number') {
-            const topY = y.getPixelForValue(value + se);
-            const bottomY = y.getPixelForValue(value - se);
-
-            ctx.save();
-            ctx.beginPath();
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 1;
-            // main line
-            ctx.moveTo(centerX, topY);
-            ctx.lineTo(centerX, bottomY);
-            // top cap
-            ctx.moveTo(centerX - 5, topY);
-            ctx.lineTo(centerX + 5, topY);
-            // bottom cap
-            ctx.moveTo(centerX - 5, bottomY);
-            ctx.lineTo(centerX + 5, bottomY);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-      }
-    }]
+/***************************************************************************
+ * LOAD SAVED RESULTS FROM LOCAL STORAGE
+ ***************************************************************************/
+function loadSavedResults() {
+  const storedResults = JSON.parse(localStorage.getItem('savedResults')) || [];
+  storedResults.forEach(result => {
+    addScenarioToTable(result);
   });
 }
