@@ -56,11 +56,11 @@
     <ol>
       <li><strong>Select Experiment:</strong> Choose one of the three experimental conditions to understand how different perspectives influence your preferences.</li>
       <li><strong>Review Attributes:</strong> Navigate to the <strong>Attributes</strong> tab to familiarize yourself with the various attributes and their levels that describe the health insurance plans.</li>
-      <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, enter your demographic information and adjust the plan attributes using sliders and selection options. Additional attributes will appear if you select Experiment 3.</li>
+      <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, enter your plan-specific information and adjust the plan attributes using sliders and selection options. Additional attributes will appear if you select Experiment 3.</li>
       <li><strong>Predict Health Plan Uptake:</strong> Click on "Predict Health Plan Uptake" to compute the likelihood of choosing a particular health plan based on your inputs.</li>
       <li><strong>View WTP Results:</strong> Navigate to the <strong>WTP Results</strong> tab and click "Show WTP Plots" to visualize your willingness to pay for each attribute.</li>
       <li><strong>Check Health Plan Uptake Probability:</strong> In the <strong>Health Plan Uptake Probability</strong> tab, click "Show Probability Plot" to view a bar chart of the predicted uptake probability.</li>
-      <li><strong>Assess Costs &amp; Benefits:</strong> Go to the <strong>Costs &amp; Benefits</strong> tab to select a QALY gain scenario and review a comprehensive analysis of the economic implications of your selected plan.</li>
+      <li><strong>Assess Costs &amp; Benefits:</strong> Go to the <strong>Costs & Benefits</strong> tab to select a QALY gain scenario and review a comprehensive analysis of the economic implications of your selected plan.</li>
       <li><strong>Manage Scenarios:</strong> Save your current scenario, compare multiple scenarios, and export your results to PDF in the <strong>Scenarios</strong> tab.</li>
     </ol>
   </div>
@@ -121,49 +121,6 @@
             <option value="1">Experiment 1: Self-focused Outcomes</option>
             <option value="2">Experiment 2: Equal Health Outcomes for Self and Others</option>
             <option value="3">Experiment 3: Varying Health Outcomes for Self and Others</option>
-          </select>
-        </div>
-
-        <!-- Demographics -->
-        <div class="form-item">
-          <label for="age">Age (18-120):</label>
-          <input 
-            type="number" 
-            id="age" 
-            name="age" 
-            min="18" max="120" 
-            placeholder="e.g., 50" 
-            required
-          />
-        </div>
-
-        <div class="form-item">
-          <label for="gender"><strong>Gender:</strong></label>
-          <select id="gender" name="gender" required>
-            <option value="">--Select Gender--</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-        </div>
-
-        <div class="form-item">
-          <label for="race"><strong>Race/Ethnicity:</strong></label>
-          <select id="race" name="race" required>
-            <option value="">--Select Race/Ethnicity--</option>
-            <option value="white">White</option>
-            <option value="black">Black</option>
-            <option value="asian">Asian</option>
-            <option value="hispanic">Hispanic</option>
-            <option value="other">Other/Not Listed</option>
-          </select>
-        </div>
-
-        <div class="form-item">
-          <label for="goodHealth"><strong>Self-Reported Health Status:</strong></label>
-          <select id="goodHealth" name="goodHealth" required>
-            <option value="">--Select Health Status--</option>
-            <option value="yes">Good Health</option>
-            <option value="no">Poor Health</option>
           </select>
         </div>
 
@@ -300,16 +257,12 @@
         <tr>
           <th>Name</th>
           <th>Experiment</th>
-          <th>Age</th>
-          <th>Gender</th>
-          <th>Race</th>
-          <th>Good Health</th>
-          <th>Efficacy (%)</th>
-          <th>Risk (%)</th>
+          <th>Chance of Reaching Target A1C (%)</th>
+          <th>Chance of Side Effects (%)</th>
           <th>Cost (USD)</th>
           <th>Efficacy Others (%)</th>
           <th>Risk Others (%)</th>
-          <th>Uptake (%)</th>
+          <th>Uptake Probability (%)</th>
         </tr>
       </thead>
       <tbody></tbody>
