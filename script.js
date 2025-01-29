@@ -10,7 +10,7 @@
  * 8) Dynamic attribute display based on experiment selection
  * 9) WTP comparison across experiments
  * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
- ****************************************************************************/
+ *****************************************************************************/
 
 /** On page load, default to introduction tab and load saved scenarios */
 window.onload = function() {
@@ -115,194 +115,86 @@ const costComponents = [
   },
   {
     item: "Delivery Variable Costs",
-    unitCost: 0.00, // USD
+    unitCost: 1500.00, // USD
     quantity: 1,
-    totalCost: 0.00
+    totalCost: 1500.00
   },
   {
     item: "Participant Time and Travel Costs",
-    unitCost: 0.00, // USD
+    unitCost: 800.00, // USD
     quantity: 1,
-    totalCost: 0.00
+    totalCost: 800.00
   },
   {
     item: "Medication Costs (Insulin, Oral Hypoglycemics)",
-    unitCost: 0.00, // USD
+    unitCost: 2000.00, // USD
     quantity: 1,
-    totalCost: 0.00
+    totalCost: 2000.00
   },
   {
     item: "Blood Glucose Monitoring",
-    unitCost: 0.00, // USD
+    unitCost: 500.00, // USD
     quantity: 1,
-    totalCost: 0.00
+    totalCost: 500.00
   },
   {
     item: "Healthcare Provider Visits",
-    unitCost: 0.00, // USD
+    unitCost: 1200.00, // USD
     quantity: 1,
-    totalCost: 0.00
+    totalCost: 1200.00
   },
   {
     item: "Hospitalization for Complications",
-    unitCost: 0.00, // USD
+    unitCost: 5000.00, // USD
     quantity: 1,
-    totalCost: 0.00
+    totalCost: 5000.00
   },
   {
     item: "Patient Time and Travel Costs",
-    unitCost: 0.00, // USD
+    unitCost: 600.00, // USD
     quantity: 1,
-    totalCost: 0.00
+    totalCost: 600.00
   },
   {
     item: "Administrative and Training Costs",
-    unitCost: 0.00, // USD
+    unitCost: 1000.00, // USD
     quantity: 1,
-    totalCost: 0.00
+    totalCost: 1000.00
   }
 ];
 
 /***************************************************************************
- * WTP DATA FOR ALL ATTRIBUTES
+ * WILLINGNESS TO PAY DATA FOR ALL ATTRIBUTES
  ***************************************************************************/
 const wtpData = {
   '1': [ // Experiment 1
-    { attribute: "Efficacy 50%", wtp: coefficients['1'].efficacy_50 / (-coefficients['1'].cost), pVal: 0.000, se: 0.074 / Math.abs(coefficients['1'].cost) },
-    { attribute: "Efficacy 90%", wtp: coefficients['1'].efficacy_90 / (-coefficients['1'].cost), pVal: 0.000, se: 0.078 / Math.abs(coefficients['1'].cost) },
-    { attribute: "Risk 8%", wtp: coefficients['1'].risk_8 / (-coefficients['1'].cost), pVal: 0.689, se: 0.085 / Math.abs(coefficients['1'].cost) },
-    { attribute: "Risk 16%", wtp: coefficients['1'].risk_16 / (-coefficients['1'].cost), pVal: 0.000, se: 0.086 / Math.abs(coefficients['1'].cost) },
-    { attribute: "Risk 30%", wtp: coefficients['1'].risk_30 / (-coefficients['1'].cost), pVal: 0.000, se: 0.090 / Math.abs(coefficients['1'].cost) }
+    { attribute: "Efficacy 50%", wtp: coefficients['1'].efficacy_50 / Math.abs(coefficients['1'].cost), pVal: 0.000, se: 0.074 / Math.abs(coefficients['1'].cost) },
+    { attribute: "Efficacy 90%", wtp: coefficients['1'].efficacy_90 / Math.abs(coefficients['1'].cost), pVal: 0.000, se: 0.078 / Math.abs(coefficients['1'].cost) },
+    { attribute: "Risk 8%", wtp: coefficients['1'].risk_8 / Math.abs(coefficients['1'].cost), pVal: 0.689, se: 0.085 / Math.abs(coefficients['1'].cost) },
+    { attribute: "Risk 16%", wtp: coefficients['1'].risk_16 / Math.abs(coefficients['1'].cost), pVal: 0.000, se: 0.086 / Math.abs(coefficients['1'].cost) },
+    { attribute: "Risk 30%", wtp: coefficients['1'].risk_30 / Math.abs(coefficients['1'].cost), pVal: 0.000, se: 0.090 / Math.abs(coefficients['1'].cost) }
   ],
   '2': [ // Experiment 2
-    { attribute: "Efficacy 50%", wtp: coefficients['2'].efficacy_50 / (-coefficients['2'].cost), pVal: 0.000, se: 0.078 / Math.abs(coefficients['2'].cost) },
-    { attribute: "Efficacy 90%", wtp: coefficients['2'].efficacy_90 / (-coefficients['2'].cost), pVal: 0.000, se: 0.084 / Math.abs(coefficients['2'].cost) },
-    { attribute: "Risk 8%", wtp: coefficients['2'].risk_8 / (-coefficients['2'].cost), pVal: 0.550, se: 0.090 / Math.abs(coefficients['2'].cost) },
-    { attribute: "Risk 16%", wtp: coefficients['2'].risk_16 / (-coefficients['2'].cost), pVal: 0.001, se: 0.089 / Math.abs(coefficients['2'].cost) },
-    { attribute: "Risk 30%", wtp: coefficients['2'].risk_30 / (-coefficients['2'].cost), pVal: 0.000, se: 0.094 / Math.abs(coefficients['2'].cost) }
+    { attribute: "Efficacy 50%", wtp: coefficients['2'].efficacy_50 / Math.abs(coefficients['2'].cost), pVal: 0.000, se: 0.078 / Math.abs(coefficients['2'].cost) },
+    { attribute: "Efficacy 90%", wtp: coefficients['2'].efficacy_90 / Math.abs(coefficients['2'].cost), pVal: 0.000, se: 0.084 / Math.abs(coefficients['2'].cost) },
+    { attribute: "Risk 8%", wtp: coefficients['2'].risk_8 / Math.abs(coefficients['2'].cost), pVal: 0.550, se: 0.090 / Math.abs(coefficients['2'].cost) },
+    { attribute: "Risk 16%", wtp: coefficients['2'].risk_16 / Math.abs(coefficients['2'].cost), pVal: 0.001, se: 0.089 / Math.abs(coefficients['2'].cost) },
+    { attribute: "Risk 30%", wtp: coefficients['2'].risk_30 / Math.abs(coefficients['2'].cost), pVal: 0.000, se: 0.094 / Math.abs(coefficients['2'].cost) }
   ],
   '3': [ // Experiment 3
-    { attribute: "Efficacy 50%", wtp: coefficients['3'].efficacy_50 / (-coefficients['3'].cost), pVal: 0.000, se: 0.081 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Efficacy 90%", wtp: coefficients['3'].efficacy_90 / (-coefficients['3'].cost), pVal: 0.000, se: 0.075 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Risk 8%", wtp: coefficients['3'].risk_8 / (-coefficients['3'].cost), pVal: 0.200, se: 0.084 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Risk 16%", wtp: coefficients['3'].risk_16 / (-coefficients['3'].cost), pVal: 0.013, se: 0.088 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Risk 30%", wtp: coefficients['3'].risk_30 / (-coefficients['3'].cost), pVal: 0.000, se: 0.085 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Efficacy Others 50%", wtp: coefficients['3'].efficacyOthers_50 / (-coefficients['3'].cost), pVal: 0.000, se: 0.075 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Efficacy Others 90%", wtp: coefficients['3'].efficacyOthers_90 / (-coefficients['3'].cost), pVal: 0.000, se: 0.076 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Risk Others 8%", wtp: coefficients['3'].riskOthers_8 / (-coefficients['3'].cost), pVal: 0.190, se: 0.085 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Risk Others 16%", wtp: coefficients['3'].riskOthers_16 / (-coefficients['3'].cost), pVal: 0.227, se: 0.085 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Risk Others 30%", wtp: coefficients['3'].riskOthers_30 / (-coefficients['3'].cost), pVal: 0.017, se: 0.083 / Math.abs(coefficients['3'].cost) }
+    { attribute: "Efficacy 50%", wtp: coefficients['3'].efficacy_50 / Math.abs(coefficients['3'].cost), pVal: 0.000, se: 0.081 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Efficacy 90%", wtp: coefficients['3'].efficacy_90 / Math.abs(coefficients['3'].cost), pVal: 0.000, se: 0.075 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk 8%", wtp: coefficients['3'].risk_8 / Math.abs(coefficients['3'].cost), pVal: 0.200, se: 0.084 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk 16%", wtp: coefficients['3'].risk_16 / Math.abs(coefficients['3'].cost), pVal: 0.013, se: 0.088 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk 30%", wtp: coefficients['3'].risk_30 / Math.abs(coefficients['3'].cost), pVal: 0.000, se: 0.085 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk Others 8%", wtp: coefficients['3'].riskOthers_8 / Math.abs(coefficients['3'].cost), pVal: 0.190, se: 0.085 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk Others 16%", wtp: coefficients['3'].riskOthers_16 / Math.abs(coefficients['3'].cost), pVal: 0.227, se: 0.085 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk Others 30%", wtp: coefficients['3'].riskOthers_30 / Math.abs(coefficients['3'].cost), pVal: 0.017, se: 0.083 / Math.abs(coefficients['3'].cost) }
   ]
 };
 
 /***************************************************************************
- * WILLINGNESS TO PAY CHART WITH ERROR BARS
- ***************************************************************************/
-let wtpChartInstance = null;
-function renderWTPChart() {
-  const experiment = document.getElementById("experimentSelect").value;
-  if (!experiment) {
-    alert("Please select an experiment in the Inputs tab.");
-    return;
-  }
-
-  const data = wtpData[experiment];
-  if (!data) {
-    alert("No WTP data available for the selected experiment.");
-    return;
-  }
-
-  const ctx = document.getElementById("wtpChartMain").getContext("2d");
-
-  if (wtpChartInstance) {
-    wtpChartInstance.destroy();
-  }
-
-  const labels = data.map(item => item.attribute);
-  const values = data.map(item => item.wtp);
-  const errors = data.map(item => item.se);
-  const colors = data.map(item => item.wtp >=0 ? 'rgba(39,174,96,0.6)' : 'rgba(231,76,60,0.6)');
-
-  const dataConfig = {
-    labels: labels,
-    datasets: [{
-      label: "WTP (USD)",
-      data: values,
-      backgroundColor: colors,
-      borderColor: values.map(v => v >=0 ? 'rgba(39,174,96,1)' : 'rgba(231,76,60,1)'),
-      borderWidth: 1,
-      error: errors
-    }]
-  };
-
-  wtpChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: dataConfig,
-    options: {
-      responsive: true,
-      scales: {
-        y: { beginAtZero: true }
-      },
-      plugins: {
-        legend: { display: false },
-        title: {
-          display: true,
-          text: `Willingness to Pay (USD) for Attributes - Experiment ${experiment}`,
-          font: { size: 16 }
-        },
-        tooltip: {
-          callbacks: {
-            afterBody: function(context) {
-              const index = context[0].dataIndex;
-              const se = data[index].se.toFixed(2);
-              const pVal = data[index].pVal;
-              return `SE: ${se}, p-value: ${pVal}`;
-            }
-          }
-        }
-      }
-    },
-    plugins: [{
-      // Draw vertical error bars
-      id: 'errorbars',
-      afterDraw: chart => {
-        const {
-          ctx,
-          scales: { x, y }
-        } = chart;
-
-        chart.getDatasetMeta(0).data.forEach((bar, i) => {
-          const centerX = bar.x;
-          const value = values[i];
-          const se = errors[i];
-          if (se && typeof se === 'number') {
-            const topY = y.getPixelForValue(value + se);
-            const bottomY = y.getPixelForValue(value - se);
-
-            ctx.save();
-            ctx.beginPath();
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 1;
-            // main line
-            ctx.moveTo(centerX, topY);
-            ctx.lineTo(centerX, bottomY);
-            // top cap
-            ctx.moveTo(centerX - 5, topY);
-            ctx.lineTo(centerX + 5, topY);
-            // bottom cap
-            ctx.moveTo(centerX - 5, bottomY);
-            ctx.lineTo(centerX + 5, bottomY);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-      }
-    }]
-  });
-}
-
-/***************************************************************************
- * PREDICT HEALTH PLAN UPTAKE PROBABILITY
+ * HEALTH PLAN UPLOAD PROBABILITY CALCULATION
  ***************************************************************************/
 function predictUptake() {
   const scenario = buildScenarioFromInputs();
@@ -383,8 +275,6 @@ function buildScenarioFromInputs() {
     return null;
   }
 
-  const goodHealth = document.getElementById("goodHealth").value;
-
   const efficacy = document.getElementById("efficacy").value;
   const risk = document.getElementById("risk").value;
   const cost = parseInt(document.getElementById("cost").value, 10);
@@ -412,11 +302,14 @@ function buildScenarioFromInputs() {
       alert("Please select Efficacy and Risk for Others.");
       return null;
     }
+    if (isNaN(costOthers) || costOthers < 0 || costOthers > 1000) {
+      alert("Please select a valid Monthly Out-of-Pocket Cost for Others between $0 and $1000.");
+      return null;
+    }
   }
 
   return {
     experiment,
-    goodHealth,
     efficacy,
     risk,
     cost,
@@ -427,7 +320,7 @@ function buildScenarioFromInputs() {
 }
 
 /***************************************************************************
- * DISPLAY HEALTH PLAN UPLOAD PROBABILITY
+ * DISPLAY HEALTH PLAN UPTAKE PROBABILITY
  ***************************************************************************/
 let probChartInstance = null;
 function displayUptakeProbability(uptakeProbability) {
@@ -478,11 +371,117 @@ function displayUptakeProbability(uptakeProbability) {
   if (uptakeProbability < 30) {
     interpretation = "Uptake is relatively low. Consider lowering cost or increasing efficacy.";
   } else if (uptakeProbability < 70) {
-    interpretation = "Uptake is moderate. Additional improvements may further boost participation.";
+    interpretation = "Uptake is moderate. Additional improvements may further boost health plan choice.";
   } else {
     interpretation = "Uptake is high. Maintaining these attributes is recommended.";
   }
   alert(`Predicted probability: ${uptakeProbability.toFixed(2)}%. ${interpretation}`);
+}
+
+/***************************************************************************
+ * WTP CHART WITH ERROR BARS
+ ***************************************************************************/
+let wtpChartInstance = null;
+function renderWTPChart() {
+  const experiment = document.getElementById("experimentSelect").value;
+  if (!experiment) {
+    alert("Please select an experiment in the Inputs tab.");
+    return;
+  }
+
+  const data = wtpData[experiment];
+  if (!data) {
+    alert("No WTP data available for the selected experiment.");
+    return;
+  }
+
+  const ctx = document.getElementById("wtpChartMain").getContext("2d");
+
+  if (wtpChartInstance) {
+    wtpChartInstance.destroy();
+  }
+
+  const labels = data.map(item => item.attribute);
+  const values = data.map(item => item.wtp);
+  const errors = data.map(item => item.se);
+  const colors = data.map(item => item.wtp >=0 ? 'rgba(39,174,96,0.6)' : 'rgba(231,76,60,0.6)');
+
+  const dataConfig = {
+    labels: labels,
+    datasets: [{
+      label: "WTP (USD)",
+      data: values,
+      backgroundColor: colors,
+      borderColor: values.map(v => v >=0 ? 'rgba(39,174,96,1)' : 'rgba(231,76,60,1)'),
+      borderWidth: 1,
+      error: errors
+    }]
+  };
+
+  wtpChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: dataConfig,
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      },
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: `Willingness to Pay (USD) for Attributes - Experiment ${experiment}`,
+          font: { size: 16 }
+        },
+        tooltip: {
+          callbacks: {
+            afterBody: function(context) {
+              const index = context[0].dataIndex;
+              const se = wtpData[experiment][index].se.toFixed(2);
+              const pVal = wtpData[experiment][index].pVal;
+              return `SE: ${se}, p-value: ${pVal}`;
+            }
+          }
+        }
+      }
+    },
+    plugins: [{
+      // Draw vertical error bars
+      id: 'errorbars',
+      afterDraw: chart => {
+        const {
+          ctx,
+          scales: { x, y }
+        } = chart;
+
+        chart.getDatasetMeta(0).data.forEach((bar, i) => {
+          const centerX = bar.x;
+          const value = values[i];
+          const se = errors[i];
+          if (se && typeof se === 'number') {
+            const topY = y.getPixelForValue(value + se);
+            const bottomY = y.getPixelForValue(value - se);
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 1;
+            // main line
+            ctx.moveTo(centerX, topY);
+            ctx.lineTo(centerX, bottomY);
+            // top cap
+            ctx.moveTo(centerX - 5, topY);
+            ctx.lineTo(centerX + 5, topY);
+            // bottom cap
+            ctx.moveTo(centerX - 5, bottomY);
+            ctx.lineTo(centerX + 5, bottomY);
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+      }
+    }]
+  });
 }
 
 /***************************************************************************
@@ -528,10 +527,6 @@ function renderCostsBenefits() {
     }
     totalCost += component.totalCost * uptakeFraction;
   });
-
-  // Add variable costs from user inputs
-  // For this tool, variable costs are set to $0 based on literature review
-  // However, Monthly Out-of-Pocket Costs are considered in uptake probability
 
   // Number of participants based on uptake probability
   const numberOfParticipants = Math.round(701 * uptakeFraction);
@@ -697,7 +692,7 @@ function saveScenario() {
   const uptakeMatch = document.getElementById("probChartMain").getContext("2d").canvas.parentElement.querySelector('h3').textContent.match(/= (\d+(\.\d+)?)%/);
   const uptake = uptakeMatch ? parseFloat(uptakeMatch[1]) : null;
 
-  if (uptake === null) {
+  if (uptake === null || uptake === 0) {
     alert("Please predict the Health Plan Uptake Probability before saving the scenario.");
     return;
   }
@@ -708,7 +703,6 @@ function saveScenario() {
   const savedResult = {
     name: `Scenario ${savedResults.length + 1}`,
     experiment: experimentName,
-    goodHealth: capitalizeFirstLetter(scenario.goodHealth),
     efficacy: scenario.efficacy,
     risk: scenario.risk,
     cost: scenario.cost,
@@ -739,7 +733,6 @@ function addScenarioToTable(result) {
   row.innerHTML = `
     <td>${result.name}</td>
     <td>${result.experiment}</td>
-    <td>${result.goodHealth}</td>
     <td>${result.efficacy}</td>
     <td>${result.risk}</td>
     <td>$${result.cost}</td>
@@ -812,24 +805,22 @@ function exportToPDF() {
     currentY += 7;
 
     doc.setFontSize(12);
-    doc.text(`Good Health: ${scenario.goodHealth}`, margin, currentY);
+    doc.text(`Efficacy: ${scenario.efficacy}%`, margin, currentY);
     currentY += 5;
-    doc.text(`Chance of Reaching Target A1C: ${scenario.efficacy}%`, margin, currentY);
-    currentY += 5;
-    doc.text(`Chance of Side Effects: ${scenario.risk}%`, margin, currentY);
+    doc.text(`Risk: ${scenario.risk}%`, margin, currentY);
     currentY += 5;
     doc.text(`Monthly Out-of-Pocket Cost: $${scenario.cost}`, margin, currentY);
     currentY += 5;
     if (scenario.efficacyOthers !== 'N/A') {
-      doc.text(`Chance of Reaching Target A1C for Others: ${scenario.efficacyOthers}%`, margin, currentY);
+      doc.text(`Efficacy Others: ${scenario.efficacyOthers}%`, margin, currentY);
       currentY += 5;
     }
     if (scenario.riskOthers !== 'N/A') {
-      doc.text(`Chance of Side Effects for Others: ${scenario.riskOthers}%`, margin, currentY);
+      doc.text(`Risk Others: ${scenario.riskOthers}%`, margin, currentY);
       currentY += 5;
     }
     if (scenario.costOthers !== 'N/A') {
-      doc.text(`Monthly Out-of-Pocket Cost for Others: $${scenario.costOthers}`, margin, currentY);
+      doc.text(`Monthly Out-of-Pocket Cost Others: $${scenario.costOthers}`, margin, currentY);
       currentY += 5;
     }
     doc.text(`Health Plan Uptake Probability: ${scenario.uptake}%`, margin, currentY);
@@ -857,7 +848,7 @@ function renderWTPComparison() {
     wtpComparisonChartInstance.destroy();
   }
 
-  // Aggregate WTP for Risk across experiments
+  // Aggregate WTP for Risk attributes per experiment
   const riskAttributes = ["Risk 8%", "Risk 16%", "Risk 30%", "Risk Others 8%", "Risk Others 16%", "Risk Others 30%"];
   const wtpPerExperiment = {
     '1': [],
@@ -947,4 +938,11 @@ function renderWTPConclusion(avgWTP) {
  ***************************************************************************/
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+/***************************************************************************
+ * HELPER: Predict and Render Uptake Probability
+ ***************************************************************************/
+function renderProbChart() {
+  predictUptake();
 }
