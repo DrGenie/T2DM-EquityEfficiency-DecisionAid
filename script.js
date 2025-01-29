@@ -58,7 +58,7 @@ const coefficients = {
     risk_8: -0.034,
     risk_16: -0.398,
     risk_30: -0.531,
-    cost: -0.123,
+    cost: -0.00123, // Adjusted by dividing by 100
     ASC_sd: 0.987
   },
   '2': { // Experiment 2
@@ -69,7 +69,7 @@ const coefficients = {
     risk_8: -0.054,
     risk_16: -0.305,
     risk_30: -0.347,
-    cost: -0.140,
+    cost: -0.00140, // Adjusted by dividing by 100
     ASC_sd: 1.196
   },
   '3': { // Experiment 3
@@ -85,11 +85,77 @@ const coefficients = {
     riskOthers_8: -0.111,
     riskOthers_16: -0.103,
     riskOthers_30: -0.197,
-    cost: -0.070,
-    costOthers: -0.041,
+    cost: -0.0007, // Adjusted by dividing by 100
+    costOthers: -0.00041, // Adjusted by dividing by 100
     ASC_sd: 1.033
   }
 };
+
+/***************************************************************************
+ * COST COMPONENTS BASED ON LITERATURE REVIEW IN THE USA
+ ***************************************************************************/
+const costComponents = [
+  {
+    item: "Advertisement",
+    unitCost: 5000.00, // USD
+    quantity: 1,
+    totalCost: 5000.00
+  },
+  {
+    item: "Training",
+    unitCost: 3000.00, // USD
+    quantity: 1,
+    totalCost: 3000.00
+  },
+  {
+    item: "Delivery Variable Costs",
+    unitCost: 0.00, // USD
+    quantity: 1,
+    totalCost: 0.00
+  },
+  {
+    item: "Participant Time and Travel Costs",
+    unitCost: 0.00, // USD
+    quantity: 1,
+    totalCost: 0.00
+  },
+  {
+    item: "Medication Costs (Insulin, Oral Hypoglycemics)",
+    unitCost: 0.00, // USD
+    quantity: 1,
+    totalCost: 0.00
+  },
+  {
+    item: "Blood Glucose Monitoring",
+    unitCost: 0.00, // USD
+    quantity: 1,
+    totalCost: 0.00
+  },
+  {
+    item: "Healthcare Provider Visits",
+    unitCost: 0.00, // USD
+    quantity: 1,
+    totalCost: 0.00
+  },
+  {
+    item: "Hospitalization for Complications",
+    unitCost: 0.00, // USD
+    quantity: 1,
+    totalCost: 0.00
+  },
+  {
+    item: "Patient Time and Travel Costs",
+    unitCost: 0.00, // USD
+    quantity: 1,
+    totalCost: 0.00
+  },
+  {
+    item: "Administrative and Training Costs",
+    unitCost: 0.00, // USD
+    quantity: 1,
+    totalCost: 0.00
+  }
+];
 
 /***************************************************************************
  * WTP DATA FOR ALL ATTRIBUTES
@@ -124,57 +190,190 @@ const wtpData = {
 };
 
 /***************************************************************************
- * COST-OF-PROVIDING T2DM TREATMENTS
- * These costs are based on literature estimates.
+ * HEALTH PLAN UPLOAD PROBABILITY CALCULATION
  ***************************************************************************/
-const costComponents = [
-  {
-    item: "Medication Costs (Insulin, Oral Hypoglycemics)",
-    unitCost: 300, // USD per month
-    quantity: 1,
-    totalCost: 300
-  },
-  {
-    item: "Blood Glucose Monitoring",
-    unitCost: 50, // USD per month
-    quantity: 1,
-    totalCost: 50
-  },
-  {
-    item: "Healthcare Provider Visits",
-    unitCost: 100, // USD per visit
-    quantity: 4, // per year
-    totalCost: 400
-  },
-  {
-    item: "Hospitalization for Complications",
-    unitCost: 2000, // USD per hospitalization
-    quantity: 0.1, // per year (assumed)
-    totalCost: 200
-  },
-  {
-    item: "Patient Time and Travel Costs",
-    unitCost: 20, // USD per visit
-    quantity: 4, // per year
-    totalCost: 80
-  },
-  {
-    item: "Administrative and Training Costs",
-    unitCost: 500, // USD per year
-    quantity: 1,
-    totalCost: 500
+function predictUptake() {
+  const scenario = buildScenarioFromInputs();
+  if (!scenario) return;
+
+  const experiment = scenario.experiment;
+  const coefs = coefficients[experiment];
+
+  // Compute utility
+  let utility = 0;
+  if (experiment === '1' || experiment === '2') {
+    if (experiment === '2') {
+      utility += coefs.ASC_mean;
+    } else {
+      utility += coefs.ASC;
+    }
+  } else if (experiment === '3') {
+    utility += coefs.ASC_mean;
   }
-];
 
-const FIXED_COSTS = {
-  advertisement: 5000, // USD
-  training: 3000 // USD
-};
+  // Add attributes
+  // Efficacy
+  if (scenario.efficacy === '50') {
+    utility += coefs.efficacy_50;
+  } else if (scenario.efficacy === '90') {
+    utility += coefs.efficacy_90;
+  }
 
-const VARIABLE_COSTS = {
-  delivery: 1000, // USD per month
-  participantTimeTravel: 500 // USD per year
-};
+  // Risk
+  if (scenario.risk === '8') {
+    utility += coefs.risk_8;
+  } else if (scenario.risk === '16') {
+    utility += coefs.risk_16;
+  } else if (scenario.risk === '30') {
+    utility += coefs.risk_30;
+  }
+
+  // Cost
+  utility += coefs.cost * scenario.cost;
+
+  // Experiment 3 additional attributes
+  if (experiment === '3') {
+    if (scenario.efficacyOthers === '50') {
+      utility += coefs.efficacyOthers_50;
+    } else if (scenario.efficacyOthers === '90') {
+      utility += coefs.efficacyOthers_90;
+    }
+
+    if (scenario.riskOthers === '8') {
+      utility += coefs.riskOthers_8;
+    } else if (scenario.riskOthers === '16') {
+      utility += coefs.riskOthers_16;
+    } else if (scenario.riskOthers === '30') {
+      utility += coefs.riskOthers_30;
+    }
+
+    utility += coefs.costOthers * scenario.costOthers;
+  }
+
+  // Alternative Specific Constants
+  let utility_optout = coefs.ASC_optout;
+
+  // Compute probabilities using Error-Component Logit
+  const exp_utility = Math.exp(utility);
+  const exp_optout = Math.exp(utility_optout);
+  const uptakeProbability = exp_utility / (exp_utility + exp_optout) * 100;
+
+  // Display results
+  displayUptakeProbability(uptakeProbability);
+
+  // Update WTP Charts with Demographics (Not applicable since demographics are removed)
+  // Hence, we just re-render the WTP chart
+  renderWTPChart();
+}
+
+/***************************************************************************
+ * BUILD SCENARIO FROM INPUTS
+ ***************************************************************************/
+function buildScenarioFromInputs() {
+  const experiment = document.getElementById("experimentSelect").value;
+  if (!experiment) {
+    alert("Please select an experiment.");
+    return null;
+  }
+
+  const efficacy = document.getElementById("efficacy").value;
+  const risk = document.getElementById("risk").value;
+  const cost = parseInt(document.getElementById("cost").value, 10);
+
+  // For Experiment 3, additional attributes
+  let efficacyOthers = "N/A"; // default reference
+  let riskOthers = "N/A"; // default reference
+  let costOthers = 0; // default
+
+  if (experiment === '3') {
+    efficacyOthers = document.getElementById("efficacyOthers").value;
+    riskOthers = document.getElementById("riskOthers").value;
+    costOthers = parseInt(document.getElementById("cost").value, 10); // Assuming same cost
+  }
+
+  // Basic validation
+  if (isNaN(cost) || cost < 0 || cost > 1000) {
+    alert("Please select a valid Monthly Out-of-Pocket Cost between $0 and $1000.");
+    return null;
+  }
+
+  // Additional validation for Experiment 3
+  if (experiment === '3') {
+    if (!efficacyOthers || !riskOthers) {
+      alert("Please select Efficacy and Risk for Others.");
+      return null;
+    }
+  }
+
+  return {
+    experiment,
+    efficacy,
+    risk,
+    cost,
+    efficacyOthers,
+    riskOthers,
+    costOthers
+  };
+}
+
+/***************************************************************************
+ * DISPLAY HEALTH PLAN UPTAKE PROBABILITY
+ ***************************************************************************/
+let probChartInstance = null;
+function displayUptakeProbability(uptakeProbability) {
+  const ctx = document.getElementById("probChartMain").getContext("2d");
+
+  if (probChartInstance) {
+    probChartInstance.destroy();
+  }
+
+  probChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ["Health Plan Uptake Probability"],
+      datasets: [{
+        label: 'Probability (%)',
+        data: [uptakeProbability],
+        backgroundColor: uptakeProbability < 30 ? 'rgba(231,76,60,0.6)'
+                         : uptakeProbability < 70 ? 'rgba(241,196,15,0.6)'
+                                 : 'rgba(39,174,96,0.6)',
+        borderColor: uptakeProbability < 30 ? 'rgba(231,76,60,1)'
+                      : uptakeProbability < 70 ? 'rgba(241,196,15,1)'
+                              : 'rgba(39,174,96,1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      indexAxis: 'y',
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: 100
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: `Health Plan Uptake Probability = ${uptakeProbability.toFixed(2)}%`,
+          font: { size: 16 }
+        }
+      }
+    }
+  });
+
+  // Provide dynamic suggestions
+  let interpretation = "";
+  if (uptakeProbability < 30) {
+    interpretation = "Uptake is relatively low. Consider lowering cost or increasing efficacy.";
+  } else if (uptakeProbability < 70) {
+    interpretation = "Uptake is moderate. Additional improvements may further boost participation.";
+  } else {
+    interpretation = "Uptake is high. Maintaining these attributes is recommended.";
+  }
+  alert(`Predicted probability: ${uptakeProbability.toFixed(2)}%. ${interpretation}`);
+}
 
 /***************************************************************************
  * WTP CHART WITH ERROR BARS
@@ -278,191 +477,6 @@ function renderWTPChart() {
 }
 
 /***************************************************************************
- * PREDICT HEALTH PLAN UPTAKE PROBABILITY
- ***************************************************************************/
-function predictUptake() {
-  const scenario = buildScenarioFromInputs();
-  if (!scenario) return;
-
-  const experiment = scenario.experiment;
-  const coefs = coefficients[experiment];
-
-  // Compute utility
-  let utility = 0;
-  if (experiment === '1' || experiment === '2') {
-    if (experiment === '2') {
-      utility += coefs.ASC_mean;
-    } else {
-      utility += coefs.ASC;
-    }
-  } else if (experiment === '3') {
-    utility += coefs.ASC_mean;
-  }
-
-  // Add attributes
-  // Efficacy
-  if (scenario.efficacy === '50') {
-    utility += coefs.efficacy_50;
-  } else if (scenario.efficacy === '90') {
-    utility += coefs.efficacy_90;
-  }
-
-  // Risk
-  if (scenario.risk === '8') {
-    utility += coefs.risk_8;
-  } else if (scenario.risk === '16') {
-    utility += coefs.risk_16;
-  } else if (scenario.risk === '30') {
-    utility += coefs.risk_30;
-  }
-
-  // Cost
-  utility += coefs.cost * scenario.cost;
-
-  // Experiment 3 additional attributes
-  if (experiment === '3') {
-    if (scenario.efficacyOthers === '50') {
-      utility += coefs.efficacyOthers_50;
-    } else if (scenario.efficacyOthers === '90') {
-      utility += coefs.efficacyOthers_90;
-    }
-
-    if (scenario.riskOthers === '8') {
-      utility += coefs.riskOthers_8;
-    } else if (scenario.riskOthers === '16') {
-      utility += coefs.riskOthers_16;
-    } else if (scenario.riskOthers === '30') {
-      utility += coefs.riskOthers_30;
-    }
-
-    utility += coefs.costOthers * scenario.costOthers;
-  }
-
-  // Alternative Specific Constants
-  let utility_optout = coefs.ASC_optout;
-
-  // Compute probabilities using Error-Component Logit
-  const exp_utility = Math.exp(utility);
-  const exp_optout = Math.exp(utility_optout);
-  const uptakeProbability = exp_utility / (exp_utility + exp_optout) * 100;
-
-  // Display results
-  displayUptakeProbability(uptakeProbability);
-
-  // Update WTP Charts (No demographic adjustments as demographics are removed)
-  renderWTPChart();
-}
-
-/***************************************************************************
- * BUILD SCENARIO FROM INPUTS
- ***************************************************************************/
-function buildScenarioFromInputs() {
-  const experiment = document.getElementById("experimentSelect").value;
-  if (!experiment) {
-    alert("Please select an experiment.");
-    return null;
-  }
-
-  const efficacy = document.getElementById("efficacy").value;
-  const risk = document.getElementById("risk").value;
-  const cost = parseInt(document.getElementById("cost").value, 10);
-
-  // For Experiment 3, additional attributes
-  let efficacyOthers = "N/A"; // default reference
-  let riskOthers = "N/A"; // default reference
-  let costOthers = 0; // default
-
-  if (experiment === '3') {
-    efficacyOthers = document.getElementById("efficacyOthers").value;
-    riskOthers = document.getElementById("riskOthers").value;
-    costOthers = parseInt(document.getElementById("cost").value, 10); // Assuming same cost
-  }
-
-  // Basic validation
-  if (isNaN(cost) || cost < 0 || cost > 1000) {
-    alert("Please select a valid monthly out-of-pocket cost.");
-    return null;
-  }
-
-  // Additional validation for Experiment 3
-  if (experiment === '3') {
-    if (!efficacyOthers || !riskOthers) {
-      alert("Please select Efficacy and Risk for Others.");
-      return null;
-    }
-  }
-
-  return {
-    experiment,
-    efficacy,
-    risk,
-    cost,
-    efficacyOthers,
-    riskOthers,
-    costOthers
-  };
-}
-
-/***************************************************************************
- * DISPLAY HEALTH PLAN UPTAKE PROBABILITY
- ***************************************************************************/
-let probChartInstance = null;
-function displayUptakeProbability(uptakeProbability) {
-  const ctx = document.getElementById("probChartMain").getContext("2d");
-
-  if (probChartInstance) {
-    probChartInstance.destroy();
-  }
-
-  probChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ["Health Plan Uptake Probability"],
-      datasets: [{
-        label: 'Probability (%)',
-        data: [uptakeProbability],
-        backgroundColor: uptakeProbability < 30 ? 'rgba(231,76,60,0.6)'
-                         : uptakeProbability < 70 ? 'rgba(241,196,15,0.6)'
-                                 : 'rgba(39,174,96,0.6)',
-        borderColor: uptakeProbability < 30 ? 'rgba(231,76,60,1)'
-                      : uptakeProbability < 70 ? 'rgba(241,196,15,1)'
-                              : 'rgba(39,174,96,1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      indexAxis: 'y',
-      scales: {
-        x: {
-          beginAtZero: true,
-          max: 100
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        title: {
-          display: true,
-          text: `Health Plan Uptake Probability = ${uptakeProbability.toFixed(2)}%`,
-          font: { size: 16 }
-        }
-      }
-    }
-  });
-
-  // Provide dynamic suggestions
-  let interpretation = "";
-  if (uptakeProbability < 30) {
-    interpretation = "Uptake is relatively low. Consider lowering cost or increasing efficacy.";
-  } else if (uptakeProbability < 70) {
-    interpretation = "Uptake is moderate. Additional improvements may further boost participation.";
-  } else {
-    interpretation = "Uptake is high. Maintaining these attributes is recommended.";
-  }
-  alert(`Predicted probability: ${uptakeProbability.toFixed(2)}%. ${interpretation}`);
-}
-
-/***************************************************************************
  * COSTS & BENEFITS ANALYSIS
  ***************************************************************************/
 let costsChartInstance = null;
@@ -483,20 +497,25 @@ function renderCostsBenefits() {
   const experiment = scenario.experiment;
   const coefs = coefficients[experiment];
 
-  // Compute total cost based on coefficients and cost components
-  let totalCost = FIXED_COSTS.advertisement + FIXED_COSTS.training;
+  // Compute total treatment cost based on coefficients and cost components
+  let totalCost = 0;
   
-  // Add variable costs based on uptake probability
+  // Fixed costs
+  costComponents.forEach(component => {
+    totalCost += component.totalCost;
+  });
+
+  // Variable costs based on uptake probability
   const uptakeMatch = document.getElementById("probChartMain").getContext("2d").canvas.parentElement.querySelector('h3').textContent.match(/= (\d+(\.\d+)?)%/);
   const uptake = uptakeMatch ? parseFloat(uptakeMatch[1]) : 0;
   const uptakeFraction = uptake / 100;
 
   // Add variable costs scaled by uptake
-  totalCost += VARIABLE_COSTS.delivery * uptakeFraction;
-  totalCost += VARIABLE_COSTS.participantTimeTravel * uptakeFraction;
-
-  // Add cost components per participant scaled by uptake
   costComponents.forEach(component => {
+    if (component.item === "Advertisement" || component.item === "Training") {
+      // These are fixed costs
+      return;
+    }
     totalCost += component.totalCost * uptakeFraction;
   });
 
@@ -505,7 +524,7 @@ function renderCostsBenefits() {
   const qalyPerParticipant = QALY_SCENARIOS_VALUES[qalyScenario];
   
   // Number of participants
-  const numberOfParticipants = 250 * uptakeFraction;
+  const numberOfParticipants = 701;
 
   // Total QALY Gains
   const totalQALY = numberOfParticipants * qalyPerParticipant;
@@ -518,11 +537,7 @@ function renderCostsBenefits() {
 
   // Prepare Cost Components Display
   const costComponentsDisplay = [
-    { item: "Advertisement", value: FIXED_COSTS.advertisement },
-    { item: "Training", value: FIXED_COSTS.training },
-    { item: "Delivery Variable Costs", value: VARIABLE_COSTS.delivery * uptakeFraction },
-    { item: "Participant Time and Travel Costs", value: VARIABLE_COSTS.participantTimeTravel * uptakeFraction },
-    ...costComponents.map(c => ({ item: c.item, value: c.totalCost * uptakeFraction }))
+    ...costComponents.map(c => ({ item: c.item, value: c.totalCost }))
   ];
 
   // Display in Costs & Benefits Tab
@@ -556,8 +571,8 @@ function renderCostsBenefits() {
   summaryDiv.innerHTML = `
     <h3>Cost &amp; Benefits Analysis</h3>
     <p><strong>Health Plan Uptake Probability:</strong> ${uptake.toFixed(2)}%</p>
-    <p><strong>Number of Participants:</strong> ${numberOfParticipants.toFixed(0)}</p>
-    <p><strong>Total Intervention Cost:</strong> $${totalCost.toFixed(2)}</p>
+    <p><strong>Number of Participants:</strong> ${numberOfParticipants}</p>
+    <p><strong>Total Treatment Cost:</strong> $${totalCost.toFixed(2)}</p>
     <p><strong>Total QALY Gains:</strong> ${totalQALY.toFixed(2)} QALYs</p>
     <p><strong>Monetised Benefits:</strong> $${monetizedBenefits.toLocaleString()}</p>
     <p><strong>Net Benefit:</strong> $${netBenefit.toLocaleString()}</p>
@@ -568,10 +583,10 @@ function renderCostsBenefits() {
   const chartsDiv = document.createElement("div");
   chartsDiv.className = "chart-grid";
 
-  // Total Intervention Cost Chart
+  // Total Treatment Cost Chart
   const costChartBox = document.createElement("div");
   costChartBox.className = "chart-box";
-  costChartBox.innerHTML = `<h3>Total Intervention Cost</h3><canvas id="costChart"></canvas>`;
+  costChartBox.innerHTML = `<h3>Total Treatment Cost</h3><canvas id="costChart"></canvas>`;
   chartsDiv.appendChild(costChartBox);
 
   // Monetised Benefits Chart
@@ -590,7 +605,7 @@ function renderCostsBenefits() {
   costsChartInstance = new Chart(ctxCost, {
     type: 'bar',
     data: {
-      labels: ["Total Intervention Cost"],
+      labels: ["Total Treatment Cost"],
       datasets: [{
         label: 'USD',
         data: [totalCost],
@@ -605,7 +620,7 @@ function renderCostsBenefits() {
         legend: { display: false },
         title: {
           display: true,
-          text: 'Total Intervention Cost',
+          text: 'Total Treatment Cost',
           font: { size: 16 }
         }
       },
@@ -785,6 +800,13 @@ function exportToPDF() {
 }
 
 /***************************************************************************
+ * HELPER FUNCTIONS
+ ***************************************************************************/
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+/***************************************************************************
  * OPEN COMPARISON WINDOW
  ***************************************************************************/
 function openComparison() {
@@ -803,38 +825,19 @@ function openComparison() {
       <title>Scenarios Comparison</title>
       <link rel="stylesheet" href="styles.css"/>
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; }
-        h2 { text-align: center; }
-        .chart-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-          gap: 20px;
-          margin-top: 20px;
-        }
-        .chart-box {
-          background: #fdfdfd;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          padding: 15px;
-          text-align: center;
-        }
-        .chart-box canvas {
-          width: 100%;
-          height: 300px;
-        }
-      </style>
     </head>
     <body>
-      <h2>Scenarios Comparison</h2>
-      <div class="chart-grid">
-        <div class="chart-box">
-          <h3>Health Plan Uptake Probability</h3>
-          <canvas id="compProbChart"></canvas>
-        </div>
-        <div class="chart-box">
-          <h3>Monetised QALY Benefits</h3>
-          <canvas id="compBenefitChart"></canvas>
+      <div class="container">
+        <h2>Scenarios Comparison</h2>
+        <div class="chart-grid">
+          <div class="chart-box">
+            <h3>Health Plan Uptake Probability</h3>
+            <canvas id="compProbChart"></canvas>
+          </div>
+          <div class="chart-box">
+            <h3>Monetised QALY Benefits</h3>
+            <canvas id="compBenefitChart"></canvas>
+          </div>
         </div>
       </div>
       <script>
@@ -888,15 +891,7 @@ function openComparison() {
             labels: labels,
             datasets: [{
               label: 'Monetised Benefits (USD)',
-              data: savedScenarios.map(s => {
-                // Assuming each participant gains QALYs based on their scenario
-                // This is a placeholder calculation; adjust based on actual QALY data
-                let qalyPerParticipant;
-                if (s.efficacy === '10') qalyPerParticipant = 0.02;
-                else if (s.efficacy === '50') qalyPerParticipant = 0.05;
-                else qalyPerParticipant = 0.1;
-                return (250 * (s.uptake / 100) * qalyPerParticipant) * 50000;
-              }),
+              data: savedScenarios.map(s => s.uptake * 50), // Placeholder calculation: uptake * 50
               backgroundColor: 'rgba(39,174,96,0.6)',
               borderColor: 'rgba(27, 163, 156,1)',
               borderWidth: 1
@@ -924,92 +919,4 @@ function openComparison() {
     </html>
   `);
   comparisonWindow.document.close();
-}
-
-/***************************************************************************
- * EXPORT TO PDF FUNCTION
- ***************************************************************************/
-function exportToPDF() {
-  if (savedResults.length < 1) {
-    alert("No scenarios saved to export.");
-    return;
-  }
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 15;
-  let currentY = margin;
-
-  doc.setFontSize(16);
-  doc.text("T2DM Equity-Efficiency Decision Aid Tool - Scenarios Comparison", pageWidth / 2, currentY, { align: 'center' });
-  currentY += 10;
-
-  savedResults.forEach((scenario, index) => {
-    // Check if adding this scenario exceeds the page height
-    if (currentY + 80 > pageHeight - margin) {
-      doc.addPage();
-      currentY = margin;
-    }
-
-    doc.setFontSize(14);
-    doc.text(`${scenario.name}: ${scenario.experiment}`, margin, currentY);
-    currentY += 7;
-
-    doc.setFontSize(12);
-    doc.text(`Chance of Reaching Target A1C: ${scenario.efficacy}%`, margin, currentY);
-    currentY += 5;
-    doc.text(`Chance of Side Effects: ${scenario.risk}%`, margin, currentY);
-    currentY += 5;
-    doc.text(`Monthly Out-of-Pocket Cost: $${scenario.cost}`, margin, currentY);
-    currentY += 5;
-    doc.text(`Chance of Reaching Target A1C for Others: ${scenario.efficacyOthers}%`, margin, currentY);
-    currentY += 5;
-    doc.text(`Chance of Side Effects for Others: ${scenario.riskOthers}%`, margin, currentY);
-    currentY += 5;
-    doc.text(`Health Plan Uptake Probability: ${scenario.uptake.toFixed(2)}%`, margin, currentY);
-    currentY += 10;
-  });
-
-  doc.save("Scenarios_Comparison.pdf");
-}
-
-/***************************************************************************
- * HELPER FUNCTIONS
- ***************************************************************************/
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-/***************************************************************************
- * ADD SCENARIO TO TABLE
- ***************************************************************************/
-function addScenarioToTable(result) {
-  const tableBody = document.querySelector("#scenarioTable tbody");
-  const row = document.createElement("tr");
-
-  row.innerHTML = `
-    <td>${result.name}</td>
-    <td>${result.experiment}</td>
-    <td>${result.efficacy}</td>
-    <td>${result.risk}</td>
-    <td>$${result.cost}</td>
-    <td>${result.efficacyOthers}</td>
-    <td>${result.riskOthers}</td>
-    <td>${result.uptake.toFixed(2)}</td>
-  `;
-
-  tableBody.appendChild(row);
-}
-
-/***************************************************************************
- * LOAD SAVED RESULTS FROM LOCAL STORAGE
- ***************************************************************************/
-function loadSavedResults() {
-  const storedResults = JSON.parse(localStorage.getItem('savedResults')) || [];
-  storedResults.forEach(result => {
-    addScenarioToTable(result);
-  });
 }
