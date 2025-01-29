@@ -149,7 +149,7 @@ header p {
 }
 
 /* Cost Slider Display */
-#costValue {
+#costValue, #costOthersValue {
   display: inline-block;
   margin-left: 10px;
   font-weight: bold;
@@ -259,6 +259,11 @@ footer {
 .qaly-selector label {
   font-weight: bold;
   margin-right: 10px;
+}
+
+/* WTP Comparison Chart */
+#wtpComparisonContainer {
+  margin-top: 40px;
 }
 
 /* Responsive Design */
