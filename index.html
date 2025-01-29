@@ -23,7 +23,7 @@
     <button class="tablink" onclick="openTab('attributesTab', this)">Attributes</button>
     <button class="tablink" onclick="openTab('inputsTab', this)">Inputs</button>
     <button class="tablink" onclick="openTab('wtpTab', this)">WTP Results</button>
-    <button class="tablink" onclick="openTab('probTab', this)">Programme Uptake Probability</button>
+    <button class="tablink" onclick="openTab('probTab', this)">Health Plan Uptake Probability</button>
     <button class="tablink" onclick="openTab('costsTab', this)">Costs & Benefits</button>
     <button class="tablink" onclick="openTab('scenariosTab', this)">Scenarios</button>
   </div>
@@ -40,7 +40,7 @@
         <li><strong>Attributes</strong> – Detailed descriptions of the DCE attributes and levels.</li>
         <li><strong>Inputs</strong> – Enter your personal and plan-specific information.</li>
         <li><strong>WTP Results</strong> – View bar charts of Willingness to Pay (WTP) for each attribute.</li>
-        <li><strong>Programme Uptake Probability</strong> – Visualize the predicted uptake probability based on your inputs.</li>
+        <li><strong>Health Plan Uptake Probability</strong> – Visualize the predicted uptake probability based on your inputs.</li>
         <li><strong>Costs &amp; Benefits</strong> – Analyze the cost-effectiveness of different plan scenarios.</li>
         <li><strong>Scenarios</strong> – Save, compare, and export multiple plan scenarios.</li>
       </ul>
@@ -56,10 +56,11 @@
     <ol>
       <li><strong>Select Experiment:</strong> Choose one of the three experimental conditions to understand how different perspectives influence your preferences.</li>
       <li><strong>Review Attributes:</strong> Navigate to the <strong>Attributes</strong> tab to familiarize yourself with the various attributes and their levels that describe the health insurance plans.</li>
-      <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, enter your demographic information and adjust the plan attributes using sliders and selection options.</li>
-      <li><strong>View WTP Results:</strong> Click on the <strong>WTP Results</strong> tab to see how much you are willing to pay for improvements in each attribute.</li>
-      <li><strong>Check Programme Uptake Probability:</strong> The <strong>Programme Uptake Probability</strong> tab displays a bar chart predicting the likelihood of you choosing a particular health plan based on your inputs.</li>
-      <li><strong>Analyze Costs &amp; Benefits:</strong> In the <strong>Costs &amp; Benefits</strong> tab, review a comprehensive analysis of the economic implications of your selected plan.</li>
+      <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, enter your demographic information and adjust the plan attributes using sliders and selection options. Additional attributes will appear if you select Experiment 3.</li>
+      <li><strong>Predict Health Plan Uptake:</strong> Click on "Predict Health Plan Uptake" to compute the likelihood of choosing a particular health plan based on your inputs.</li>
+      <li><strong>View WTP Results:</strong> Navigate to the <strong>WTP Results</strong> tab and click "Show WTP Plots" to visualize your willingness to pay for each attribute.</li>
+      <li><strong>Check Health Plan Uptake Probability:</strong> In the <strong>Health Plan Uptake Probability</strong> tab, click "Show Probability Plot" to view a bar chart of the predicted uptake probability.</li>
+      <li><strong>Assess Costs &amp; Benefits:</strong> Go to the <strong>Costs &amp; Benefits</strong> tab to select a QALY gain scenario and review a comprehensive analysis of the economic implications of your selected plan.</li>
       <li><strong>Manage Scenarios:</strong> Save your current scenario, compare multiple scenarios, and export your results to PDF in the <strong>Scenarios</strong> tab.</li>
     </ol>
   </div>
@@ -67,36 +68,42 @@
   <!-- Attributes Tab -->
   <div id="attributesTab" class="tabcontent">
     <h2>Study Attributes and Levels</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Attribute</th>
-          <th>Description</th>
-          <th>Levels</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Chance of reaching target A1C in 6 months</td>
-          <td>The expected probability of achieving target A1C (long-term blood glucose level) after taking the medication.</td>
-          <td>10%, 50%, 90%</td>
-        </tr>
-        <tr>
-          <td>Chance of side effects (e.g., gastrointestinal side effects, genital infection)</td>
-          <td>The risk of experiencing side effects such as gastrointestinal issues or genital infections.</td>
-          <td>0%, 8%, 16%, 30%</td>
-        </tr>
-        <tr>
-          <td>Monthly out-of-pocket cost</td>
-          <td>The amount patients are required to pay each month for the T2DM treatments.</td>
-          <td>$0, $200, $500, $1000</td>
-        </tr>
-      </tbody>
-    </table>
+    <h3>Attributes</h3>
+    <div class="attributes-list">
+      <div class="attribute-item">
+        <h4>Chance of Reaching Target A1C in 6 Months</h4>
+        <p>The expected probability of achieving target A1C (long-term blood glucose level) after taking the medication.</p>
+        <ul>
+          <li>10%</li>
+          <li>50%</li>
+          <li>90%</li>
+        </ul>
+      </div>
+      <div class="attribute-item">
+        <h4>Chance of Side Effects</h4>
+        <p>The risk of experiencing side effects such as gastrointestinal issues or genital infections.</p>
+        <ul>
+          <li>0%</li>
+          <li>8%</li>
+          <li>16%</li>
+          <li>30%</li>
+        </ul>
+      </div>
+      <div class="attribute-item">
+        <h4>Monthly Out-of-Pocket Cost (USD)</h4>
+        <p>The amount patients are required to pay each month for the T2DM treatments.</p>
+        <ul>
+          <li>$0</li>
+          <li>$200</li>
+          <li>$500</li>
+          <li>$1000</li>
+        </ul>
+      </div>
+    </div>
     <h3>Experimental Conditions</h3>
     <ol>
-      <li><strong>Experiment 1: Self-focused Outcomes</strong> – Focuses exclusively on personal health outcomes and costs.</li>
-      <li><strong>Experiment 2: Equal Health Outcomes for Self and Others</strong> – Introduces an egalitarian perspective by considering equal health outcomes for self and other patients with poorer health.</li>
+      <li><strong>Experiment 1: Self-focused Outcomes</strong> – Preferences based solely on personal efficacy, risk, and cost.</li>
+      <li><strong>Experiment 2: Equal Health Outcomes for Self and Others</strong> – Incorporates societal influences by considering equal health outcomes for self and other patients with poorer health.</li>
       <li><strong>Experiment 3: Varying Health Outcomes for Self and Others</strong> – Examines preferences when health outcomes and costs vary between self and other patients with poorer health.</li>
     </ol>
   </div>
@@ -152,24 +159,6 @@
         </div>
 
         <div class="form-item">
-          <label for="income"><strong>Income Group:</strong></label>
-          <select id="income" name="income" required>
-            <option value="">--Select Income Group--</option>
-            <option value="low">Low Income</option>
-            <option value="high">High Income</option>
-          </select>
-        </div>
-
-        <div class="form-item">
-          <label for="degree"><strong>Educational Qualification:</strong></label>
-          <select id="degree" name="degree" required>
-            <option value="">--Select Qualification--</option>
-            <option value="no">No Degree</option>
-            <option value="yes">Degree or Higher</option>
-          </select>
-        </div>
-
-        <div class="form-item">
           <label for="goodHealth"><strong>Self-Reported Health Status:</strong></label>
           <select id="goodHealth" name="goodHealth" required>
             <option value="">--Select Health Status--</option>
@@ -181,7 +170,7 @@
         <!-- Plan Attributes -->
         <h3>Health Plan Attributes</h3>
         <div class="form-item">
-          <label for="efficacy"><strong>Chance of reaching target A1C in 6 months:</strong></label>
+          <label for="efficacy"><strong>Chance of Reaching Target A1C in 6 Months:</strong></label>
           <select id="efficacy" name="efficacy" required>
             <option value="">--Select Efficacy--</option>
             <option value="10">10%</option>
@@ -191,7 +180,7 @@
         </div>
 
         <div class="form-item">
-          <label for="risk"><strong>Chance of side effects:</strong></label>
+          <label for="risk"><strong>Chance of Side Effects:</strong></label>
           <select id="risk" name="risk" required>
             <option value="">--Select Risk Level--</option>
             <option value="0">0%</option>
@@ -202,14 +191,14 @@
         </div>
 
         <div class="form-item">
-          <label for="cost"><strong>Monthly out-of-pocket cost (USD):</strong></label>
+          <label for="cost"><strong>Monthly Out-of-Pocket Cost (USD):</strong></label>
           <input 
             type="range" 
             id="cost" 
             name="cost"
             min="0" 
             max="1000" 
-            step="50" 
+            step="10" 
             value="200"
             oninput="updateCostDisplay(this.value)" 
           />
@@ -218,7 +207,7 @@
 
         <!-- Additional Attributes for Experiment 3 -->
         <div class="form-item" id="efficacyOthersDiv" style="display: none;">
-          <label for="efficacyOthers"><strong>Chance of reaching target A1C for Others:</strong></label>
+          <label for="efficacyOthers"><strong>Chance of Reaching Target A1C for Others:</strong></label>
           <select id="efficacyOthers" name="efficacyOthers">
             <option value="10">10%</option>
             <option value="50">50%</option>
@@ -227,7 +216,7 @@
         </div>
 
         <div class="form-item" id="riskOthersDiv" style="display: none;">
-          <label for="riskOthers"><strong>Chance of side effects for Others:</strong></label>
+          <label for="riskOthers"><strong>Chance of Side Effects for Others:</strong></label>
           <select id="riskOthers" name="riskOthers">
             <option value="0">0%</option>
             <option value="8">8%</option>
@@ -237,7 +226,7 @@
         </div>
       </div>
       <div class="buttons-row">
-        <button type="button" onclick="predictUptake()">Predict Plan Uptake</button>
+        <button type="button" onclick="predictUptake()">Predict Health Plan Uptake</button>
         <button type="button" onclick="saveCurrentResult()">Save Result</button>
       </div>
     </form>
@@ -260,9 +249,9 @@
     </div>
   </div>
 
-  <!-- Programme Uptake Probability Tab -->
+  <!-- Health Plan Uptake Probability Tab -->
   <div id="probTab" class="tabcontent">
-    <h2>Programme Uptake Probability</h2>
+    <h2>Health Plan Uptake Probability</h2>
     <p>
       Click “Show Probability Plot” to compute a new bar chart based on your <strong>Inputs</strong>. Depending on whether the predicted uptake is below 30%, between 30–70%, or above 70%, you will receive suggestions for adjustments in cost, efficacy, or risk.
     </p>
@@ -271,7 +260,7 @@
     </div>
     <div class="chart-grid">
       <div class="chart-box">
-        <h3>Programme Uptake Probability</h3>
+        <h3>Health Plan Uptake Probability</h3>
         <canvas id="probChartMain"></canvas>
       </div>
     </div>
@@ -292,7 +281,6 @@
       <div id="costsBenefitsResults">
         <!-- Results will be injected here -->
       </div>
-      <p><strong>Reference:</strong> Engel, L., Lee, Y. Y., Le, L. K. D., Lal, A., &amp; Mihalopoulos, C. (2021). Reducing loneliness to prevent depression in older adults in Australia: A modelled cost-effectiveness analysis. Mental Health and Prevention, 24. <a href="https://doi.org/10.1016/j.mhp.2021.200212" target="_blank">https://doi.org/10.1016/j.mhp.2021.200212</a>.</p>
     </div>
   </div>
 
@@ -315,23 +303,17 @@
           <th>Age</th>
           <th>Gender</th>
           <th>Race</th>
-          <th>Income</th>
-          <th>Degree</th>
           <th>Good Health</th>
           <th>Efficacy (%)</th>
           <th>Risk (%)</th>
           <th>Cost (USD)</th>
           <th>Efficacy Others (%)</th>
           <th>Risk Others (%)</th>
+          <th>Uptake (%)</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
-  </div>
-
-  <!-- Results Section -->
-  <div id="resultsSection" class="tabcontent">
-    <!-- This section can be used for additional dynamic results if needed -->
   </div>
 
   <footer>
