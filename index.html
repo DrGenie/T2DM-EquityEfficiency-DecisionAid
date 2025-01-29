@@ -38,7 +38,7 @@
       <ul>
         <li><strong>Instructions</strong> – Step-by-step guidance on using the tool.</li>
         <li><strong>Attributes</strong> – Detailed descriptions of the DCE attributes and levels.</li>
-        <li><strong>Inputs</strong> – Enter your personal and plan-specific information.</li>
+        <li><strong>Inputs</strong> – Enter your plan-specific information.</li>
         <li><strong>WTP Results</strong> – View bar charts of Willingness to Pay (WTP) for each attribute.</li>
         <li><strong>Health Plan Uptake Probability</strong> – Visualize the predicted uptake probability based on your inputs.</li>
         <li><strong>Costs &amp; Benefits</strong> – Analyze the cost-effectiveness of different plan scenarios.</li>
@@ -56,11 +56,11 @@
     <ol>
       <li><strong>Select Experiment:</strong> Choose one of the three experimental conditions to understand how different perspectives influence your preferences.</li>
       <li><strong>Review Attributes:</strong> Navigate to the <strong>Attributes</strong> tab to familiarize yourself with the various attributes and their levels that describe the health insurance plans.</li>
-      <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, enter your plan-specific information and adjust the plan attributes using sliders and selection options. Additional attributes will appear if you select Experiment 3.</li>
+      <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, enter your plan attributes using sliders and selection options. Additional attributes will appear if you select Experiment 3.</li>
       <li><strong>Predict Health Plan Uptake:</strong> Click on "Predict Health Plan Uptake" to compute the likelihood of choosing a particular health plan based on your inputs.</li>
       <li><strong>View WTP Results:</strong> Navigate to the <strong>WTP Results</strong> tab and click "Show WTP Plots" to visualize your willingness to pay for each attribute.</li>
       <li><strong>Check Health Plan Uptake Probability:</strong> In the <strong>Health Plan Uptake Probability</strong> tab, click "Show Probability Plot" to view a bar chart of the predicted uptake probability.</li>
-      <li><strong>Assess Costs &amp; Benefits:</strong> Go to the <strong>Costs & Benefits</strong> tab to select a QALY gain scenario and review a comprehensive analysis of the economic implications of your selected plan.</li>
+      <li><strong>Assess Costs &amp; Benefits:</strong> Go to the <strong>Costs &amp; Benefits</strong> tab to select a QALY gain scenario and review a comprehensive analysis of the economic implications of your selected plan.</li>
       <li><strong>Manage Scenarios:</strong> Save your current scenario, compare multiple scenarios, and export your results to PDF in the <strong>Scenarios</strong> tab.</li>
     </ol>
   </div>
@@ -94,9 +94,9 @@
         <p>The amount patients are required to pay each month for the T2DM treatments.</p>
         <ul>
           <li>$0</li>
-          <li>$200</li>
-          <li>$500</li>
-          <li>$1000</li>
+          <li>$10</li>
+          <li>$20</li>
+          <li>... (increments of $10 up to $1000)</li>
         </ul>
       </div>
     </div>
@@ -184,7 +184,7 @@
       </div>
       <div class="buttons-row">
         <button type="button" onclick="predictUptake()">Predict Health Plan Uptake</button>
-        <button type="button" onclick="saveCurrentResult()">Save Result</button>
+        <button type="button" onclick="saveScenario()">Save Result</button>
       </div>
     </form>
   </div>
@@ -257,12 +257,16 @@
         <tr>
           <th>Name</th>
           <th>Experiment</th>
-          <th>Chance of Reaching Target A1C (%)</th>
-          <th>Chance of Side Effects (%)</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Race</th>
+          <th>Good Health</th>
+          <th>Efficacy (%)</th>
+          <th>Risk (%)</th>
           <th>Cost (USD)</th>
           <th>Efficacy Others (%)</th>
           <th>Risk Others (%)</th>
-          <th>Uptake Probability (%)</th>
+          <th>Uptake (%)</th>
         </tr>
       </thead>
       <tbody></tbody>
