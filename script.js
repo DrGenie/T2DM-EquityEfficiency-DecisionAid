@@ -12,7 +12,7 @@
  * 10) Enforce selection of all attributes with specific validation messages
  * 11) Filter functionality for scenarios
  * 12) Accessibility enhancements
- * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
+ * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (NBS, The University of Newcastle, Australia)
  *****************************************************************************/
 
 /** Global variable to store current uptake probability */
