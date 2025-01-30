@@ -62,7 +62,7 @@
         <li><strong>Predict Health Plan Uptake:</strong> Click on "Predict Health Plan Uptake" to compute the likelihood of choosing a particular health plan based on your inputs.</li>
         <li><strong>View WTP Results:</strong> Navigate to the <strong>WTP Results</strong> tab and click "Show WTP Plots" to visualize your willingness to pay for each attribute.</li>
         <li><strong>Check Health Plan Uptake Probability:</strong> In the <strong>Health Plan Uptake Probability</strong> tab, click "Show Probability Plot" to view a bar chart of the predicted uptake probability.</li>
-        <li><strong>Assess Costs &amp; Benefits:</strong> Go to the <strong>Costs &amp; Benefits</strong> tab to select a QALY gain scenario and review a comprehensive analysis of the economic implications of your selected plan.</li>
+        <li><strong>Assess Costs &amp; Benefits:</strong> Go to the <strong>Costs & Benefits</strong> tab to select a QALY gain scenario and review a comprehensive analysis of the economic implications of your selected plan.</li>
         <li><strong>Manage Scenarios:</strong> Save your current scenario, compare multiple scenarios, and export your results to PDF in the <strong>Scenarios</strong> tab.</li>
       </ol>
     </div>
@@ -74,7 +74,13 @@
       <div class="attributes-list">
         <div class="attribute-card" tabindex="0" aria-labelledby="attribute-1-title">
           <div class="attribute-icon">
-            <img src="assets/icons/info-icon.png" alt="Efficacy Icon" aria-hidden="true"/>
+            <!-- Info Icon SVG -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
+              <rect x="11" y="16" width="2" height="2" fill="#2980b9"/>
+              <path d="M12 8V12" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="12" cy="6" r="1" fill="#2980b9"/>
+            </svg>
             <span class="tooltip" role="tooltip">
               The probability of achieving target A1C after 6 months of treatment.
             </span>
@@ -91,7 +97,13 @@
         </div>
         <div class="attribute-card" tabindex="0" aria-labelledby="attribute-2-title">
           <div class="attribute-icon">
-            <img src="assets/icons/info-icon.png" alt="Risk Icon" aria-hidden="true"/>
+            <!-- Info Icon SVG -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
+              <rect x="11" y="16" width="2" height="2" fill="#2980b9"/>
+              <path d="M12 8V12" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="12" cy="6" r="1" fill="#2980b9"/>
+            </svg>
             <span class="tooltip" role="tooltip">
               The risk of experiencing side effects from the treatment.
             </span>
@@ -109,7 +121,13 @@
         </div>
         <div class="attribute-card" tabindex="0" aria-labelledby="attribute-3-title">
           <div class="attribute-icon">
-            <img src="assets/icons/info-icon.png" alt="Cost Icon" aria-hidden="true"/>
+            <!-- Info Icon SVG -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
+              <rect x="11" y="16" width="2" height="2" fill="#2980b9"/>
+              <path d="M12 8V12" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="12" cy="6" r="1" fill="#2980b9"/>
+            </svg>
             <span class="tooltip" role="tooltip">
               The amount patients are required to pay monthly out-of-pocket for the treatment.
             </span>
@@ -130,7 +148,7 @@
       <ol>
         <li><strong>Experiment 1: Self-focused Outcomes</strong> – Preferences based solely on personal efficacy, risk, and cost.</li>
         <li><strong>Experiment 2: Equal Health Outcomes for Self and Others</strong> – Incorporates societal influences by considering equal health outcomes for self and other patients with poorer health.</li>
-        <li><strong>Experiment 3: Varying Health Outcomes for Self and Others</strong> – Examines preferences when health outcomes and costs vary between self and other patients with poorer health.</li>
+        <li><strong>Experiment 3: Varying Health Outcomes for Self and Others</strong> – Exams preferences when health outcomes and costs vary between self and other patients with poorer health.</li>
       </ol>
     </div>
 
@@ -154,7 +172,15 @@
           <h3>Health Plan Attributes</h3>
           <div class="form-item">
             <label for="efficacy"><strong>Chance of Reaching Target A1C in 6 Months:</strong>
-              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="efficacy-tooltip"/>
+              <button type="button" class="info-button" aria-label="More information about Efficacy">
+                <!-- Info Icon SVG -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
+                  <rect x="11" y="16" width="2" height="2" fill="#2980b9"/>
+                  <path d="M12 8V12" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="6" r="1" fill="#2980b9"/>
+                </svg>
+              </button>
             </label>
             <span id="efficacy-tooltip" class="tooltip-text">The probability of achieving target A1C after 6 months of treatment.</span>
             <select id="efficacy" name="efficacy" required aria-required="true">
@@ -167,7 +193,15 @@
 
           <div class="form-item">
             <label for="risk"><strong>Chance of Side Effects:</strong>
-              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="risk-tooltip"/>
+              <button type="button" class="info-button" aria-label="More information about Risk">
+                <!-- Info Icon SVG -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
+                  <rect x="11" y="16" width="2" height="2" fill="#2980b9"/>
+                  <path d="M12 8V12" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="6" r="1" fill="#2980b9"/>
+                </svg>
+              </button>
             </label>
             <span id="risk-tooltip" class="tooltip-text">The risk of experiencing side effects from the treatment.</span>
             <select id="risk" name="risk" required aria-required="true">
@@ -181,7 +215,15 @@
 
           <div class="form-item">
             <label for="cost"><strong>Monthly Out-of-Pocket Cost (USD):</strong>
-              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="cost-tooltip"/>
+              <button type="button" class="info-button" aria-label="More information about Cost">
+                <!-- Info Icon SVG -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
+                  <rect x="11" y="16" width="2" height="2" fill="#2980b9"/>
+                  <path d="M12 8V12" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="6" r="1" fill="#2980b9"/>
+                </svg>
+              </button>
             </label>
             <span id="cost-tooltip" class="tooltip-text">The amount patients are required to pay monthly out-of-pocket for the treatment.</span>
             <input 
@@ -201,7 +243,15 @@
           <!-- Additional Attributes for Experiment 3 -->
           <div class="form-item" id="efficacyOthersDiv" style="display: none;">
             <label for="efficacyOthers"><strong>Chance of Reaching Target A1C for Others:</strong>
-              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="efficacyOthers-tooltip"/>
+              <button type="button" class="info-button" aria-label="More information about Efficacy Others">
+                <!-- Info Icon SVG -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
+                  <rect x="11" y="16" width="2" height="2" fill="#2980b9"/>
+                  <path d="M12 8V12" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="6" r="1" fill="#2980b9"/>
+                </svg>
+              </button>
             </label>
             <span id="efficacyOthers-tooltip" class="tooltip-text">The probability of achieving target A1C for other patients after 6 months of treatment.</span>
             <select id="efficacyOthers" name="efficacyOthers" aria-required="false">
@@ -214,7 +264,15 @@
 
           <div class="form-item" id="riskOthersDiv" style="display: none;">
             <label for="riskOthers"><strong>Chance of Side Effects for Others:</strong>
-              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="riskOthers-tooltip"/>
+              <button type="button" class="info-button" aria-label="More information about Risk Others">
+                <!-- Info Icon SVG -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
+                  <rect x="11" y="16" width="2" height="2" fill="#2980b9"/>
+                  <path d="M12 8V12" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="6" r="1" fill="#2980b9"/>
+                </svg>
+              </button>
             </label>
             <span id="riskOthers-tooltip" class="tooltip-text">The risk of experiencing side effects for other patients from the treatment.</span>
             <select id="riskOthers" name="riskOthers" aria-required="false">
@@ -229,7 +287,15 @@
           <!-- Monthly Out-of-Pocket Cost for Others (Experiment 3) -->
           <div class="form-item" id="costOthersDiv" style="display: none;">
             <label for="costOthers"><strong>Monthly Out-of-Pocket Cost for Others (USD):</strong>
-              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="costOthers-tooltip"/>
+              <button type="button" class="info-button" aria-label="More information about Cost Others">
+                <!-- Info Icon SVG -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
+                  <rect x="11" y="16" width="2" height="2" fill="#2980b9"/>
+                  <path d="M12 8V12" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="6" r="1" fill="#2980b9"/>
+                </svg>
+              </button>
             </label>
             <span id="costOthers-tooltip" class="tooltip-text">The amount other patients are required to pay monthly out-of-pocket for the treatment.</span>
             <input 
@@ -320,7 +386,10 @@
         Save your scenario from <strong>Inputs</strong> and compare or export multiple configurations, including WTP and uptake probability charts, to PDF.
       </p>
       <div class="filter-options">
-        <img src="assets/icons/filter-icon.png" alt="Filter Icon" class="filter-icon" aria-hidden="true"/>
+        <!-- Filter Icon SVG -->
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg" class="filter-icon" aria-hidden="true">
+          <polygon points="3,4 21,4 14,11 17,11 21,16 3,16 7,11 10,11"/>
+        </svg>
         <label for="filterExperiment"><strong>Filter by Experiment:</strong></label>
         <select id="filterExperiment" onchange="filterScenarios()">
           <option value="all">All Experiments</option>
