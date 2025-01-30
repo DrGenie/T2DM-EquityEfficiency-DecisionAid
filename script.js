@@ -2,13 +2,13 @@
  * script.js
  * 1) Tab switching
  * 2) Range slider label updates
- * 3) Main DCE coefficients for Experiments 1, 2, 3 with adjusted cost coefficients
+ * 3) Main DCE coefficients for Experiments 1, 2, 3 with updated cost coefficients
  * 4) WTP data for all features with error bars (p-values, SE)
  * 5) Health Plan Uptake Probability bar chart
  * 6) Scenario saving & PDF export
  * 7) Cost-benefit analysis based on literature-reviewed costs
  * 8) Dynamic attribute display based on experiment selection
- * 9) WTP comparison across experiments with separate averages for Experiment 3
+ * 9) WTP comparison across saved scenarios
  * 10) Enforce selection of all attributes with specific validation messages
  * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
  *****************************************************************************/
@@ -57,7 +57,7 @@ function updateCostOthersDisplay(val) {
 
 /***************************************************************************
  * MAIN DCE COEFFICIENTS
- * Adjusted cost coefficients by dividing by 100
+ * Updated cost coefficients as per instructions
  ***************************************************************************/
 const coefficients = {
   '1': { // Experiment 1
@@ -68,7 +68,7 @@ const coefficients = {
     risk_8: -0.034,
     risk_16: -0.398,
     risk_30: -0.531,
-    cost: -0.0123 / 100, // -0.000123
+    cost: -0.00123, // Updated
     ASC_sd: 0.987
   },
   '2': { // Experiment 2
@@ -79,7 +79,7 @@ const coefficients = {
     risk_8: -0.054,
     risk_16: -0.305,
     risk_30: -0.347,
-    cost: -0.0140 / 100, // -0.00014
+    cost: -0.00140, // Updated
     ASC_sd: 1.196
   },
   '3': { // Experiment 3
@@ -95,8 +95,8 @@ const coefficients = {
     riskOthers_8: -0.111,
     riskOthers_16: -0.103,
     riskOthers_30: -0.197,
-    cost: -0.070 / 100, // -0.0007
-    costOthers: -0.041 / 100, // -0.00041
+    cost: -0.0007,      // Updated
+    costOthers: -0.00041, // Updated
     ASC_sd: 1.033
   }
 };
@@ -169,6 +169,7 @@ const costComponents = [
 
 /***************************************************************************
  * WILLINGNESS TO PAY DATA FOR ALL ATTRIBUTES
+ * Updated WTP computations based on new cost coefficients
  ***************************************************************************/
 const wtpData = {
   '1': [ // Experiment 1
@@ -386,7 +387,8 @@ function displayUptakeProbability(uptakeProbability) {
 }
 
 /***************************************************************************
- * WTP CHART WITH ERROR BARS
+ * WTP CHART WITHOUT ERROR BARS
+ * Title changed to "WTP (USD)"
  ***************************************************************************/
 let wtpChartInstance = null;
 function renderWTPChart() {
@@ -757,7 +759,9 @@ function loadSavedResults() {
   storedResults.forEach(result => {
     addScenarioToTable(result);
   });
-  renderWTPComparison();
+  if (storedResults.length > 0) {
+    renderWTPComparison();
+  }
 }
 
 /***************************************************************************
@@ -835,7 +839,7 @@ function exportToPDF() {
 }
 
 /***************************************************************************
- * WTP COMPARISON ACROSS EXPERIMENTS
+ * WTP COMPARISON ACROSS SAVED SCENARIOS
  ***************************************************************************/
 let wtpComparisonChartInstance = null;
 function renderWTPComparison() {
@@ -852,64 +856,35 @@ function renderWTPComparison() {
     wtpComparisonChartInstance.destroy();
   }
 
-  // Define risk attributes for self and others
-  const riskAttributesSelf = ["Risk 8%", "Risk 16%", "Risk 30%"];
-  const riskAttributesOthers = ["Risk Others 8%", "Risk Others 16%", "Risk Others 30%"];
-
-  const wtpPerExperiment = {
-    '1': { self: [], others: [] }, // Others not applicable
-    '2': { self: [], others: [] }, // Others not applicable
-    '3': { self: [], others: [] }
-  };
+  // Initialize data storage
+  const wtpPerScenario = {};
 
   savedResults.forEach(scenario => {
     const experiment = scenario.experiment.split(' ')[1];
     if (wtpData[experiment]) {
-      wtpData[experiment].forEach(item => {
-        if (riskAttributesSelf.includes(item.attribute)) {
-          wtpPerExperiment[experiment].self.push(item.wtp);
-        }
-        if (riskAttributesOthers.includes(item.attribute)) {
-          wtpPerExperiment[experiment].others.push(item.wtp);
-        }
-      });
+      const data = wtpData[experiment];
+      wtpPerScenario[scenario.name] = data.map(item => item.wtp);
     }
   });
 
-  // Calculate average WTP for Risk attributes per experiment
-  const avgWTP = {};
-  for (let exp in wtpPerExperiment) {
-    const selfData = wtpPerExperiment[exp].self;
-    const othersData = wtpPerExperiment[exp].others;
-    avgWTP[`Experiment ${exp} Self`] = selfData.length > 0 ? (selfData.reduce((a, b) => a + b, 0) / selfData.length).toFixed(2) : "N/A";
-    avgWTP[`Experiment ${exp} Others`] = othersData.length > 0 ? (othersData.reduce((a, b) => a + b, 0) / othersData.length).toFixed(2) : "N/A";
-  }
+  const labels = ["Efficacy 50%", "Efficacy 90%", "Risk 8%", "Risk 16%", "Risk 30%", "Risk Others 8%", "Risk Others 16%", "Risk Others 30%"];
+  const datasets = [];
 
-  const labels = ["Experiment 1 Self", "Experiment 2 Self", "Experiment 3 Self", "Experiment 3 Others"];
-  const values = [
-    avgWTP["Experiment 1 Self"],
-    avgWTP["Experiment 2 Self"],
-    avgWTP["Experiment 3 Self"],
-    avgWTP["Experiment 3 Others"]
-  ];
-  const colors = [
-    'rgba(39,174,96,0.6)', // Experiment 1 Self
-    'rgba(39,174,96,0.6)', // Experiment 2 Self
-    'rgba(39,174,96,0.6)', // Experiment 3 Self
-    'rgba(231,76,60,0.6)'  // Experiment 3 Others
-  ];
+  Object.keys(wtpPerScenario).forEach((scenarioName, index) => {
+    datasets.push({
+      label: scenarioName,
+      data: wtpPerScenario[scenarioName],
+      backgroundColor: getColor(index),
+      borderColor: getColor(index).replace('0.6', '1'),
+      borderWidth: 1
+    });
+  });
 
   wtpComparisonChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
-      datasets: [{
-        label: "Average WTP for Risk Attributes (USD)",
-        data: values,
-        backgroundColor: colors,
-        borderColor: colors.map(color => color.replace('0.6', '1')),
-        borderWidth: 1
-      }]
+      datasets: datasets
     },
     options: {
       responsive: true,
@@ -917,10 +892,10 @@ function renderWTPComparison() {
         y: { beginAtZero: true }
       },
       plugins: {
-        legend: { display: false },
+        legend: { position: 'top' },
         title: {
           display: true,
-          text: 'Average WTP for Risk Attributes Across Experiments',
+          text: 'Willingness to Pay (USD) Comparison Across Scenarios',
           font: { size: 16 }
         }
       }
@@ -928,39 +903,66 @@ function renderWTPComparison() {
   });
 
   // Render Conclusion
-  renderWTPConclusion(avgWTP);
-}
-
-function renderWTPConclusion(avgWTP) {
-  const conclusion = document.getElementById("wtpConclusion");
-  const exp1Self = avgWTP["Experiment 1 Self"] || "N/A";
-  const exp2Self = avgWTP["Experiment 2 Self"] || "N/A";
-  const exp3Self = avgWTP["Experiment 3 Self"] || "N/A";
-  const exp3Others = avgWTP["Experiment 3 Others"] || "N/A";
-
-  conclusion.innerHTML = `
-    <strong>Conclusion:</strong> 
-    <br/><br/>
-    <strong>Experiments 1 & 2:</strong> Across Experiments 1 and 2, respondents' willingness to pay (WTP) for risk attributes decreased when equity considerations were introduced. 
-    <ul>
-      <li><strong>Experiment 1 (Self-focused Outcomes):</strong> Average WTP for risk attributes was $${exp1Self}.</li>
-      <li><strong>Experiment 2 (Equal Health Outcomes for Self and Others):</strong> Average WTP for risk attributes decreased to $${exp2Self}.</li>
-    </ul>
-    This indicates a reduction in risk aversion when respondents consider both their own and others' health outcomes, aligning with studies emphasizing ethical considerations in decision-making under risk (Arrieta et al., 2017).
-    <br/><br/>
-    <strong>Experiment 3:</strong> In Experiment 3, where health outcomes were unequal between self and others, there are two separate average WTP values:
-    <ul>
-      <li><strong>Self Risk Attributes:</strong> Average WTP was $${exp3Self}.</li>
-      <li><strong>Others' Risk Attributes:</strong> Average WTP was $${exp3Others}.</li>
-    </ul>
-    The average WTP for self risk attributes remains higher compared to others', suggesting that disparities in health outcomes may influence respondents' willingness to accept personal risks differently for themselves versus others. This highlights the complexity of risk aversion when equity is factored into health decision-making.
-  `;
+  renderWTPConclusion();
 }
 
 /***************************************************************************
- * Scenario Comparison (Display Saved Scenarios and WTP Comparison)
- * This functionality is handled within the Scenarios Tab and WTP Comparison Chart
+ * HELPER FUNCTION TO GET PROFESSIONAL COLORS
  ***************************************************************************/
+function getColor(index) {
+  const colors = [
+    'rgba(52, 152, 219, 0.6)',  // Blue
+    'rgba(46, 204, 113, 0.6)',  // Green
+    'rgba(231, 76, 60, 0.6)',   // Red
+    'rgba(155, 89, 182, 0.6)',  // Purple
+    'rgba(241, 196, 15, 0.6)',  // Yellow
+    'rgba(52, 73, 94, 0.6)',    // Dark Blue
+    'rgba(26, 188, 156, 0.6)',  // Teal
+    'rgba(236, 240, 241, 0.6)'   // Light Gray
+  ];
+  return colors[index % colors.length];
+}
+
+/***************************************************************************
+ * RENDER WTP CONCLUSION
+ ***************************************************************************/
+function renderWTPConclusion() {
+  const conclusion = document.getElementById("wtpConclusion");
+  let conclusionText = `<strong>Conclusion:</strong> 
+  <br/><br/>
+  <em>Willingness to Pay (WTP)</em> for various attributes across different scenarios provides valuable insights into patient preferences. By analyzing these comparisons, stakeholders can better understand which attributes are most valued and how changes in these attributes can influence health plan uptake.
+
+  <br/><br/>
+  <em>Key Observations:</em>
+  <ul>
+    ${savedResults.map((scenario, index) => {
+      return `<li><strong>${scenario.name}:</strong> The highest WTP is observed for <em>${getHighestWTPAttribute(scenario.name)}</em>.</li>`;
+    }).join('')}
+  </ul>
+  `;
+
+  conclusion.innerHTML = conclusionText;
+}
+
+/***************************************************************************
+ * HELPER FUNCTION TO GET HIGHEST WTP ATTRIBUTE FOR A SCENARIO
+ ***************************************************************************/
+function getHighestWTPAttribute(scenarioName) {
+  const scenario = savedResults.find(s => s.name === scenarioName);
+  if (!scenario) return "N/A";
+  const experiment = scenario.experiment.split(' ')[1];
+  const data = wtpData[experiment];
+  if (!data) return "N/A";
+
+  let highest = { attribute: "N/A", wtp: -Infinity };
+  data.forEach(item => {
+    if (item.wtp > highest.wtp) {
+      highest = { attribute: item.attribute, wtp: item.wtp };
+    }
+  });
+
+  return highest.attribute;
+}
 
 /***************************************************************************
  * HELPER FUNCTIONS
