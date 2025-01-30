@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f9f9f9;
+  background-color: #f0f2f5;
   color: #333;
 }
 
@@ -18,8 +18,8 @@ body {
   overflow: hidden;
   padding: 20px;
   background-color: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 /* Header */
@@ -39,7 +39,7 @@ header p {
 }
 
 /* Tabs */
-.tabs {
+nav .tabs {
   display: flex;
   flex-wrap: wrap;
   border-bottom: 2px solid #ecf0f1;
@@ -74,7 +74,7 @@ header p {
   display: none;
 }
 
-.intro-box, .form-grid, .buttons-row, .chart-grid, .chart-box, .attributes-list, .attribute-item, .qaly-selector {
+.intro-box, .form-grid, .buttons-row, .chart-grid, .chart-box, .attributes-list, .attribute-item, .qaly-selector, .filter-options {
   margin-bottom: 25px;
 }
 
@@ -90,21 +90,47 @@ header p {
 }
 
 .attribute-card {
-  background-color: #f2f2f2;
+  background-color: #f7f9fc;
   border-radius: 8px;
   padding: 15px;
   display: flex;
   align-items: flex-start;
   width: calc(33.333% - 20px);
+  position: relative;
 }
 
 .attribute-card .attribute-icon {
   margin-right: 15px;
+  position: relative;
 }
 
 .attribute-card .attribute-icon img {
   width: 40px;
   height: 40px;
+  cursor: pointer;
+}
+
+.attribute-card .tooltip {
+  visibility: hidden;
+  width: 200px;
+  background-color: #2c3e50;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position above the icon */
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.attribute-card .attribute-icon:hover .tooltip,
+.attribute-card .attribute-icon:focus .tooltip {
+  visibility: visible;
+  opacity: 1;
 }
 
 .attribute-card .attribute-content h4 {
@@ -123,18 +149,6 @@ header p {
   color: #34495e;
 }
 
-@media (max-width: 992px) {
-  .attribute-card {
-    width: calc(50% - 20px);
-  }
-}
-
-@media (max-width: 600px) {
-  .attribute-card {
-    width: 100%;
-  }
-}
-
 /* Form Grid */
 .form-grid {
   display: grid;
@@ -145,15 +159,47 @@ header p {
 .form-item {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .form-item label {
   margin-bottom: 8px;
   font-weight: 600;
   color: #2c3e50;
+  display: flex;
+  align-items: center;
 }
 
-.form-item select, .form-item input[type="range"] {
+.form-item .info-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 220px;
+  background-color: #2c3e50;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.info-icon:hover + .tooltip-text,
+.info-icon:focus + .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.form-item select, .form-item input[type="range"], .form-item input[type="number"] {
   padding: 8px;
   border: 1px solid #bdc3c7;
   border-radius: 4px;
@@ -170,6 +216,7 @@ header p {
 .buttons-row {
   display: flex;
   gap: 15px;
+  flex-wrap: wrap;
 }
 
 .buttons-row button {
@@ -212,6 +259,26 @@ header p {
   margin-top: 10px;
 }
 
+/* Scenarios Tab - Filter Options */
+.filter-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filter-options label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.filter-options select, .filter-options input[type="number"] {
+  padding: 6px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
 /* Scenarios Table */
 #scenarioTable {
   width: 100%;
@@ -237,11 +304,19 @@ header p {
 }
 
 /* WTP Comparison Conclusion */
-#wtpConclusion {
+.conclusion-section {
   margin-top: 20px;
   font-size: 1em;
   line-height: 1.6;
   color: #2c3e50;
+}
+
+.conclusion-section strong {
+  font-weight: bold;
+}
+
+.conclusion-section em {
+  font-style: italic;
 }
 
 /* Footer */
@@ -258,6 +333,12 @@ footer p {
 }
 
 /* Responsive Design */
+@media (max-width: 992px) {
+  .attribute-card {
+    width: calc(50% - 20px);
+  }
+}
+
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;
@@ -276,4 +357,21 @@ footer p {
     text-align: left;
     border-radius: 0;
   }
+
+  .filter-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Accessibility: Screen Reader Only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
 }
