@@ -127,8 +127,8 @@ nav .tabs {
   transition: opacity 0.3s;
 }
 
-.attribute-card .attribute-icon:hover .tooltip,
-.attribute-card .attribute-icon:focus .tooltip {
+.attribute-card:hover .tooltip,
+.attribute-card:focus-within .tooltip {
   visibility: visible;
   opacity: 1;
 }
