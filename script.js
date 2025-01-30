@@ -10,15 +10,15 @@
  * 8) Dynamic attribute display based on experiment selection
  * 9) WTP comparison across experiments focusing on risk attributes
  * 10) Enforce selection of all attributes with specific validation messages
- * 11) Filter functionality for scenarios
- * 12) Accessibility enhancements
+ * 11) Remove Filter by Uptake Probability
+ * 12) Tooltip enhancements
  * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
  *****************************************************************************/
 
 /** Global variable to store current uptake probability */
 let currentUptakeProbability = 0;
 
-/** On page load, default to introduction tab and load saved scenarios */
+/** On page load, default to introduction tab and initialize */
 window.onload = function() {
   openTab('introTab', document.querySelector('.tablink.active'));
   loadSavedResults();
@@ -43,7 +43,7 @@ function openTab(tabId, btn) {
 
   // Render charts if navigating to respective tabs
   if (tabId === 'wtpTab') {
-    renderWTPChart();
+    // Do not auto-render WTP charts; require user action
   }
   if (tabId === 'costsTab') {
     renderCostsBenefits();
@@ -174,6 +174,7 @@ const costComponents = [
 /***************************************************************************
  * WILLINGNESS TO PAY DATA FOR ALL ATTRIBUTES
  * Updated WTP computations based on new cost coefficients
+ * Included efficacy attributes for Experiment 3
  ***************************************************************************/
 const wtpData = {
   '1': [ // Experiment 1
@@ -191,9 +192,15 @@ const wtpData = {
     { attribute: "Risk 30%", wtp: coefficients['2'].risk_30 / Math.abs(coefficients['2'].cost), pVal: 0.000, se: 0.094 / Math.abs(coefficients['2'].cost) }
   ],
   '3': [ // Experiment 3
+    // Self Attributes
+    { attribute: "Efficacy 50% (Self)", wtp: coefficients['3'].efficacy_50 / Math.abs(coefficients['3'].cost), pVal: 0.000, se: 0.070 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Efficacy 90% (Self)", wtp: coefficients['3'].efficacy_90 / Math.abs(coefficients['3'].cost), pVal: 0.000, se: 0.075 / Math.abs(coefficients['3'].cost) },
     { attribute: "Risk 8% (Self)", wtp: coefficients['3'].risk_8 / Math.abs(coefficients['3'].cost), pVal: 0.200, se: 0.084 / Math.abs(coefficients['3'].cost) },
     { attribute: "Risk 16% (Self)", wtp: coefficients['3'].risk_16 / Math.abs(coefficients['3'].cost), pVal: 0.013, se: 0.088 / Math.abs(coefficients['3'].cost) },
     { attribute: "Risk 30% (Self)", wtp: coefficients['3'].risk_30 / Math.abs(coefficients['3'].cost), pVal: 0.000, se: 0.085 / Math.abs(coefficients['3'].cost) },
+    // Others Attributes
+    { attribute: "Efficacy 50% (Others)", wtp: coefficients['3'].efficacyOthers_50 / Math.abs(coefficients['3'].cost), pVal: 0.100, se: 0.050 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Efficacy 90% (Others)", wtp: coefficients['3'].efficacyOthers_90 / Math.abs(coefficients['3'].cost), pVal: 0.050, se: 0.055 / Math.abs(coefficients['3'].cost) },
     { attribute: "Risk 8% (Others)", wtp: coefficients['3'].riskOthers_8 / Math.abs(coefficients['3'].cost), pVal: 0.190, se: 0.085 / Math.abs(coefficients['3'].cost) },
     { attribute: "Risk 16% (Others)", wtp: coefficients['3'].riskOthers_16 / Math.abs(coefficients['3'].cost), pVal: 0.227, se: 0.085 / Math.abs(coefficients['3'].cost) },
     { attribute: "Risk 30% (Others)", wtp: coefficients['3'].riskOthers_30 / Math.abs(coefficients['3'].cost), pVal: 0.017, se: 0.083 / Math.abs(coefficients['3'].cost) }
@@ -440,7 +447,7 @@ function renderWTPChart() {
         legend: { display: false },
         title: {
           display: true,
-          text: `Willingness to Pay (USD) for Risk Attributes - Experiment ${experiment}`,
+          text: `Willingness to Pay (USD) for Attributes - Experiment ${experiment}`,
           font: { size: 16 }
         },
         tooltip: {
@@ -493,9 +500,7 @@ function renderWTPChart() {
     }]
   });
 
-  // Show Conclusion Section
-  document.getElementById("wtpConclusionSection").style.display = "block";
-  renderWTPConclusion();
+  // Hide Conclusion Section as per user request
 }
 
 /***************************************************************************
@@ -725,7 +730,7 @@ function saveScenario() {
   };
 
   savedResults.push(savedResult);
-  localStorage.setItem('savedResults', JSON.stringify(savedResults));
+  // Removed localStorage to prevent persistence across sessions
 
   // Update the table
   addScenarioToTable(savedResult);
@@ -761,14 +766,10 @@ function addScenarioToTable(result) {
  * LOAD SAVED RESULTS FROM LOCAL STORAGE
  ***************************************************************************/
 function loadSavedResults() {
-  const storedResults = JSON.parse(localStorage.getItem('savedResults')) || [];
-  savedResults = storedResults; // Update the global variable
-  storedResults.forEach(result => {
-    addScenarioToTable(result);
-  });
-  if (storedResults.length > 0) {
-    renderWTPComparison();
-  }
+  // Removed localStorage loading to prevent persistence across sessions
+  savedResults = [];
+  const tableBody = document.querySelector("#scenarioTable tbody");
+  tableBody.innerHTML = ''; // Clear any existing rows
 }
 
 /***************************************************************************
@@ -789,10 +790,10 @@ function toggleExperimentAttributes() {
 
 /***************************************************************************
  * FILTER FUNCTIONALITY FOR SCENARIOS
+ * Removed Filter by Uptake Probability
  ***************************************************************************/
 function filterScenarios() {
   const experimentFilter = document.getElementById("filterExperiment").value;
-  const uptakeFilter = parseFloat(document.getElementById("filterUptake").value) || 0;
 
   const tableBody = document.querySelector("#scenarioTable tbody");
   const rows = tableBody.getElementsByTagName("tr");
@@ -800,15 +801,10 @@ function filterScenarios() {
   for (let i = 0; i < rows.length; i++) {
     const cells = rows[i].getElementsByTagName("td");
     const experiment = cells[1].textContent;
-    const uptake = parseFloat(cells[8].textContent);
 
     let display = true;
 
     if (experimentFilter !== "all" && experiment !== experimentFilter) {
-      display = false;
-    }
-
-    if (uptake < uptakeFilter) {
       display = false;
     }
 
@@ -895,25 +891,19 @@ function renderWTPComparison() {
   // Initialize data storage
   const riskAttributes = ["Risk 8%", "Risk 16%", "Risk 30%"];
   const riskAttributesOthers = ["Risk 8% (Others)", "Risk 16% (Others)", "Risk 30% (Others)"];
+  const efficacyAttributes = ["Efficacy 50%", "Efficacy 90%"];
+  const efficacyAttributesOthers = ["Efficacy 50% (Others)", "Efficacy 90% (Others)"];
 
-  // Calculate average WTP for risk attributes across experiments
+  // Calculate average WTP for attributes across experiments
   const avgWTP = {
-    "Experiment 1": {},
-    "Experiment 2": {},
-    "Experiment 3": {}
+    "Experiment 1": { Efficacy: [], Risk: [] },
+    "Experiment 2": { Efficacy: [], Risk: [] },
+    "Experiment 3": { "Efficacy (Self)": [], "Risk (Self)": [], "Efficacy (Others)": [], "Risk (Others)": [] }
   };
 
   savedResults.forEach(scenario => {
     const experiment = scenario.experiment;
     if (!avgWTP[experiment]) return;
-
-    // Initialize sums and counts
-    if (!avgWTP[experiment]["self"]) {
-      avgWTP[experiment]["self"] = { sum: 0, count: 0 };
-    }
-    if (experiment === "Experiment 3" && !avgWTP[experiment]["others"]) {
-      avgWTP[experiment]["others"] = { sum: 0, count: 0 };
-    }
 
     // Find WTP data for the experiment
     const experimentNumber = experiment.split(' ')[1];
@@ -921,65 +911,89 @@ function renderWTPComparison() {
     if (!data) return;
 
     data.forEach(item => {
-      if (item.attribute.startsWith("Risk") && !item.attribute.includes("(Others)")) {
-        avgWTP[experiment]["self"].sum += item.wtp;
-        avgWTP[experiment]["self"].count += 1;
+      if (item.attribute.startsWith("Efficacy") && !item.attribute.includes("(Others)")) {
+        avgWTP[experiment]["Efficacy"].push(item.wtp);
       }
-      if (item.attribute.includes("(Others)")) {
-        avgWTP[experiment]["others"].sum += item.wtp;
-        avgWTP[experiment]["others"].count += 1;
+      if (item.attribute.startsWith("Risk") && !item.attribute.includes("(Others)")) {
+        avgWTP[experiment]["Risk"].push(item.wtp);
+      }
+      if (item.attribute.startsWith("Efficacy") && item.attribute.includes("(Others)")) {
+        avgWTP[experiment]["Efficacy (Others)"].push(item.wtp);
+      }
+      if (item.attribute.startsWith("Risk") && item.attribute.includes("(Others)")) {
+        avgWTP[experiment]["Risk (Others)"].push(item.wtp);
       }
     });
   });
 
+  // Compute average WTP
+  const computedAvgWTP = {
+    "Experiment 1": {
+      "Efficacy 50%": avgWTP["Experiment 1"].Efficacy.length > 0 ? (avgWTP["Experiment 1"].Efficacy.reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"].Efficacy.length).toFixed(2) : 0,
+      "Efficacy 90%": avgWTP["Experiment 1"].Efficacy.length > 0 ? (avgWTP["Experiment 1"].Efficacy.reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"].Efficacy.length).toFixed(2) : 0,
+      "Risk 8%": avgWTP["Experiment 1"].Risk.length > 0 ? (avgWTP["Experiment 1"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"].Risk.length).toFixed(2) : 0,
+      "Risk 16%": avgWTP["Experiment 1"].Risk.length > 0 ? (avgWTP["Experiment 1"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"].Risk.length).toFixed(2) : 0,
+      "Risk 30%": avgWTP["Experiment 1"].Risk.length > 0 ? (avgWTP["Experiment 1"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"].Risk.length).toFixed(2) : 0
+    },
+    "Experiment 2": {
+      "Efficacy 50%": avgWTP["Experiment 2"].Efficacy.length > 0 ? (avgWTP["Experiment 2"].Efficacy.reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"].Efficacy.length).toFixed(2) : 0,
+      "Efficacy 90%": avgWTP["Experiment 2"].Efficacy.length > 0 ? (avgWTP["Experiment 2"].Efficacy.reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"].Efficacy.length).toFixed(2) : 0,
+      "Risk 8%": avgWTP["Experiment 2"].Risk.length > 0 ? (avgWTP["Experiment 2"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"].Risk.length).toFixed(2) : 0,
+      "Risk 16%": avgWTP["Experiment 2"].Risk.length > 0 ? (avgWTP["Experiment 2"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"].Risk.length).toFixed(2) : 0,
+      "Risk 30%": avgWTP["Experiment 2"].Risk.length > 0 ? (avgWTP["Experiment 2"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"].Risk.length).toFixed(2) : 0
+    },
+    "Experiment 3": {
+      "Efficacy 50% (Self)": avgWTP["Experiment 3"]["Efficacy (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Efficacy (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Efficacy (Self)"].length).toFixed(2) : 0,
+      "Efficacy 90% (Self)": avgWTP["Experiment 3"]["Efficacy (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Efficacy (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Efficacy (Self)"].length).toFixed(2) : 0,
+      "Efficacy 50% (Others)": avgWTP["Experiment 3"]["Efficacy (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Efficacy (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Efficacy (Others)"].length).toFixed(2) : 0,
+      "Efficacy 90% (Others)": avgWTP["Experiment 3"]["Efficacy (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Efficacy (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Efficacy (Others)"].length).toFixed(2) : 0,
+      "Risk 8% (Self)": avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length).toFixed(2) : 0,
+      "Risk 16% (Self)": avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length).toFixed(2) : 0,
+      "Risk 30% (Self)": avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length).toFixed(2) : 0,
+      "Risk 8% (Others)": avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length).toFixed(2) : 0,
+      "Risk 16% (Others)": avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length).toFixed(2) : 0,
+      "Risk 30% (Others)": avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length).toFixed(2) : 0
+    }
+  };
+
   // Prepare chart data
-  const labels = ["Risk 8%", "Risk 16%", "Risk 30%"];
+  const labels = ["Risk 8%", "Risk 16%", "Risk 30%", "Efficacy 50%", "Efficacy 90%"];
   const datasets = [];
 
-  Object.keys(avgWTP).forEach((experiment, index) => {
-    if (experiment === "Experiment 3") {
-      // Average WTP for self and others
-      const avgSelf = avgWTP[experiment]["self"].count > 0 ? (avgWTP[experiment]["self"].sum / avgWTP[experiment]["self"].count) : 0;
-      const avgOthers = avgWTP[experiment]["others"].count > 0 ? (avgWTP[experiment]["others"].sum / avgWTP[experiment]["others"].count) : 0;
-      const combinedAvg = (avgSelf + avgOthers) / 2;
+  Object.keys(computedAvgWTP).forEach((experiment, index) => {
+    const dataSet = [];
 
-      datasets.push({
-        label: `${experiment} (Self)`,
-        data: [avgSelf, avgSelf, avgSelf], // For consistency in chart
-        backgroundColor: getColor(index),
-        borderColor: getColor(index).replace('0.6', '1'),
-        borderWidth: 1
-      });
+    labels.forEach(label => {
+      if (experiment === "Experiment 3") {
+        if (label.includes("Efficacy") && label.includes("(Others)")) {
+          dataSet.push(parseFloat(computedAvgWTP[experiment][label]));
+        } else if (label.includes("Efficacy")) {
+          dataSet.push(parseFloat(computedAvgWTP[experiment][label]));
+        } else if (label.includes("Risk") && label.includes("(Others)")) {
+          dataSet.push(parseFloat(computedAvgWTP[experiment][label]));
+        } else if (label.includes("Risk")) {
+          dataSet.push(parseFloat(computedAvgWTP[experiment][label]));
+        } else {
+          dataSet.push(0);
+        }
+      } else {
+        if (label.includes("Efficacy")) {
+          dataSet.push(parseFloat(computedAvgWTP[experiment][label]));
+        } else if (label.includes("Risk")) {
+          dataSet.push(parseFloat(computedAvgWTP[experiment][label]));
+        } else {
+          dataSet.push(0);
+        }
+      }
+    });
 
-      datasets.push({
-        label: `${experiment} (Others)`,
-        data: [avgOthers, avgOthers, avgOthers],
-        backgroundColor: 'rgba(149, 165, 166, 0.6)', // Gray color for others
-        borderColor: 'rgba(149, 165, 166, 1)',
-        borderWidth: 1
-      });
-
-      // Push combined average
-      datasets.push({
-        label: `${experiment} (Combined)`,
-        data: [combinedAvg, combinedAvg, combinedAvg],
-        backgroundColor: 'rgba(243, 156, 18, 0.6)', // Orange color for combined
-        borderColor: 'rgba(243, 156, 18, 1)',
-        borderWidth: 1
-      });
-
-    } else {
-      // Average WTP for self
-      const avgSelf = avgWTP[experiment]["self"].count > 0 ? (avgWTP[experiment]["self"].sum / avgWTP[experiment]["self"].count) : 0;
-
-      datasets.push({
-        label: experiment,
-        data: [avgSelf, avgSelf, avgSelf],
-        backgroundColor: getColor(index),
-        borderColor: getColor(index).replace('0.6', '1'),
-        borderWidth: 1
-      });
-    }
+    datasets.push({
+      label: experiment,
+      data: dataSet,
+      backgroundColor: getColor(index),
+      borderColor: getColor(index).replace('0.6', '1'),
+      borderWidth: 1
+    });
   });
 
   wtpComparisonChartInstance = new Chart(ctx, {
@@ -1003,7 +1017,7 @@ function renderWTPComparison() {
         legend: { position: 'top' },
         title: {
           display: true,
-          text: 'Average WTP for Risk Attributes Across Experiments',
+          text: 'Average WTP for Attributes Across Experiments',
           font: { size: 16 }
         }
       }
@@ -1032,40 +1046,19 @@ function getColor(index) {
 }
 
 /***************************************************************************
- * RENDER WTP CONCLUSION
- ***************************************************************************/
-function renderWTPConclusion() {
-  const conclusion = document.getElementById("wtpConclusion");
-  let conclusionText = `<strong>Conclusion:</strong> 
-  <br/><br/>
-  <em>Willingness to Pay (WTP)</em> for risk attributes provides insights into how much value patients place on minimizing risks associated with their treatments. By analyzing WTP across different experiments, we can understand the trade-offs between equity and risk aversion.
-  
-  <br/><br/>
-  <em>Key Observations:</em>
-  <ul>
-    <li>Higher WTP values indicate a greater preference for reducing risks.</li>
-    <li>Experiment 3, which considers both self and others' risks, shows how societal considerations influence risk aversion.</li>
-    <li>Understanding these preferences helps in designing health insurance plans that align with patient values and promote equitable health outcomes.</li>
-  </ul>
-  `;
-
-  conclusion.innerHTML = conclusionText;
-}
-
-/***************************************************************************
  * RENDER WTP COMPARISON CONCLUSION
  ***************************************************************************/
 function renderWTPComparisonConclusion() {
   const conclusion = document.getElementById("wtpComparisonConclusion");
   let conclusionText = `<strong>Conclusion:</strong> 
   <br/><br/>
-  The comparison of average WTP for risk attributes across different experiments reveals the underlying values and preferences of patients regarding risk management in their treatment plans.
-
+  The comparison of average WTP for both efficacy and risk attributes across different experiments reveals the underlying values and preferences of patients regarding risk management and treatment efficacy in their health plans.
+  
   <br/><br/>
   <em>Implications:</em>
   <ul>
-    <li><em>Equity Considerations:</em> Experiment 3, which accounts for both self and others' risks, demonstrates how societal concerns can affect patient preferences, indicating a willingness to invest more in reducing risks not only for themselves but also for others.</li>
-    <li><em>Risk Aversion:</em> Higher average WTP values in certain experiments suggest stronger aversion to risks, guiding insurers and policymakers to prioritize risk mitigation strategies that resonate with patient values.</li>
+    <li><em>Equity Considerations:</em> Experiment 3, which accounts for both self and others' attributes, demonstrates how societal concerns influence patient preferences, indicating a willingness to invest more in reducing risks and improving efficacy not only for themselves but also for others.</li>
+    <li><em>Risk and Efficacy Aversion:</em> Higher average WTP values for certain attributes suggest stronger aversion to risks or higher value placed on efficacy improvements, guiding insurers and policymakers to prioritize these aspects in plan designs.</li>
     <li>These insights facilitate the development of health insurance plans that balance efficiency with equity, ensuring that patient preferences are central to plan design.</li>
   </ul>
   `;
@@ -1132,12 +1125,166 @@ function displayUptakeProbability(uptakeProbability) {
 }
 
 /***************************************************************************
+ * BUILD SCENARIO FROM INPUTS
+ ***************************************************************************/
+function buildScenarioFromInputs() {
+  const experiment = document.getElementById("experimentSelect").value;
+  if (!experiment) {
+    alert("Please select an experiment.");
+    return null;
+  }
+
+  const efficacy = document.getElementById("efficacy").value;
+  const risk = document.getElementById("risk").value;
+  const cost = parseInt(document.getElementById("cost").value, 10);
+
+  // For Experiment 3, additional attributes
+  let efficacyOthers = "N/A"; // default reference
+  let riskOthers = "N/A"; // default reference
+  let costOthers = "N/A"; // default
+
+  if (experiment === '3') {
+    efficacyOthers = document.getElementById("efficacyOthers").value;
+    riskOthers = document.getElementById("riskOthers").value;
+    costOthers = parseInt(document.getElementById("costOthers").value, 10);
+  }
+
+  // Basic validation for all experiments
+  let missingFields = [];
+  if (!efficacy) missingFields.push("Efficacy");
+  if (!risk) missingFields.push("Risk");
+  if (isNaN(cost) || cost < 0 || cost > 1000) missingFields.push("Cost");
+
+  // Additional validation for Experiment 3
+  if (experiment === '3') {
+    if (!efficacyOthers) missingFields.push("Efficacy Others");
+    if (!riskOthers) missingFields.push("Risk Others");
+    if (isNaN(costOthers) || costOthers < 0 || costOthers > 1000) missingFields.push("Cost Others");
+  }
+
+  if (missingFields.length > 0) {
+    alert(`Please select the following attributes: ${missingFields.join(", ")}.`);
+    return null;
+  }
+
+  return {
+    experiment,
+    efficacy,
+    risk,
+    cost,
+    efficacyOthers,
+    riskOthers,
+    costOthers
+  };
+}
+
+/***************************************************************************
+ * DISPLAY HEALTH PLAN UPTAKE PROBABILITY
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * WTP CHART WITHOUT ERROR BARS
+ * Title changed to "WTP (USD)"
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * COSTS & BENEFITS ANALYSIS
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * SAVE SCENARIO
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * ADD SCENARIO TO TABLE
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * LOAD SAVED RESULTS FROM LOCAL STORAGE
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * TOGGLE ADDITIONAL ATTRIBUTES FOR EXPERIMENT 3
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * FILTER FUNCTIONALITY FOR SCENARIOS
+ * Removed Filter by Uptake Probability
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * EXPORT TO PDF FUNCTION
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * WTP COMPARISON ACROSS EXPERIMENTS FOCUSING ON RISK ATTRIBUTES
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * HELPER FUNCTION TO GET PROFESSIONAL COLORS
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
+ * RENDER WTP COMPARISON CONCLUSION
+ ***************************************************************************/
+/* 
+  This function has been moved above to ensure proper execution order.
+*/
+
+/***************************************************************************
  * INITIALIZE TOOLTIP FUNCTIONALITY
  ***************************************************************************/
 document.addEventListener("DOMContentLoaded", function() {
-  // Handle tooltip display on focus and blur for accessibility
+  // Handle tooltip display on hover and focus for accessibility
   const infoButtons = document.querySelectorAll('.info-button');
   infoButtons.forEach(button => {
+    button.addEventListener('mouseover', function() {
+      const tooltip = this.nextElementSibling;
+      if (tooltip) {
+        tooltip.style.visibility = 'visible';
+        tooltip.style.opacity = '1';
+      }
+    });
+    button.addEventListener('mouseout', function() {
+      const tooltip = this.nextElementSibling;
+      if (tooltip) {
+        tooltip.style.visibility = 'hidden';
+        tooltip.style.opacity = '0';
+      }
+    });
     button.addEventListener('focus', function() {
       const tooltip = this.nextElementSibling;
       if (tooltip) {
@@ -1154,3 +1301,10 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 });
+
+/***************************************************************************
+ * DEFINE RENDER PROBABILITY CHART FUNCTION
+ ***************************************************************************/
+function renderProbChart() {
+  predictUptake();
+}
