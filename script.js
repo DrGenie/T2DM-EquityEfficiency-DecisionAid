@@ -95,7 +95,7 @@ const coefficients = {
     riskOthers_8: -0.111,
     riskOthers_16: -0.103,
     riskOthers_30: -0.197,
-    cost: -0.0007,      // Updated
+    cost: -0.0007,       // Updated
     costOthers: -0.00041, // Updated
     ASC_sd: 1.033
   }
@@ -413,7 +413,7 @@ function renderWTPChart() {
   const labels = data.map(item => item.attribute);
   const values = data.map(item => item.wtp);
   const errors = data.map(item => item.se);
-  const colors = data.map(item => item.wtp >=0 ? 'rgba(39,174,96,0.6)' : 'rgba(231,76,60,0.6)');
+  const colors = data.map(item => item.wtp >=0 ? 'rgba(52, 152, 219, 0.6)' : 'rgba(231,76,60,0.6)');
 
   const dataConfig = {
     labels: labels,
@@ -421,7 +421,7 @@ function renderWTPChart() {
       label: "WTP (USD)",
       data: values,
       backgroundColor: colors,
-      borderColor: values.map(v => v >=0 ? 'rgba(39,174,96,1)' : 'rgba(231,76,60,1)'),
+      borderColor: values.map(v => v >=0 ? 'rgba(52, 152, 219, 1)' : 'rgba(231,76,60,1)'),
       borderWidth: 1
     }]
   };
@@ -661,8 +661,8 @@ function renderCostsBenefits() {
       datasets: [{
         label: 'USD',
         data: [monetizedBenefits],
-        backgroundColor: 'rgba(39,174,96,0.6)',
-        borderColor: 'rgba(27, 163, 156,1)',
+        backgroundColor: 'rgba(52, 152, 219, 0.6)',
+        borderColor: 'rgba(52, 152, 219, 1)',
         borderWidth: 1
       }]
     },
@@ -756,6 +756,7 @@ function addScenarioToTable(result) {
  ***************************************************************************/
 function loadSavedResults() {
   const storedResults = JSON.parse(localStorage.getItem('savedResults')) || [];
+  savedResults = storedResults; // Update the global variable
   storedResults.forEach(result => {
     addScenarioToTable(result);
   });
@@ -867,13 +868,29 @@ function renderWTPComparison() {
     }
   });
 
-  const labels = ["Efficacy 50%", "Efficacy 90%", "Risk 8%", "Risk 16%", "Risk 30%", "Risk Others 8%", "Risk Others 16%", "Risk Others 30%"];
-  const datasets = [];
+  // Determine unique attributes across all scenarios
+  const allAttributes = new Set();
+  savedResults.forEach(scenario => {
+    const experiment = scenario.experiment.split(' ')[1];
+    if (wtpData[experiment]) {
+      wtpData[experiment].forEach(item => {
+        allAttributes.add(item.attribute);
+      });
+    }
+  });
+  const labels = Array.from(allAttributes);
 
-  Object.keys(wtpPerScenario).forEach((scenarioName, index) => {
+  // Prepare datasets
+  const datasets = [];
+  savedResults.forEach((scenario, index) => {
+    const data = wtpPerScenario[scenario.name];
+    const mappedData = labels.map(label => {
+      const found = wtpData[scenario.experiment.split(' ')[1]].find(item => item.attribute === label);
+      return found ? found.wtp : 0;
+    });
     datasets.push({
-      label: scenarioName,
-      data: wtpPerScenario[scenarioName],
+      label: scenario.name,
+      data: mappedData,
       backgroundColor: getColor(index),
       borderColor: getColor(index).replace('0.6', '1'),
       borderWidth: 1
@@ -935,7 +952,7 @@ function renderWTPConclusion() {
   <br/><br/>
   <em>Key Observations:</em>
   <ul>
-    ${savedResults.map((scenario, index) => {
+    ${savedResults.map((scenario) => {
       return `<li><strong>${scenario.name}:</strong> The highest WTP is observed for <em>${getHighestWTPAttribute(scenario.name)}</em>.</li>`;
     }).join('')}
   </ul>
