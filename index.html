@@ -11,296 +11,296 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1>T2DM Equity-Efficiency Decision Aid Tool</h1>
-    <p>Assessing patient preferences for health insurance plans covering newer T2DM treatments.</p>
-  </header>
+  <div class="container">
+    <header>
+      <h1>T2DM Equity-Efficiency Decision Aid Tool</h1>
+      <p>Assessing patient preferences for health insurance plans covering newer T2DM treatments.</p>
+    </header>
 
-  <div class="tabs">
-    <button class="tablink active" onclick="openTab('introTab', this)">Introduction</button>
-    <button class="tablink" onclick="openTab('instructionsTab', this)">Instructions</button>
-    <button class="tablink" onclick="openTab('attributesTab', this)">Attributes</button>
-    <button class="tablink" onclick="openTab('inputsTab', this)">Inputs</button>
-    <button class="tablink" onclick="openTab('wtpTab', this)">WTP Results</button>
-    <button class="tablink" onclick="openTab('probTab', this)">Health Plan Uptake Probability</button>
-    <button class="tablink" onclick="openTab('costsTab', this)">Costs & Benefits</button>
-    <button class="tablink" onclick="openTab('scenariosTab', this)">Scenarios</button>
-  </div>
+    <div class="tabs">
+      <button class="tablink active" onclick="openTab('introTab', this)">Introduction</button>
+      <button class="tablink" onclick="openTab('instructionsTab', this)">Instructions</button>
+      <button class="tablink" onclick="openTab('attributesTab', this)">Attributes</button>
+      <button class="tablink" onclick="openTab('inputsTab', this)">Inputs</button>
+      <button class="tablink" onclick="openTab('wtpTab', this)">WTP Results</button>
+      <button class="tablink" onclick="openTab('probTab', this)">Health Plan Uptake Probability</button>
+      <button class="tablink" onclick="openTab('costsTab', this)">Costs & Benefits</button>
+      <button class="tablink" onclick="openTab('scenariosTab', this)">Scenarios</button>
+    </div>
 
-  <!-- Introduction Tab -->
-  <div id="introTab" class="tabcontent" style="display: block;">
-    <div class="intro-box">
+    <!-- Introduction Tab -->
+    <div id="introTab" class="tabcontent" style="display: block;">
+      <div class="intro-box">
+        <p>
+          Welcome to the T2DM Equity-Efficiency Decision Aid Tool. This tool is designed to help patients with Type 2 Diabetes Mellitus (T2DM) evaluate and understand their preferences for different health insurance plans covering newer T2DM treatments. By considering various attributes under different experimental conditions of equity and efficiency, the tool provides personalized insights to aid in informed decision-making.
+        </p>
+        <p>Use the tabs above to navigate through the tool:</p>
+        <ul>
+          <li><strong>Instructions</strong> – Step-by-step guidance on using the tool.</li>
+          <li><strong>Attributes</strong> – Detailed descriptions of the DCE attributes and levels.</li>
+          <li><strong>Inputs</strong> – Enter your plan-specific information.</li>
+          <li><strong>WTP Results</strong> – View bar charts of Willingness to Pay (WTP) for each attribute.</li>
+          <li><strong>Health Plan Uptake Probability</strong> – Visualize the predicted uptake probability based on your inputs.</li>
+          <li><strong>Costs &amp; Benefits</strong> – Analyze the cost-effectiveness of different plan scenarios.</li>
+          <li><strong>Scenarios</strong> – Save, compare, and export multiple plan scenarios.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Instructions Tab -->
+    <div id="instructionsTab" class="tabcontent">
+      <h2>How to Use This Tool</h2>
       <p>
-        Welcome to the T2DM Equity-Efficiency Decision Aid Tool. This tool is designed to help patients with Type 2 Diabetes Mellitus (T2DM) evaluate and understand their preferences for different health insurance plans covering newer T2DM treatments. By considering various attributes under different experimental conditions of equity and efficiency, the tool provides personalized insights to aid in informed decision-making.
+        Follow these steps to effectively use the T2DM Equity-Efficiency Decision Aid Tool:
       </p>
-      <p>Use the tabs above to navigate through the tool:</p>
-      <ul>
-        <li><strong>Instructions</strong> – Step-by-step guidance on using the tool.</li>
-        <li><strong>Attributes</strong> – Detailed descriptions of the DCE attributes and levels.</li>
-        <li><strong>Inputs</strong> – Enter your plan-specific information.</li>
-        <li><strong>WTP Results</strong> – View bar charts of Willingness to Pay (WTP) for each attribute.</li>
-        <li><strong>Health Plan Uptake Probability</strong> – Visualize the predicted uptake probability based on your inputs.</li>
-        <li><strong>Costs &amp; Benefits</strong> – Analyze the cost-effectiveness of different plan scenarios.</li>
-        <li><strong>Scenarios</strong> – Save, compare, and export multiple plan scenarios.</li>
-      </ul>
+      <ol>
+        <li><strong>Select Experiment:</strong> Choose one of the three experimental conditions to understand how different perspectives influence your preferences.</li>
+        <li><strong>Review Attributes:</strong> Navigate to the <strong>Attributes</strong> tab to familiarize yourself with the various attributes and their levels that describe the health insurance plans.</li>
+        <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, enter your plan attributes using sliders and selection options. Additional attributes will appear if you select Experiment 3.</li>
+        <li><strong>Predict Health Plan Uptake:</strong> Click on "Predict Health Plan Uptake" to compute the likelihood of choosing a particular health plan based on your inputs.</li>
+        <li><strong>View WTP Results:</strong> Navigate to the <strong>WTP Results</strong> tab and click "Show WTP Plots" to visualize your willingness to pay for each attribute.</li>
+        <li><strong>Check Health Plan Uptake Probability:</strong> In the <strong>Health Plan Uptake Probability</strong> tab, click "Show Probability Plot" to view a bar chart of the predicted uptake probability.</li>
+        <li><strong>Assess Costs &amp; Benefits:</strong> Go to the <strong>Costs &amp; Benefits</strong> tab to select a QALY gain scenario and review a comprehensive analysis of the economic implications of your selected plan.</li>
+        <li><strong>Manage Scenarios:</strong> Save your current scenario, compare multiple scenarios, and export your results to PDF in the <strong>Scenarios</strong> tab.</li>
+      </ol>
     </div>
-  </div>
 
-  <!-- Instructions Tab -->
-  <div id="instructionsTab" class="tabcontent">
-    <h2>How to Use This Tool</h2>
-    <p>
-      Follow these steps to effectively use the T2DM Equity-Efficiency Decision Aid Tool:
-    </p>
-    <ol>
-      <li><strong>Select Experiment:</strong> Choose one of the three experimental conditions to understand how different perspectives influence your preferences.</li>
-      <li><strong>Review Attributes:</strong> Navigate to the <strong>Attributes</strong> tab to familiarize yourself with the various attributes and their levels that describe the health insurance plans.</li>
-      <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, enter your plan attributes using sliders and selection options. Additional attributes will appear if you select Experiment 3.</li>
-      <li><strong>Predict Health Plan Uptake:</strong> Click on "Predict Health Plan Uptake" to compute the likelihood of choosing a particular health plan based on your inputs.</li>
-      <li><strong>View WTP Results:</strong> Navigate to the <strong>WTP Results</strong> tab and click "Show WTP Plots" to visualize your willingness to pay for each attribute.</li>
-      <li><strong>Check Health Plan Uptake Probability:</strong> In the <strong>Health Plan Uptake Probability</strong> tab, click "Show Probability Plot" to view a bar chart of the predicted uptake probability.</li>
-      <li><strong>Assess Costs &amp; Benefits:</strong> Go to the <strong>Costs &amp; Benefits</strong> tab to select a QALY gain scenario and review a comprehensive analysis of the economic implications of your selected plan.</li>
-      <li><strong>Manage Scenarios:</strong> Save your current scenario, compare multiple scenarios, and export your results to PDF in the <strong>Scenarios</strong> tab.</li>
-    </ol>
-  </div>
-
-  <!-- Attributes Tab -->
-  <div id="attributesTab" class="tabcontent">
-    <h2>Study Attributes and Levels</h2>
-    <h3>Attributes</h3>
-    <div class="attributes-list">
-      <div class="attribute-item">
-        <h4>Chance of Reaching Target A1C in 6 Months</h4>
-        <p>The expected probability of achieving target A1C (long-term blood glucose level) after taking the medication.</p>
-        <ul>
-          <li>10%</li>
-          <li>50%</li>
-          <li>90%</li>
-        </ul>
+    <!-- Attributes Tab -->
+    <div id="attributesTab" class="tabcontent">
+      <h2>Study Attributes and Levels</h2>
+      <h3>Attributes</h3>
+      <div class="attributes-list">
+        <div class="attribute-item">
+          <h4>Chance of Reaching Target A1C in 6 Months</h4>
+          <p>The expected probability of achieving target A1C (long-term blood glucose level) after taking the medication.</p>
+          <ul>
+            <li>10%</li>
+            <li>50%</li>
+            <li>90%</li>
+          </ul>
+        </div>
+        <div class="attribute-item">
+          <h4>Chance of Side Effects</h4>
+          <p>The risk of experiencing side effects such as gastrointestinal issues or genital infections.</p>
+          <ul>
+            <li>0%</li>
+            <li>8%</li>
+            <li>16%</li>
+            <li>30%</li>
+          </ul>
+        </div>
+        <div class="attribute-item">
+          <h4>Monthly Out-of-Pocket Cost (USD)</h4>
+          <p>This refers to the total amount patients pay for the T2D treatments.</p>
+          <ul>
+            <li>$0</li>
+            <li>$200</li>
+            <li>$500</li>
+            <li>$1000</li>
+          </ul>
+        </div>
       </div>
-      <div class="attribute-item">
-        <h4>Chance of Side Effects</h4>
-        <p>The risk of experiencing side effects such as gastrointestinal issues or genital infections.</p>
-        <ul>
-          <li>0%</li>
-          <li>8%</li>
-          <li>16%</li>
-          <li>30%</li>
-        </ul>
-      </div>
-      <div class="attribute-item">
-        <h4>Monthly Out-of-Pocket Cost (USD)</h4>
-        <p>This refers to the total amount patients pay for the T2D treatments.</p>
-        <ul>
-          <li>$0</li>
-          <li>$200</li>
-          <li>$500</li>
-          <li>$1000</li>
-        </ul>
-      </div>
+      <h3>Experimental Conditions</h3>
+      <ol>
+        <li><strong>Experiment 1: Self-focused Outcomes</strong> – Preferences based solely on personal efficacy, risk, and cost.</li>
+        <li><strong>Experiment 2: Equal Health Outcomes for Self and Others</strong> – Incorporates societal influences by considering equal health outcomes for self and other patients with poorer health.</li>
+        <li><strong>Experiment 3: Varying Health Outcomes for Self and Others</strong> – Examines preferences when health outcomes and costs vary between self and other patients with poorer health.</li>
+      </ol>
     </div>
-    <h3>Experimental Conditions</h3>
-    <ol>
-      <li><strong>Experiment 1: Self-focused Outcomes</strong> – Preferences based solely on personal efficacy, risk, and cost.</li>
-      <li><strong>Experiment 2: Equal Health Outcomes for Self and Others</strong> – Incorporates societal influences by considering equal health outcomes for self and other patients with poorer health.</li>
-      <li><strong>Experiment 3: Varying Health Outcomes for Self and Others</strong> – Examines preferences when health outcomes and costs vary between self and other patients with poorer health.</li>
-    </ol>
-  </div>
 
-  <!-- Inputs Tab -->
-  <div id="inputsTab" class="tabcontent">
-    <h2>Inputs</h2>
-    <form onsubmit="event.preventDefault();">
-      <div class="form-grid">
-        <!-- Experiment Selection -->
-        <div class="form-item">
-          <label for="experimentSelect"><strong>Select Experiment:</strong></label>
-          <select id="experimentSelect" required>
-            <option value="">--Select Experiment--</option>
-            <option value="1">Experiment 1: Self-focused Outcomes</option>
-            <option value="2">Experiment 2: Equal Health Outcomes for Self and Others</option>
-            <option value="3">Experiment 3: Varying Health Outcomes for Self and Others</option>
-          </select>
-        </div>
+    <!-- Inputs Tab -->
+    <div id="inputsTab" class="tabcontent">
+      <h2>Inputs</h2>
+      <form onsubmit="event.preventDefault();">
+        <div class="form-grid">
+          <!-- Experiment Selection -->
+          <div class="form-item">
+            <label for="experimentSelect"><strong>Select Experiment:</strong></label>
+            <select id="experimentSelect" required>
+              <option value="">--Select Experiment--</option>
+              <option value="1">Experiment 1: Self-focused Outcomes</option>
+              <option value="2">Experiment 2: Equal Health Outcomes for Self and Others</option>
+              <option value="3">Experiment 3: Varying Health Outcomes for Self and Others</option>
+            </select>
+          </div>
 
-        <!-- Plan Attributes -->
-        <h3>Health Plan Attributes</h3>
-        <div class="form-item">
-          <label for="efficacy"><strong>Chance of Reaching Target A1C in 6 Months:</strong></label>
-          <select id="efficacy" name="efficacy" required>
-            <option value="">--Select Efficacy--</option>
-            <option value="10">10%</option>
-            <option value="50">50%</option>
-            <option value="90">90%</option>
-          </select>
-        </div>
+          <!-- Plan Attributes -->
+          <h3>Health Plan Attributes</h3>
+          <div class="form-item">
+            <label for="efficacy"><strong>Chance of Reaching Target A1C in 6 Months:</strong></label>
+            <select id="efficacy" name="efficacy" required>
+              <option value="">--Select Efficacy--</option>
+              <option value="10">10%</option>
+              <option value="50">50%</option>
+              <option value="90">90%</option>
+            </select>
+          </div>
 
-        <div class="form-item">
-          <label for="risk"><strong>Chance of Side Effects:</strong></label>
-          <select id="risk" name="risk" required>
-            <option value="">--Select Risk Level--</option>
-            <option value="0">0%</option>
-            <option value="8">8%</option>
-            <option value="16">16%</option>
-            <option value="30">30%</option>
-          </select>
-        </div>
+          <div class="form-item">
+            <label for="risk"><strong>Chance of Side Effects:</strong></label>
+            <select id="risk" name="risk" required>
+              <option value="">--Select Risk Level--</option>
+              <option value="0">0%</option>
+              <option value="8">8%</option>
+              <option value="16">16%</option>
+              <option value="30">30%</option>
+            </select>
+          </div>
 
-        <div class="form-item">
-          <label for="cost"><strong>Monthly Out-of-Pocket Cost (USD):</strong></label>
-          <input 
-            type="range" 
-            id="cost" 
-            name="cost"
-            min="0" 
-            max="1000" 
-            step="10" 
-            value="200"
-            oninput="updateCostDisplay(this.value)" 
-          />
-          <span id="costValue">$200</span>
-        </div>
+          <div class="form-item">
+            <label for="cost"><strong>Monthly Out-of-Pocket Cost (USD):</strong></label>
+            <input 
+              type="range" 
+              id="cost" 
+              name="cost"
+              min="0" 
+              max="1000" 
+              step="10" 
+              value="200"
+              oninput="updateCostDisplay(this.value)" 
+            />
+            <span id="costValue">$200</span>
+          </div>
 
-        <!-- Additional Attributes for Experiment 3 -->
-        <div class="form-item" id="efficacyOthersDiv" style="display: none;">
-          <label for="efficacyOthers"><strong>Chance of Reaching Target A1C for Others:</strong></label>
-          <select id="efficacyOthers" name="efficacyOthers">
-            <option value="">--Select Efficacy for Others--</option>
-            <option value="10">10%</option>
-            <option value="50">50%</option>
-            <option value="90">90%</option>
-          </select>
-        </div>
+          <!-- Additional Attributes for Experiment 3 -->
+          <div class="form-item" id="efficacyOthersDiv" style="display: none;">
+            <label for="efficacyOthers"><strong>Chance of Reaching Target A1C for Others:</strong></label>
+            <select id="efficacyOthers" name="efficacyOthers">
+              <option value="">--Select Efficacy for Others--</option>
+              <option value="10">10%</option>
+              <option value="50">50%</option>
+              <option value="90">90%</option>
+            </select>
+          </div>
 
-        <div class="form-item" id="riskOthersDiv" style="display: none;">
-          <label for="riskOthers"><strong>Chance of Side Effects for Others:</strong></label>
-          <select id="riskOthers" name="riskOthers">
-            <option value="">--Select Risk Level for Others--</option>
-            <option value="0">0%</option>
-            <option value="8">8%</option>
-            <option value="16">16%</option>
-            <option value="30">30%</option>
-          </select>
-        </div>
+          <div class="form-item" id="riskOthersDiv" style="display: none;">
+            <label for="riskOthers"><strong>Chance of Side Effects for Others:</strong></label>
+            <select id="riskOthers" name="riskOthers">
+              <option value="">--Select Risk Level for Others--</option>
+              <option value="0">0%</option>
+              <option value="8">8%</option>
+              <option value="16">16%</option>
+              <option value="30">30%</option>
+            </select>
+          </div>
 
-        <!-- Monthly Out-of-Pocket Cost for Others (Experiment 3) -->
-        <div class="form-item" id="costOthersDiv" style="display: none;">
-          <label for="costOthers"><strong>Monthly Out-of-Pocket Cost for Others (USD):</strong></label>
-          <input 
-            type="range" 
-            id="costOthers" 
-            name="costOthers"
-            min="0" 
-            max="1000" 
-            step="10" 
-            value="200"
-            oninput="updateCostOthersDisplay(this.value)" 
-          />
-          <span id="costOthersValue">$200</span>
+          <!-- Monthly Out-of-Pocket Cost for Others (Experiment 3) -->
+          <div class="form-item" id="costOthersDiv" style="display: none;">
+            <label for="costOthers"><strong>Monthly Out-of-Pocket Cost for Others (USD):</strong></label>
+            <input 
+              type="range" 
+              id="costOthers" 
+              name="costOthers"
+              min="0" 
+              max="1000" 
+              step="10" 
+              value="200"
+              oninput="updateCostOthersDisplay(this.value)" 
+            />
+            <span id="costOthersValue">$200</span>
+          </div>
         </div>
-      </div>
+        <div class="buttons-row">
+          <button type="button" onclick="predictUptake()">Predict Health Plan Uptake</button>
+          <button type="button" onclick="saveScenario()">Save Result</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- WTP Results Tab -->
+    <div id="wtpTab" class="tabcontent">
+      <h2>Willingness to Pay (WTP) Results</h2>
+      <p>
+        The Willingness-to-Pay (WTP) for each attribute is calculated by taking the ratio of the attribute’s coefficient to the negative of the "Monthly out-of-pocket cost" coefficient. This metric quantifies the monetary value respondents place on each attribute, holding other factors constant.
+      </p>
       <div class="buttons-row">
-        <button type="button" onclick="predictUptake()">Predict Health Plan Uptake</button>
-        <button type="button" onclick="saveScenario()">Save Result</button>
+        <button onclick="renderWTPChart()">Show WTP Plots</button>
       </div>
-    </form>
-  </div>
-
-  <!-- WTP Results Tab -->
-  <div id="wtpTab" class="tabcontent">
-    <h2>Willingness to Pay (WTP) Results</h2>
-    <p>
-      The Willingness-to-Pay (WTP) for each attribute is calculated by taking the ratio of the attribute’s coefficient to the negative of the "Monthly out-of-pocket cost" coefficient. This metric quantifies the monetary value respondents place on each attribute, holding other factors constant.
-    </p>
-    <div class="buttons-row">
-      <button onclick="renderWTPChart()">Show WTP Plots</button>
-    </div>
-    <div class="chart-grid">
-      <div class="chart-box">
-        <h3>WTP (USD) with Error Bars</h3>
-        <canvas id="wtpChartMain"></canvas>
+      <div class="chart-grid">
+        <div class="chart-box">
+          <h3>WTP (USD) with Error Bars</h3>
+          <canvas id="wtpChartMain"></canvas>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Health Plan Uptake Probability Tab -->
-  <div id="probTab" class="tabcontent">
-    <h2>Health Plan Uptake Probability</h2>
-    <p>
-      Click “Show Probability Plot” to compute a new bar chart based on your <strong>Inputs</strong>. Depending on whether the predicted uptake is below 30%, between 30–70%, or above 70%, you will receive suggestions for adjustments in cost, efficacy, or risk.
-    </p>
-    <div class="buttons-row">
-      <button onclick="renderProbChart()">Show Probability Plot</button>
-    </div>
-    <div class="chart-grid">
-      <div class="chart-box">
-        <h3>Health Plan Uptake Probability</h3>
-        <canvas id="probChartMain"></canvas>
+    <!-- Health Plan Uptake Probability Tab -->
+    <div id="probTab" class="tabcontent">
+      <h2>Health Plan Uptake Probability</h2>
+      <p>
+        Click “Show Probability Plot” to compute a new bar chart based on your <strong>Inputs</strong>. Depending on whether the predicted uptake is below 30%, between 30–70%, or above 70%, you will receive suggestions for adjustments in cost, efficacy, or risk.
+      </p>
+      <div class="buttons-row">
+        <button onclick="renderProbChart()">Show Probability Plot</button>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-box">
+          <h3>Health Plan Uptake Probability</h3>
+          <canvas id="probChartMain"></canvas>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Costs & Benefits Tab -->
-  <div id="costsTab" class="tabcontent">
-    <h2>Costs &amp; Benefits</h2>
-    <div id="costsBenefitsContainer">
-      <div class="qaly-selector">
-        <label for="qalySelect"><strong>Select QALY Gain Scenario:</strong></label>
-        <select id="qalySelect" onchange="renderCostsBenefits()">
-          <option value="low">Low (0.02 QALYs per participant)</option>
-          <option value="moderate" selected>Moderate (0.05 QALYs per participant)</option>
-          <option value="high">High (0.1 QALYs per participant)</option>
-        </select>
+    <!-- Costs & Benefits Tab -->
+    <div id="costsTab" class="tabcontent">
+      <h2>Costs &amp; Benefits</h2>
+      <div id="costsBenefitsContainer">
+        <div class="qaly-selector">
+          <label for="qalySelect"><strong>Select QALY Gain Scenario:</strong></label>
+          <select id="qalySelect" onchange="renderCostsBenefits()">
+            <option value="low">Low (0.02 QALYs per participant)</option>
+            <option value="moderate" selected>Moderate (0.05 QALYs per participant)</option>
+            <option value="high">High (0.1 QALYs per participant)</option>
+          </select>
+        </div>
+        <div id="costsBenefitsResults">
+          <!-- Results will be injected here -->
+        </div>
       </div>
-      <div id="costsBenefitsResults">
-        <!-- Results will be injected here -->
+    </div>
+
+    <!-- Scenarios Tab -->
+    <div id="scenariosTab" class="tabcontent">
+      <h2>Saved Scenarios</h2>
+      <p>
+        Save your scenario from <strong>Inputs</strong> and compare or export multiple configurations, including WTP and uptake probability charts, to PDF.
+      </p>
+      <div class="buttons-row">
+        <button onclick="renderWTPComparison()">Compare All Scenarios</button>
+        <button onclick="exportToPDF()">Export Comparison to PDF</button>
+      </div>
+      <table id="scenarioTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Experiment</th>
+            <th>Efficacy (%)</th>
+            <th>Risk (%)</th>
+            <th>Cost (USD)</th>
+            <th>Efficacy Others (%)</th>
+            <th>Risk Others (%)</th>
+            <th>Cost Others (USD)</th>
+            <th>Uptake (%)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <!-- WTP Comparison Chart -->
+      <div id="wtpComparisonContainer" style="margin-top: 40px; display: none;">
+        <h3>WTP Comparison Across Experiments</h3>
+        <canvas id="wtpComparisonChart"></canvas>
+        <p id="wtpConclusion" style="margin-top: 20px; font-weight: bold;"></p>
       </div>
     </div>
+
+    <footer>
+      <p>
+        &copy; 2025 T2DM Equity-Efficiency Decision Aid Tool. All Rights Reserved. <br/>
+        Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
+      </p>
+    </footer>
   </div>
-
-  <!-- Scenarios Tab -->
-  <div id="scenariosTab" class="tabcontent">
-    <h2>Saved Scenarios</h2>
-    <p>
-      Save your scenario from <strong>Inputs</strong> and compare or export multiple configurations, including WTP and uptake probability charts, to PDF.
-    </p>
-    <div class="buttons-row">
-      <button onclick="renderWTPComparison()">Compare All Scenarios</button>
-      <button onclick="exportToPDF()">Export Comparison to PDF</button>
-    </div>
-    <table id="scenarioTable">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Experiment</th>
-          <th>Efficacy (%)</th>
-          <th>Risk (%)</th>
-          <th>Cost (USD)</th>
-          <th>Efficacy Others (%)</th>
-          <th>Risk Others (%)</th>
-          <th>Cost Others (USD)</th>
-          <th>Uptake (%)</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <!-- WTP Comparison Chart -->
-    <div id="wtpComparisonContainer" style="margin-top: 40px; display: none;">
-      <h3>WTP Comparison Across Experiments</h3>
-      <canvas id="wtpComparisonChart"></canvas>
-      <p id="wtpConclusion" style="margin-top: 20px; font-weight: bold;"></p>
-    </div>
-  </div>
-
-  <footer>
-    <p>
-      &copy; 2025 T2DM Equity-Efficiency Decision Aid Tool. All Rights Reserved. <br/>
-      Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
-    </p>
-  </footer>
-</div>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
