@@ -12,7 +12,7 @@
  * 10) Enforce selection of all attributes with specific validation messages
  * 11) Filter functionality for scenarios
  * 12) Accessibility enhancements
- * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (NBS, The University of Newcastle, Australia)
+ * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
  *****************************************************************************/
 
 /** Global variable to store current uptake probability */
@@ -1074,218 +1074,61 @@ function renderWTPComparisonConclusion() {
 }
 
 /***************************************************************************
- * EXPORT TO PDF FUNCTION
+ * DISPLAY HEALTH PLAN UPTAKE PROBABILITY
  ***************************************************************************/
-function exportToPDF() {
-  if (savedResults.length < 1) {
-    alert("No scenarios saved to export.");
-    return;
+function displayUptakeProbability(uptakeProbability) {
+  const ctx = document.getElementById("probChartMain").getContext("2d");
+
+  if (probChartInstance) {
+    probChartInstance.destroy();
   }
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 15;
-  let currentY = margin;
-
-  doc.setFontSize(16);
-  doc.text("T2DM Equity-Efficiency Decision Aid Tool - Scenarios Comparison", pageWidth / 2, currentY, { align: 'center' });
-  currentY += 10;
-
-  savedResults.forEach((scenario, index) => {
-    // Check if adding this scenario exceeds the page height
-    if (currentY + 80 > pageHeight - margin) {
-      doc.addPage();
-      currentY = margin;
-    }
-
-    doc.setFontSize(14);
-    doc.text(`${scenario.name}: ${scenario.experiment}`, margin, currentY);
-    currentY += 7;
-
-    doc.setFontSize(12);
-    doc.text(`Efficacy: ${scenario.efficacy}%`, margin, currentY);
-    currentY += 5;
-    doc.text(`Risk: ${scenario.risk}%`, margin, currentY);
-    currentY += 5;
-    doc.text(`Monthly Out-of-Pocket Cost: $${scenario.cost}`, margin, currentY);
-    currentY += 5;
-    if (scenario.efficacyOthers !== 'N/A') {
-      doc.text(`Efficacy Others: ${scenario.efficacyOthers}%`, margin, currentY);
-      currentY += 5;
-    }
-    if (scenario.riskOthers !== 'N/A') {
-      doc.text(`Risk Others: ${scenario.riskOthers}%`, margin, currentY);
-      currentY += 5;
-    }
-    if (scenario.costOthers !== 'N/A') {
-      doc.text(`Monthly Out-of-Pocket Cost Others: $${scenario.costOthers}`, margin, currentY);
-      currentY += 5;
-    }
-    doc.text(`Health Plan Uptake Probability: ${scenario.uptake}%`, margin, currentY);
-    currentY += 10;
-  });
-
-  doc.save("Scenarios_Comparison.pdf");
-}
-
-/***************************************************************************
- * WTP COMPARISON ACROSS EXPERIMENTS FOCUSING ON RISK ATTRIBUTES
- ***************************************************************************/
-let wtpComparisonChartInstance = null;
-function renderWTPComparison() {
-  if (savedResults.length < 1) {
-    document.getElementById("wtpComparisonContainer").style.display = "none";
-    return;
-  }
-
-  document.getElementById("wtpComparisonContainer").style.display = "block";
-
-  const ctx = document.getElementById("wtpComparisonChart").getContext("2d");
-
-  if (wtpComparisonChartInstance) {
-    wtpComparisonChartInstance.destroy();
-  }
-
-  // Initialize data storage
-  const riskAttributes = ["Risk 8%", "Risk 16%", "Risk 30%"];
-  const riskAttributesOthers = ["Risk 8% (Others)", "Risk 16% (Others)", "Risk 30% (Others)"];
-
-  // Calculate average WTP for risk attributes across experiments
-  const avgWTP = {
-    "Experiment 1": {},
-    "Experiment 2": {},
-    "Experiment 3": {}
-  };
-
-  savedResults.forEach(scenario => {
-    const experiment = scenario.experiment;
-    if (!avgWTP[experiment]) return;
-
-    // Initialize sums and counts
-    if (!avgWTP[experiment]["self"]) {
-      avgWTP[experiment]["self"] = { sum: 0, count: 0 };
-    }
-    if (experiment === "Experiment 3" && !avgWTP[experiment]["others"]) {
-      avgWTP[experiment]["others"] = { sum: 0, count: 0 };
-    }
-
-    // Find WTP data for the experiment
-    const experimentNumber = experiment.split(' ')[1];
-    const data = wtpData[experimentNumber];
-    if (!data) return;
-
-    data.forEach(item => {
-      if (item.attribute.startsWith("Risk") && !item.attribute.includes("(Others)")) {
-        avgWTP[experiment]["self"].sum += item.wtp;
-        avgWTP[experiment]["self"].count += 1;
-      }
-      if (item.attribute.includes("(Others)")) {
-        avgWTP[experiment]["others"].sum += item.wtp;
-        avgWTP[experiment]["others"].count += 1;
-      }
-    });
-  });
-
-  // Prepare chart data
-  const labels = ["Risk 8%", "Risk 16%", "Risk 30%"];
-  const datasets = [];
-
-  Object.keys(avgWTP).forEach((experiment, index) => {
-    if (experiment === "Experiment 3") {
-      // Average WTP for self and others
-      const avgSelf = avgWTP[experiment]["self"].count > 0 ? (avgWTP[experiment]["self"].sum / avgWTP[experiment]["self"].count) : 0;
-      const avgOthers = avgWTP[experiment]["others"].count > 0 ? (avgWTP[experiment]["others"].sum / avgWTP[experiment]["others"].count) : 0;
-      const combinedAvg = (avgSelf + avgOthers) / 2;
-
-      datasets.push({
-        label: `${experiment} (Self)`,
-        data: [avgSelf, avgSelf, avgSelf], // For consistency in chart
-        backgroundColor: getColor(index),
-        borderColor: getColor(index).replace('0.6', '1'),
-        borderWidth: 1
-      });
-
-      datasets.push({
-        label: `${experiment} (Others)`,
-        data: [avgOthers, avgOthers, avgOthers],
-        backgroundColor: 'rgba(149, 165, 166, 0.6)', // Gray color for others
-        borderColor: 'rgba(149, 165, 166, 1)',
-        borderWidth: 1
-      });
-
-      // Push combined average
-      datasets.push({
-        label: `${experiment} (Combined)`,
-        data: [combinedAvg, combinedAvg, combinedAvg],
-        backgroundColor: 'rgba(243, 156, 18, 0.6)', // Orange color for combined
-        borderColor: 'rgba(243, 156, 18, 1)',
-        borderWidth: 1
-      });
-
-    } else {
-      // Average WTP for self
-      const avgSelf = avgWTP[experiment]["self"].count > 0 ? (avgWTP[experiment]["self"].sum / avgWTP[experiment]["self"].count) : 0;
-
-      datasets.push({
-        label: experiment,
-        data: [avgSelf, avgSelf, avgSelf],
-        backgroundColor: getColor(index),
-        borderColor: getColor(index).replace('0.6', '1'),
-        borderWidth: 1
-      });
-    }
-  });
-
-  wtpComparisonChartInstance = new Chart(ctx, {
+  probChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: labels,
-      datasets: datasets
+      labels: ["Health Plan Uptake Probability"],
+      datasets: [{
+        label: 'Probability (%)',
+        data: [uptakeProbability],
+        backgroundColor: uptakeProbability < 30 ? 'rgba(231,76,60,0.6)'
+                         : uptakeProbability < 70 ? 'rgba(241,196,15,0.6)'
+                                 : 'rgba(39,174,96,0.6)',
+        borderColor: uptakeProbability < 30 ? 'rgba(231,76,60,1)'
+                      : uptakeProbability < 70 ? 'rgba(241,196,15,1)'
+                              : 'rgba(39,174,96,1)',
+        borderWidth: 1
+      }]
     },
     options: {
       responsive: true,
+      indexAxis: 'y',
       scales: {
-        y: { 
+        x: {
           beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Average WTP (USD)'
-          }
+          max: 100
         }
       },
       plugins: {
-        legend: { position: 'top' },
+        legend: { display: false },
         title: {
           display: true,
-          text: 'Average WTP for Risk Attributes Across Experiments',
+          text: `Health Plan Uptake Probability = ${uptakeProbability.toFixed(2)}%`,
           font: { size: 16 }
         }
       }
     }
   });
 
-  // Render Conclusion
-  renderWTPComparisonConclusion();
-}
-
-/***************************************************************************
- * HELPER FUNCTION TO GET PROFESSIONAL COLORS
- ***************************************************************************/
-function getColor(index) {
-  const colors = [
-    'rgba(52, 152, 219, 0.6)',  // Blue
-    'rgba(46, 204, 113, 0.6)',  // Green
-    'rgba(231, 76, 60, 0.6)',   // Red
-    'rgba(155, 89, 182, 0.6)',  // Purple
-    'rgba(241, 196, 15, 0.6)',  // Yellow
-    'rgba(52, 73, 94, 0.6)',    // Dark Blue
-    'rgba(26, 188, 156, 0.6)',  // Teal
-    'rgba(236, 240, 241, 0.6)'   // Light Gray
-  ];
-  return colors[index % colors.length];
+  // Provide dynamic suggestions
+  let interpretation = "";
+  if (uptakeProbability < 30) {
+    interpretation = "Uptake is relatively low. Consider lowering cost or increasing efficacy.";
+  } else if (uptakeProbability < 70) {
+    interpretation = "Uptake is moderate. Additional improvements may further boost health plan choice.";
+  } else {
+    interpretation = "Uptake is high. Maintaining these attributes is recommended.";
+  }
+  alert(`Predicted probability: ${uptakeProbability.toFixed(2)}%. ${interpretation}`);
 }
 
 /***************************************************************************
