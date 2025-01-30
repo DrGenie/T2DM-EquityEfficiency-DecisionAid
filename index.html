@@ -32,7 +32,7 @@
     <div id="introTab" class="tabcontent" style="display: block;">
       <div class="intro-box">
         <p>
-          Welcome to the T2DM Equity-Efficiency Decision Aid Tool. This tool is designed to help patients with Type 2 Diabetes Mellitus (T2DM) evaluate and understand their preferences for different health insurance plans covering newer T2DM treatments. By considering various attributes under different experimental conditions of equity and efficiency, the tool provides personalized insights to aid in informed decision-making.
+          Welcome to the T2DM Equity-Efficiency Decision Aid Tool. This tool is designed to help users evaluate and understand patients' preferences for different health insurance plans covering newer Type 2 Diabetes Mellitus (T2DM) treatments. By considering efficacy, risk, and cost under different experimental conditions of equity and efficiency, the tool provides insights to aid in informed decision-making.
         </p>
         <p>Use the tabs above to navigate through the tool:</p>
         <ul>
@@ -56,7 +56,7 @@
       <ol>
         <li><strong>Select Experiment:</strong> Choose one of the three experimental conditions to understand how different perspectives influence your preferences.</li>
         <li><strong>Review Attributes:</strong> Navigate to the <strong>Attributes</strong> tab to familiarize yourself with the various attributes and their levels that describe the health insurance plans.</li>
-        <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, enter your plan attributes using sliders and selection options. Additional attributes will appear if you select Experiment 3.</li>
+        <li><strong>Input Your Details:</strong> In the <strong>Inputs</strong> tab, select the experiment and adjust the plan attributes using sliders and selection options. Additional attributes will appear if you select Experiment 3.</li>
         <li><strong>Predict Health Plan Uptake:</strong> Click on "Predict Health Plan Uptake" to compute the likelihood of choosing a particular health plan based on your inputs.</li>
         <li><strong>View WTP Results:</strong> Navigate to the <strong>WTP Results</strong> tab and click "Show WTP Plots" to visualize your willingness to pay for each attribute.</li>
         <li><strong>Check Health Plan Uptake Probability:</strong> In the <strong>Health Plan Uptake Probability</strong> tab, click "Show Probability Plot" to view a bar chart of the predicted uptake probability.</li>
@@ -218,7 +218,7 @@
       </div>
       <div class="chart-grid">
         <div class="chart-box">
-          <h3>WTP (USD) with Error Bars</h3>
+          <h3>WTP (USD)</h3>
           <canvas id="wtpChartMain"></canvas>
         </div>
       </div>
@@ -255,6 +255,9 @@
         </div>
         <div id="costsBenefitsResults">
           <!-- Results will be injected here -->
+          <p class="description">
+            The cost components are derived from a targeted literature review focusing on various aspects such as advertisement, training, medication, and healthcare provider visits. Benefits are calculated based on the selected Quality-Adjusted Life Year (QALY) gain scenario and monetized using a standard value per QALY.
+          </p>
         </div>
       </div>
     </div>
@@ -288,9 +291,9 @@
 
       <!-- WTP Comparison Chart -->
       <div id="wtpComparisonContainer" style="margin-top: 40px; display: none;">
-        <h3>WTP Comparison Across Experiments</h3>
+        <h3>WTP Comparison Across Scenarios</h3>
         <canvas id="wtpComparisonChart"></canvas>
-        <p id="wtpConclusion" style="margin-top: 20px; font-weight: bold;"></p>
+        <p id="wtpConclusion" style="margin-top: 20px;"></p>
       </div>
     </div>
 
