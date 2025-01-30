@@ -6,49 +6,62 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
   color: #333;
 }
 
 .container {
-  width: 90%;
+  width: 95%;
+  max-width: 1200px;
   margin: auto;
   overflow: hidden;
   padding: 20px;
-  background-color: #fff;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 /* Header */
 header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 header h1 {
   margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+header p {
+  font-size: 1.1em;
+  color: #7f8c8d;
 }
 
 /* Tabs */
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 20px;
+  border-bottom: 2px solid #ecf0f1;
+  margin-bottom: 30px;
 }
 
 .tablink {
-  background-color: inherit;
+  background-color: #ecf0f1;
   border: none;
   outline: none;
-  padding: 14px 16px;
+  padding: 14px 20px;
   cursor: pointer;
   transition: background-color 0.3s;
   font-size: 16px;
+  color: #2c3e50;
+  margin-right: 2px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .tablink:hover {
-  background-color: #ddd;
+  background-color: #bdc3c7;
 }
 
 .tablink.active {
@@ -62,17 +75,17 @@ header h1 {
 }
 
 .intro-box, .form-grid, .buttons-row, .chart-grid, .chart-box, .attributes-list, .attribute-item, .qaly-selector {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .attribute-item {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 25px;
 }
 
 .form-item {
@@ -81,33 +94,43 @@ header h1 {
 }
 
 .form-item label {
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-item select, .form-item input[type="range"] {
+  padding: 8px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  font-size: 1em;
 }
 
 .buttons-row {
   display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
 .buttons-row button {
-  padding: 10px 20px;
+  padding: 12px 25px;
   background-color: #2980b9;
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  border-radius: 5px;
+  font-size: 1em;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .buttons-row button:hover {
-  background-color: #1f6391;
+  background-color: #1c5980;
+  transform: translateY(-2px);
 }
 
 .chart-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 30px;
 }
 
 .chart-box {
@@ -116,40 +139,57 @@ header h1 {
 
 .chart-box h3 {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.description {
+  font-size: 0.95em;
+  color: #7f8c8d;
+  margin-top: 10px;
 }
 
 /* Scenarios Table */
+#scenarioTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
 #scenarioTable th,
 #scenarioTable td {
-  border: 1px solid #ccc;
-  padding: 8px;
+  border: 1px solid #bdc3c7;
+  padding: 10px;
   text-align: center;
 }
 
 #scenarioTable th {
-  background: #2980b9;
+  background-color: #2980b9;
   color: #fff;
-  font-weight: bold;
+  font-weight: 600;
 }
 
-/* WTP Comparison Conclusion */
+#scenarioTable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
 #wtpConclusion {
   margin-top: 20px;
-  font-weight: bold;
-  white-space: pre-wrap;
+  font-size: 1em;
+  line-height: 1.6;
+  color: #2c3e50;
 }
 
-/* Footer */
 footer {
   text-align: center;
-  margin-top: 40px;
-  padding: 10px 0;
-  border-top: 1px solid #ccc;
+  margin-top: 50px;
+  padding: 15px 0;
+  border-top: 1px solid #ecf0f1;
 }
 
 footer p {
-  font-size: 14px;
+  font-size: 0.9em;
+  color: #7f8c8d;
 }
 
 /* Responsive Design */
@@ -169,5 +209,6 @@ footer p {
   .tablink {
     width: 100%;
     text-align: left;
+    border-radius: 0;
   }
 }
