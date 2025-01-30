@@ -198,9 +198,9 @@ const wtpData = {
     { attribute: "Risk 16% (Self)", wtp: coefficients['3'].risk_16 / Math.abs(coefficients['3'].cost), pVal: 0.013, se: 0.088 / Math.abs(coefficients['3'].cost) },
     { attribute: "Risk 30% (Self)", wtp: coefficients['3'].risk_30 / Math.abs(coefficients['3'].cost), pVal: 0.000, se: 0.085 / Math.abs(coefficients['3'].cost) },
     // Others Attributes
-    { attribute: "Risk 8% (Others)", wtp: coefficients['3'].riskOthers_8 / Math.abs(coefficients['3'].cost), pVal: 0.190, se: 0.085 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Risk 16% (Others)", wtp: coefficients['3'].riskOthers_16 / Math.abs(coefficients['3'].cost), pVal: 0.227, se: 0.085 / Math.abs(coefficients['3'].cost) },
-    { attribute: "Risk 30% (Others)", wtp: coefficients['3'].riskOthers_30 / Math.abs(coefficients['3'].cost), pVal: 0.017, se: 0.083 / Math.abs(coefficients['3'].cost) }
+    { attribute: "Risk 8% (Others)", wtp: coefficients['3'].riskOthers_8 / Math.abs(coefficients['3'].costOthers), pVal: 0.190, se: 0.085 / Math.abs(coefficients['3'].costOthers) },
+    { attribute: "Risk 16% (Others)", wtp: coefficients['3'].riskOthers_16 / Math.abs(coefficients['3'].costOthers), pVal: 0.227, se: 0.085 / Math.abs(coefficients['3'].costOthers) },
+    { attribute: "Risk 30% (Others)", wtp: coefficients['3'].riskOthers_30 / Math.abs(coefficients['3'].costOthers), pVal: 0.017, se: 0.083 / Math.abs(coefficients['3'].costOthers) }
   ]
 };
 
@@ -928,12 +928,18 @@ function renderWTPComparison() {
       "Risk 30%": avgWTP["Experiment 2"].Risk.length > 0 ? (avgWTP["Experiment 2"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"].Risk.length).toFixed(2) : 0
     },
     "Experiment 3": {
-      "Risk 8% (Self)": avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length).toFixed(2) : 0,
-      "Risk 16% (Self)": avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length).toFixed(2) : 0,
-      "Risk 30% (Self)": avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length).toFixed(2) : 0,
-      "Risk 8% (Others)": avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length).toFixed(2) : 0,
-      "Risk 16% (Others)": avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length).toFixed(2) : 0,
-      "Risk 30% (Others)": avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length).toFixed(2) : 0
+      "Risk 8%": (
+        (avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length) : 0) +
+        (avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length) : 0)
+      ) / 2).toFixed(2),
+      "Risk 16%": (
+        (avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length) : 0) +
+        (avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length) : 0)
+      ) / 2).toFixed(2),
+      "Risk 30%": (
+        (avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length) : 0) +
+        (avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length) : 0)
+      ) / 2).toFixed(2)
     }
   };
 
@@ -967,29 +973,16 @@ function renderWTPComparison() {
     borderWidth: 1
   });
 
-  // Experiment 3 - Self
+  // Experiment 3
   datasets.push({
-    label: "Experiment 3 (Self)",
+    label: "Experiment 3",
     data: [
-      parseFloat(computedAvgWTP["Experiment 3"]["Risk 8% (Self)"]),
-      parseFloat(computedAvgWTP["Experiment 3"]["Risk 16% (Self)"]),
-      parseFloat(computedAvgWTP["Experiment 3"]["Risk 30% (Self)"])
+      parseFloat(computedAvgWTP["Experiment 3"]["Risk 8%"]),
+      parseFloat(computedAvgWTP["Experiment 3"]["Risk 16%"]),
+      parseFloat(computedAvgWTP["Experiment 3"]["Risk 30%"])
     ],
     backgroundColor: 'rgba(231, 76, 60, 0.6)',
     borderColor: 'rgba(231, 76, 60, 1)',
-    borderWidth: 1
-  });
-
-  // Experiment 3 - Others
-  datasets.push({
-    label: "Experiment 3 (Others)",
-    data: [
-      parseFloat(computedAvgWTP["Experiment 3"]["Risk 8% (Others)"]),
-      parseFloat(computedAvgWTP["Experiment 3"]["Risk 16% (Others)"]),
-      parseFloat(computedAvgWTP["Experiment 3"]["Risk 30% (Others)"])
-    ],
-    backgroundColor: 'rgba(243, 156, 18, 0.6)',
-    borderColor: 'rgba(243, 156, 18, 1)',
     borderWidth: 1
   });
 
@@ -1064,18 +1057,11 @@ function renderWTPComparisonConclusion(computedAvgWTP) {
         <li>Risk 30%: $${computedAvgWTP["Experiment 2"]["Risk 30%"]}</li>
       </ul>
     </li>
-    <li><strong>Experiment 3 (Self):</strong>
+    <li><strong>Experiment 3:</strong>
       <ul>
-        <li>Risk 8%: $${computedAvgWTP["Experiment 3"]["Risk 8% (Self)"]}</li>
-        <li>Risk 16%: $${computedAvgWTP["Experiment 3"]["Risk 16% (Self)"]}</li>
-        <li>Risk 30%: $${computedAvgWTP["Experiment 3"]["Risk 30% (Self)"]}</li>
-      </ul>
-    </li>
-    <li><strong>Experiment 3 (Others):</strong>
-      <ul>
-        <li>Risk 8%: $${computedAvgWTP["Experiment 3"]["Risk 8% (Others)"]}</li>
-        <li>Risk 16%: $${computedAvgWTP["Experiment 3"]["Risk 16% (Others)"]}</li>
-        <li>Risk 30%: $${computedAvgWTP["Experiment 3"]["Risk 30% (Others)"]}</li>
+        <li>Risk 8%: $${computedAvgWTP["Experiment 3"]["Risk 8%"]}</li>
+        <li>Risk 16%: $${computedAvgWTP["Experiment 3"]["Risk 16%"]}</li>
+        <li>Risk 30%: $${computedAvgWTP["Experiment 3"]["Risk 30%"]}</li>
       </ul>
     </li>
   </ul>
@@ -1087,12 +1073,6 @@ function renderWTPComparisonConclusion(computedAvgWTP) {
 /***************************************************************************
  * SAVE SCENARIO
  ***************************************************************************/
-/* 
-  Scenarios are now saved only within the session and do not persist across browser restarts.
-  Removed localStorage to ensure scenarios are cleared upon page reload.
-*/
-let savedResults = [];
-
 function saveScenario() {
   const scenario = buildScenarioFromInputs();
   if (!scenario) return;
@@ -1367,7 +1347,7 @@ function renderWTPComparison() {
     borderWidth: 1
   });
 
-  // Experiment 3 - Combined (Self and Others)
+  // Experiment 3
   datasets.push({
     label: "Experiment 3",
     data: [
@@ -1419,7 +1399,8 @@ function getColor(index) {
   const colors = [
     'rgba(52, 152, 219, 0.6)',  // Blue
     'rgba(46, 204, 113, 0.6)',  // Green
-    'rgba(231, 76, 60, 0.6)'    // Red
+    'rgba(231, 76, 60, 0.6)',   // Red
+    'rgba(243, 156, 18, 0.6)'   // Orange
   ];
   return colors[index % colors.length];
 }
@@ -1462,78 +1443,6 @@ function renderWTPComparisonConclusion(computedAvgWTP) {
 
   conclusion.innerHTML = conclusionText;
 }
-
-/***************************************************************************
- * DISPLAY HEALTH PLAN UPTAKE PROBABILITY
- ***************************************************************************/
-/* 
-  This function is now defined once above and used in predictUptake().
-*/
-
-/***************************************************************************
- * WTP CHART WITHOUT ERROR BARS
- ***************************************************************************/
-/* 
-  The WTP chart is now properly configured in the renderWTPChart() function above.
-*/
-
-/***************************************************************************
- * COSTS & BENEFITS ANALYSIS
- ***************************************************************************/
-/* 
-  The Cost & Benefits analysis is handled in renderCostsBenefits().
-*/
-
-/***************************************************************************
- * SAVE SCENARIO
- ***************************************************************************/
-/* 
-  Scenarios are now saved only within the session and do not persist across browser restarts.
-  Removed localStorage to ensure scenarios are cleared upon page reload.
-*/
-
-/***************************************************************************
- * ADD SCENARIO TO TABLE
- ***************************************************************************/
-/* 
-  This function is now defined above and used in saveScenario().
-*/
-
-/***************************************************************************
- * LOAD SAVED RESULTS FROM SESSION STORAGE
- ***************************************************************************/
-/* 
-  This function now clears any existing scenarios upon page load to prevent persistence.
-*/
-
-/***************************************************************************
- * TOGGLE ADDITIONAL ATTRIBUTES FOR EXPERIMENT 3
- ***************************************************************************/
-/* 
-  This function is now correctly implemented to show/hide additional attributes.
-*/
-
-/***************************************************************************
- * FILTER FUNCTIONALITY FOR SCENARIOS
- * Removed Filter by Uptake Probability
- ***************************************************************************/
-/* 
-  This function now only filters based on experiment selection.
-*/
-
-/***************************************************************************
- * EXPORT TO PDF FUNCTION
- ***************************************************************************/
-/* 
-  This function now exports all saved scenarios correctly without including charts.
-*/
-
-/***************************************************************************
- * WTP COMPARISON ACROSS EXPERIMENTS FOCUSING ON RISK ATTRIBUTES
- ***************************************************************************/
-/* 
-  The WTP comparison now calculates the average WTP for risk attributes across all experiments, including both self and others' risks in Experiment 3.
-*/
 
 /***************************************************************************
  * INITIALIZE TOOLTIP FUNCTIONALITY
