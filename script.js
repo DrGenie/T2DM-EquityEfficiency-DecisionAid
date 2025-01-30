@@ -311,11 +311,7 @@ function buildScenarioFromInputs() {
   }
 
   if (missingFields.length > 0) {
-    if (experiment === '3') {
-      alert(`Please select the following attributes: ${missingFields.join(", ")}.`);
-    } else {
-      alert(`Please select the following attributes: ${missingFields.join(", ")}.`);
-    }
+    alert(`Please select the following attributes: ${missingFields.join(", ")}.`);
     return null;
   }
 
@@ -957,7 +953,7 @@ function renderWTPConclusion(avgWTP) {
       <li><strong>Self Risk Attributes:</strong> Average WTP was $${exp3Self}.</li>
       <li><strong>Others' Risk Attributes:</strong> Average WTP was $${exp3Others}.</li>
     </ul>
-    The average WTP for self risk attributes remains higher compared to others', suggesting that disparities in health outcomes may influence respondents' willingness to accept personal risks differently for themselves versus others. This nuanced understanding highlights the complexity of risk aversion when equity is factored into health decision-making.
+    The average WTP for self risk attributes remains higher compared to others', suggesting that disparities in health outcomes may influence respondents' willingness to accept personal risks differently for themselves versus others. This highlights the complexity of risk aversion when equity is factored into health decision-making.
   `;
 }
 
