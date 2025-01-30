@@ -9,6 +9,8 @@
  * 7) Cost-benefit analysis based on literature-reviewed costs
  * 8) Dynamic attribute display based on experiment selection
  * 9) WTP comparison across experiments
+ * 10) Enforce selection of all attributes
+ * 11) Correct calculation of average WTP for risk attributes in Experiment 3
  * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
  *****************************************************************************/
 
@@ -848,7 +850,8 @@ function renderWTPComparison() {
   }
 
   // Aggregate WTP for Risk attributes per experiment
-  const riskAttributes = ["Risk 8%", "Risk 16%", "Risk 30%", "Risk Others 8%", "Risk Others 16%", "Risk Others 30%"];
+  const riskAttributesSelf = ["Risk 8%", "Risk 16%", "Risk 30%"];
+  const riskAttributesOthers = ["Risk Others 8%", "Risk Others 16%", "Risk Others 30%"];
   const wtpPerExperiment = {
     '1': [],
     '2': [],
@@ -859,8 +862,11 @@ function renderWTPComparison() {
     const experiment = scenario.experiment.split(' ')[1];
     if (wtpData[experiment]) {
       wtpData[experiment].forEach(item => {
-        if (riskAttributes.includes(item.attribute)) {
-          wtpPerExperiment[experiment].push(item.wtp);
+        if (riskAttributesSelf.includes(item.attribute)) {
+          wtpPerExperiment[experiment].push({ type: 'Self', value: item.wtp });
+        }
+        if (riskAttributesOthers.includes(item.attribute)) {
+          wtpPerExperiment[experiment].push({ type: 'Others', value: item.wtp });
         }
       });
     }
@@ -871,7 +877,8 @@ function renderWTPComparison() {
   for (let exp in wtpPerExperiment) {
     const data = wtpPerExperiment[exp];
     if (data.length > 0) {
-      avgWTP[`Experiment ${exp}`] = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(2);
+      const total = data.reduce((acc, curr) => acc + curr.value, 0);
+      avgWTP[`Experiment ${exp}`] = (total / data.length).toFixed(2);
     }
   }
 
