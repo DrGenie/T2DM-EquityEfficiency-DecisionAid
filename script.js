@@ -8,9 +8,8 @@
  * 6) Scenario saving & PDF export
  * 7) Cost-benefit analysis based on literature-reviewed costs
  * 8) Dynamic attribute display based on experiment selection
- * 9) WTP comparison across experiments
- * 10) Enforce selection of all attributes
- * 11) Correct calculation of average WTP for risk attributes in Experiment 3
+ * 9) WTP comparison across experiments with separate averages for Experiment 3
+ * 10) Enforce selection of all attributes with specific validation messages
  * Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
  *****************************************************************************/
 
@@ -298,18 +297,26 @@ function buildScenarioFromInputs() {
     costOthers = parseInt(document.getElementById("costOthers").value, 10);
   }
 
-  // Basic validation
-  if (isNaN(cost) || cost < 0 || cost > 1000) {
-    alert("Please select a valid Monthly Out-of-Pocket Cost.");
-    return null;
-  }
+  // Basic validation for all experiments
+  let missingFields = [];
+  if (!efficacy) missingFields.push("Efficacy");
+  if (!risk) missingFields.push("Risk");
+  if (isNaN(cost) || cost < 0 || cost > 1000) missingFields.push("Cost");
 
   // Additional validation for Experiment 3
   if (experiment === '3') {
-    if (!efficacyOthers || !riskOthers || isNaN(costOthers)) {
-      alert("Please select Efficacy, Risk, and Cost for Others.");
-      return null;
+    if (!efficacyOthers) missingFields.push("Efficacy Others");
+    if (!riskOthers) missingFields.push("Risk Others");
+    if (isNaN(costOthers) || costOthers < 0 || costOthers > 1000) missingFields.push("Cost Others");
+  }
+
+  if (missingFields.length > 0) {
+    if (experiment === '3') {
+      alert(`Please select the following attributes: ${missingFields.join(", ")}.`);
+    } else {
+      alert(`Please select the following attributes: ${missingFields.join(", ")}.`);
     }
+    return null;
   }
 
   return {
@@ -849,13 +856,14 @@ function renderWTPComparison() {
     wtpComparisonChartInstance.destroy();
   }
 
-  // Aggregate WTP for Risk attributes per experiment
+  // Define risk attributes for self and others
   const riskAttributesSelf = ["Risk 8%", "Risk 16%", "Risk 30%"];
   const riskAttributesOthers = ["Risk Others 8%", "Risk Others 16%", "Risk Others 30%"];
+
   const wtpPerExperiment = {
-    '1': [],
-    '2': [],
-    '3': []
+    '1': { self: [], others: [] }, // Others not applicable
+    '2': { self: [], others: [] }, // Others not applicable
+    '3': { self: [], others: [] }
   };
 
   savedResults.forEach(scenario => {
@@ -863,10 +871,10 @@ function renderWTPComparison() {
     if (wtpData[experiment]) {
       wtpData[experiment].forEach(item => {
         if (riskAttributesSelf.includes(item.attribute)) {
-          wtpPerExperiment[experiment].push({ type: 'Self', value: item.wtp });
+          wtpPerExperiment[experiment].self.push(item.wtp);
         }
         if (riskAttributesOthers.includes(item.attribute)) {
-          wtpPerExperiment[experiment].push({ type: 'Others', value: item.wtp });
+          wtpPerExperiment[experiment].others.push(item.wtp);
         }
       });
     }
@@ -875,16 +883,25 @@ function renderWTPComparison() {
   // Calculate average WTP for Risk attributes per experiment
   const avgWTP = {};
   for (let exp in wtpPerExperiment) {
-    const data = wtpPerExperiment[exp];
-    if (data.length > 0) {
-      const total = data.reduce((acc, curr) => acc + curr.value, 0);
-      avgWTP[`Experiment ${exp}`] = (total / data.length).toFixed(2);
-    }
+    const selfData = wtpPerExperiment[exp].self;
+    const othersData = wtpPerExperiment[exp].others;
+    avgWTP[`Experiment ${exp} Self`] = selfData.length > 0 ? (selfData.reduce((a, b) => a + b, 0) / selfData.length).toFixed(2) : "N/A";
+    avgWTP[`Experiment ${exp} Others`] = othersData.length > 0 ? (othersData.reduce((a, b) => a + b, 0) / othersData.length).toFixed(2) : "N/A";
   }
 
-  const labels = Object.keys(avgWTP);
-  const values = Object.values(avgWTP);
-  const colors = ['rgba(39,174,96,0.6)', 'rgba(241,196,15,0.6)', 'rgba(231,76,60,0.6)'];
+  const labels = ["Experiment 1 Self", "Experiment 2 Self", "Experiment 3 Self", "Experiment 3 Others"];
+  const values = [
+    avgWTP["Experiment 1 Self"],
+    avgWTP["Experiment 2 Self"],
+    avgWTP["Experiment 3 Self"],
+    avgWTP["Experiment 3 Others"]
+  ];
+  const colors = [
+    'rgba(39,174,96,0.6)', // Experiment 1 Self
+    'rgba(39,174,96,0.6)', // Experiment 2 Self
+    'rgba(39,174,96,0.6)', // Experiment 3 Self
+    'rgba(231,76,60,0.6)'  // Experiment 3 Others
+  ];
 
   wtpComparisonChartInstance = new Chart(ctx, {
     type: 'bar',
@@ -920,12 +937,27 @@ function renderWTPComparison() {
 
 function renderWTPConclusion(avgWTP) {
   const conclusion = document.getElementById("wtpConclusion");
-  const exp1 = avgWTP["Experiment 1"] || "N/A";
-  const exp2 = avgWTP["Experiment 2"] || "N/A";
-  const exp3 = avgWTP["Experiment 3"] || "N/A";
+  const exp1Self = avgWTP["Experiment 1 Self"] || "N/A";
+  const exp2Self = avgWTP["Experiment 2 Self"] || "N/A";
+  const exp3Self = avgWTP["Experiment 3 Self"] || "N/A";
+  const exp3Others = avgWTP["Experiment 3 Others"] || "N/A";
 
   conclusion.innerHTML = `
-    <strong>Conclusion:</strong> Across experiments, risk aversion progressively declined when equity considerations were introduced. In a self-focused setup (Experiment 1), respondents showed strong risk aversion with an average WTP of $${exp1}. This aversion decreased notably as the experiments incorporated equity considerations, particularly in Experiment 2, where health outcomes were equal between respondents (“self”) and others with poorer health conditions, resulting in an average WTP of $${exp2}. This reduction in risk aversion suggests a greater tolerance for potential risk of side effects when the health needs of others with poorer health conditions are also considered, which aligns with studies that emphasize broader ethical considerations in decision-making under risk (Arrieta et al., 2017). However, the reduction in risk aversion was less pronounced moving from Experiment 2 to Experiment 3, where health outcomes were unequal between the “self” and “others”, with an average WTP of $${exp3}. This suggests that disparities in health outcomes may reduce respondents’ willingness to accept personal risks.
+    <strong>Conclusion:</strong> 
+    <br/><br/>
+    <strong>Experiments 1 & 2:</strong> Across Experiments 1 and 2, respondents' willingness to pay (WTP) for risk attributes decreased when equity considerations were introduced. 
+    <ul>
+      <li><strong>Experiment 1 (Self-focused Outcomes):</strong> Average WTP for risk attributes was $${exp1Self}.</li>
+      <li><strong>Experiment 2 (Equal Health Outcomes for Self and Others):</strong> Average WTP for risk attributes decreased to $${exp2Self}.</li>
+    </ul>
+    This indicates a reduction in risk aversion when respondents consider both their own and others' health outcomes, aligning with studies emphasizing ethical considerations in decision-making under risk (Arrieta et al., 2017).
+    <br/><br/>
+    <strong>Experiment 3:</strong> In Experiment 3, where health outcomes were unequal between self and others, there are two separate average WTP values:
+    <ul>
+      <li><strong>Self Risk Attributes:</strong> Average WTP was $${exp3Self}.</li>
+      <li><strong>Others' Risk Attributes:</strong> Average WTP was $${exp3Others}.</li>
+    </ul>
+    The average WTP for self risk attributes remains higher compared to others', suggesting that disparities in health outcomes may influence respondents' willingness to accept personal risks differently for themselves versus others. This nuanced understanding highlights the complexity of risk aversion when equity is factored into health decision-making.
   `;
 }
 
