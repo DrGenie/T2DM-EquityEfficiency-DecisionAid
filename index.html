@@ -17,19 +17,21 @@
       <p>Assessing patient preferences for health insurance plans covering newer T2DM treatments.</p>
     </header>
 
-    <div class="tabs">
-      <button class="tablink active" onclick="openTab('introTab', this)">Introduction</button>
-      <button class="tablink" onclick="openTab('instructionsTab', this)">Instructions</button>
-      <button class="tablink" onclick="openTab('attributesTab', this)">Attributes</button>
-      <button class="tablink" onclick="openTab('inputsTab', this)">Inputs</button>
-      <button class="tablink" onclick="openTab('wtpTab', this)">WTP Results</button>
-      <button class="tablink" onclick="openTab('probTab', this)">Health Plan Uptake Probability</button>
-      <button class="tablink" onclick="openTab('costsTab', this)">Costs & Benefits</button>
-      <button class="tablink" onclick="openTab('scenariosTab', this)">Scenarios</button>
-    </div>
+    <nav>
+      <div class="tabs" role="tablist">
+        <button class="tablink active" onclick="openTab('introTab', this)" role="tab" aria-selected="true" aria-controls="introTab" id="tab-intro">Introduction</button>
+        <button class="tablink" onclick="openTab('instructionsTab', this)" role="tab" aria-selected="false" aria-controls="instructionsTab" id="tab-instructions">Instructions</button>
+        <button class="tablink" onclick="openTab('attributesTab', this)" role="tab" aria-selected="false" aria-controls="attributesTab" id="tab-attributes">Attributes</button>
+        <button class="tablink" onclick="openTab('inputsTab', this)" role="tab" aria-selected="false" aria-controls="inputsTab" id="tab-inputs">Inputs</button>
+        <button class="tablink" onclick="openTab('wtpTab', this)" role="tab" aria-selected="false" aria-controls="wtpTab" id="tab-wtp">WTP Results</button>
+        <button class="tablink" onclick="openTab('probTab', this)" role="tab" aria-selected="false" aria-controls="probTab" id="tab-prob">Health Plan Uptake Probability</button>
+        <button class="tablink" onclick="openTab('costsTab', this)" role="tab" aria-selected="false" aria-controls="costsTab" id="tab-costs">Costs & Benefits</button>
+        <button class="tablink" onclick="openTab('scenariosTab', this)" role="tab" aria-selected="false" aria-controls="scenariosTab" id="tab-scenarios">Scenarios</button>
+      </div>
+    </nav>
 
     <!-- Introduction Tab -->
-    <div id="introTab" class="tabcontent" style="display: block;">
+    <div id="introTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-intro" style="display: block;">
       <div class="intro-box">
         <p>
           Welcome to the T2DM Equity-Efficiency Decision Aid Tool. This tool is designed to help users evaluate and understand patients' preferences for different health insurance plans covering newer Type 2 Diabetes Mellitus (T2DM) treatments. By considering efficacy, risk, and cost under different experimental conditions of equity and efficiency, the tool provides insights to aid in informed decision-making.
@@ -48,7 +50,7 @@
     </div>
 
     <!-- Instructions Tab -->
-    <div id="instructionsTab" class="tabcontent">
+    <div id="instructionsTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-instructions">
       <h2>How to Use This Tool</h2>
       <p>
         Follow these steps to effectively use the T2DM Equity-Efficiency Decision Aid Tool:
@@ -66,16 +68,19 @@
     </div>
 
     <!-- Attributes Tab -->
-    <div id="attributesTab" class="tabcontent">
+    <div id="attributesTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-attributes">
       <h2>Study Attributes and Levels</h2>
       <h3>Attributes</h3>
       <div class="attributes-list">
-        <div class="attribute-card">
+        <div class="attribute-card" tabindex="0" aria-labelledby="attribute-1-title">
           <div class="attribute-icon">
-            <img src="https://img.icons8.com/ios-filled/50/000000/target.png" alt="Efficacy Icon"/>
+            <img src="assets/icons/info-icon.png" alt="Efficacy Icon" aria-hidden="true"/>
+            <span class="tooltip" role="tooltip">
+              The probability of achieving target A1C after 6 months of treatment.
+            </span>
           </div>
           <div class="attribute-content">
-            <h4>Chance of Reaching Target A1C in 6 Months</h4>
+            <h4 id="attribute-1-title">Chance of Reaching Target A1C in 6 Months</h4>
             <p>The expected probability of achieving target A1C (long-term blood glucose level) after taking the medication.</p>
             <ul>
               <li>10%</li>
@@ -84,12 +89,15 @@
             </ul>
           </div>
         </div>
-        <div class="attribute-card">
+        <div class="attribute-card" tabindex="0" aria-labelledby="attribute-2-title">
           <div class="attribute-icon">
-            <img src="https://img.icons8.com/ios-filled/50/000000/medical-doctor.png" alt="Risk Icon"/>
+            <img src="assets/icons/info-icon.png" alt="Risk Icon" aria-hidden="true"/>
+            <span class="tooltip" role="tooltip">
+              The risk of experiencing side effects from the treatment.
+            </span>
           </div>
           <div class="attribute-content">
-            <h4>Chance of Side Effects</h4>
+            <h4 id="attribute-2-title">Chance of Side Effects</h4>
             <p>The risk of experiencing side effects such as gastrointestinal issues or genital infections.</p>
             <ul>
               <li>0%</li>
@@ -99,12 +107,15 @@
             </ul>
           </div>
         </div>
-        <div class="attribute-card">
+        <div class="attribute-card" tabindex="0" aria-labelledby="attribute-3-title">
           <div class="attribute-icon">
-            <img src="https://img.icons8.com/ios-filled/50/000000/money.png" alt="Cost Icon"/>
+            <img src="assets/icons/info-icon.png" alt="Cost Icon" aria-hidden="true"/>
+            <span class="tooltip" role="tooltip">
+              The amount patients are required to pay monthly out-of-pocket for the treatment.
+            </span>
           </div>
           <div class="attribute-content">
-            <h4>Monthly Out-of-Pocket Cost (USD)</h4>
+            <h4 id="attribute-3-title">Monthly Out-of-Pocket Cost (USD)</h4>
             <p>This refers to the total amount patients pay for the T2D treatments.</p>
             <ul>
               <li>$0</li>
@@ -124,14 +135,14 @@
     </div>
 
     <!-- Inputs Tab -->
-    <div id="inputsTab" class="tabcontent">
+    <div id="inputsTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-inputs">
       <h2>Inputs</h2>
-      <form onsubmit="event.preventDefault();">
+      <form onsubmit="event.preventDefault();" aria-labelledby="inputs-form">
         <div class="form-grid">
           <!-- Experiment Selection -->
           <div class="form-item">
             <label for="experimentSelect"><strong>Select Experiment:</strong></label>
-            <select id="experimentSelect" required>
+            <select id="experimentSelect" required aria-required="true">
               <option value="">--Select Experiment--</option>
               <option value="1">Experiment 1: Self-focused Outcomes</option>
               <option value="2">Experiment 2: Equal Health Outcomes for Self and Others</option>
@@ -142,8 +153,11 @@
           <!-- Plan Attributes -->
           <h3>Health Plan Attributes</h3>
           <div class="form-item">
-            <label for="efficacy"><strong>Chance of Reaching Target A1C in 6 Months:</strong></label>
-            <select id="efficacy" name="efficacy" required>
+            <label for="efficacy"><strong>Chance of Reaching Target A1C in 6 Months:</strong>
+              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="efficacy-tooltip"/>
+            </label>
+            <span id="efficacy-tooltip" class="tooltip-text">The probability of achieving target A1C after 6 months of treatment.</span>
+            <select id="efficacy" name="efficacy" required aria-required="true">
               <option value="">--Select Efficacy--</option>
               <option value="10">10%</option>
               <option value="50">50%</option>
@@ -152,8 +166,11 @@
           </div>
 
           <div class="form-item">
-            <label for="risk"><strong>Chance of Side Effects:</strong></label>
-            <select id="risk" name="risk" required>
+            <label for="risk"><strong>Chance of Side Effects:</strong>
+              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="risk-tooltip"/>
+            </label>
+            <span id="risk-tooltip" class="tooltip-text">The risk of experiencing side effects from the treatment.</span>
+            <select id="risk" name="risk" required aria-required="true">
               <option value="">--Select Risk Level--</option>
               <option value="0">0%</option>
               <option value="8">8%</option>
@@ -163,7 +180,10 @@
           </div>
 
           <div class="form-item">
-            <label for="cost"><strong>Monthly Out-of-Pocket Cost (USD):</strong></label>
+            <label for="cost"><strong>Monthly Out-of-Pocket Cost (USD):</strong>
+              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="cost-tooltip"/>
+            </label>
+            <span id="cost-tooltip" class="tooltip-text">The amount patients are required to pay monthly out-of-pocket for the treatment.</span>
             <input 
               type="range" 
               id="cost" 
@@ -173,14 +193,18 @@
               step="10" 
               value="200"
               oninput="updateCostDisplay(this.value)" 
+              aria-labelledby="cost-label"
             />
             <span id="costValue">$200</span>
           </div>
 
           <!-- Additional Attributes for Experiment 3 -->
           <div class="form-item" id="efficacyOthersDiv" style="display: none;">
-            <label for="efficacyOthers"><strong>Chance of Reaching Target A1C for Others:</strong></label>
-            <select id="efficacyOthers" name="efficacyOthers">
+            <label for="efficacyOthers"><strong>Chance of Reaching Target A1C for Others:</strong>
+              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="efficacyOthers-tooltip"/>
+            </label>
+            <span id="efficacyOthers-tooltip" class="tooltip-text">The probability of achieving target A1C for other patients after 6 months of treatment.</span>
+            <select id="efficacyOthers" name="efficacyOthers" aria-required="false">
               <option value="">--Select Efficacy for Others--</option>
               <option value="10">10%</option>
               <option value="50">50%</option>
@@ -189,8 +213,11 @@
           </div>
 
           <div class="form-item" id="riskOthersDiv" style="display: none;">
-            <label for="riskOthers"><strong>Chance of Side Effects for Others:</strong></label>
-            <select id="riskOthers" name="riskOthers">
+            <label for="riskOthers"><strong>Chance of Side Effects for Others:</strong>
+              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="riskOthers-tooltip"/>
+            </label>
+            <span id="riskOthers-tooltip" class="tooltip-text">The risk of experiencing side effects for other patients from the treatment.</span>
+            <select id="riskOthers" name="riskOthers" aria-required="false">
               <option value="">--Select Risk Level for Others--</option>
               <option value="0">0%</option>
               <option value="8">8%</option>
@@ -201,7 +228,10 @@
 
           <!-- Monthly Out-of-Pocket Cost for Others (Experiment 3) -->
           <div class="form-item" id="costOthersDiv" style="display: none;">
-            <label for="costOthers"><strong>Monthly Out-of-Pocket Cost for Others (USD):</strong></label>
+            <label for="costOthers"><strong>Monthly Out-of-Pocket Cost for Others (USD):</strong>
+              <img src="assets/icons/info-icon.png" alt="Info Icon" class="info-icon" tabindex="0" aria-describedby="costOthers-tooltip"/>
+            </label>
+            <span id="costOthers-tooltip" class="tooltip-text">The amount other patients are required to pay monthly out-of-pocket for the treatment.</span>
             <input 
               type="range" 
               id="costOthers" 
@@ -211,6 +241,7 @@
               step="10" 
               value="200"
               oninput="updateCostOthersDisplay(this.value)" 
+              aria-labelledby="costOthers-label"
             />
             <span id="costOthersValue">$200</span>
           </div>
@@ -223,7 +254,7 @@
     </div>
 
     <!-- WTP Results Tab -->
-    <div id="wtpTab" class="tabcontent">
+    <div id="wtpTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-wtp">
       <h2>Willingness to Pay (WTP) Results</h2>
       <p>
         The Willingness-to-Pay (WTP) for each attribute is calculated by taking the ratio of the attribute’s coefficient to the negative of the "Monthly out-of-pocket cost" coefficient. This metric quantifies the monetary value respondents place on each attribute, holding other factors constant.
@@ -237,10 +268,15 @@
           <canvas id="wtpChartMain"></canvas>
         </div>
       </div>
+      <!-- Conclusion Section -->
+      <div id="wtpConclusionSection" class="conclusion-section" style="display: none;">
+        <h3>Conclusion</h3>
+        <p id="wtpConclusion"></p>
+      </div>
     </div>
 
     <!-- Health Plan Uptake Probability Tab -->
-    <div id="probTab" class="tabcontent">
+    <div id="probTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-prob">
       <h2>Health Plan Uptake Probability</h2>
       <p>
         Click “Show Probability Plot” to compute a new bar chart based on your <strong>Inputs</strong>. Depending on whether the predicted uptake is below 30%, between 30–70%, or above 70%, you will receive suggestions for adjustments in cost, efficacy, or risk.
@@ -257,7 +293,7 @@
     </div>
 
     <!-- Costs & Benefits Tab -->
-    <div id="costsTab" class="tabcontent">
+    <div id="costsTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-costs">
       <h2>Costs &amp; Benefits</h2>
       <div id="costsBenefitsContainer">
         <div class="qaly-selector">
@@ -278,16 +314,30 @@
     </div>
 
     <!-- Scenarios Tab -->
-    <div id="scenariosTab" class="tabcontent">
+    <div id="scenariosTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-scenarios">
       <h2>Saved Scenarios</h2>
       <p>
         Save your scenario from <strong>Inputs</strong> and compare or export multiple configurations, including WTP and uptake probability charts, to PDF.
       </p>
+      <div class="filter-options">
+        <img src="assets/icons/filter-icon.png" alt="Filter Icon" class="filter-icon" aria-hidden="true"/>
+        <label for="filterExperiment"><strong>Filter by Experiment:</strong></label>
+        <select id="filterExperiment" onchange="filterScenarios()">
+          <option value="all">All Experiments</option>
+          <option value="Experiment 1">Experiment 1</option>
+          <option value="Experiment 2">Experiment 2</option>
+          <option value="Experiment 3">Experiment 3</option>
+        </select>
+
+        <label for="filterUptake"><strong>Filter by Uptake Probability:</strong></label>
+        <input type="number" id="filterUptake" placeholder="Minimum Uptake (%)" min="0" max="100" oninput="filterScenarios()" />
+      </div>
       <div class="buttons-row">
-        <button onclick="renderWTPComparison()">Compare All Scenarios</button>
+        <button onclick="renderWTPComparison()">Compare Risk Attributes Across Experiments</button>
         <button onclick="exportToPDF()">Export Comparison to PDF</button>
       </div>
-      <table id="scenarioTable">
+      <table id="scenarioTable" aria-describedby="scenarioTable-description">
+        <caption id="scenarioTable-description" class="sr-only">Table of saved scenarios with details</caption>
         <thead>
           <tr>
             <th>Name</th>
@@ -306,16 +356,16 @@
 
       <!-- WTP Comparison Chart -->
       <div id="wtpComparisonContainer" style="margin-top: 40px; display: none;">
-        <h3>WTP Comparison Across Scenarios</h3>
+        <h3>WTP Comparison for Risk Attributes Across Experiments</h3>
         <canvas id="wtpComparisonChart"></canvas>
-        <p id="wtpConclusion" style="margin-top: 20px;"></p>
+        <p id="wtpComparisonConclusion" class="conclusion-section"></p>
       </div>
     </div>
 
     <footer>
       <p>
         &copy; 2025 T2DM Equity-Efficiency Decision Aid Tool. All Rights Reserved. <br/>
-        Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (NBS, The University of Newcastle, Australia)
+        Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
       </p>
     </footer>
   </div>
