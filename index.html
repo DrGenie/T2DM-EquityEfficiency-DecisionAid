@@ -371,6 +371,16 @@
           <p class="description">
             The cost components are derived from a targeted literature review focusing on various aspects such as advertisement, training, medication, and healthcare provider visits. Benefits are calculated based on the selected Quality-Adjusted Life Year (QALY) gain scenario and monetized using a standard value per QALY.
           </p>
+          <!-- Added info about how costs and benefits are calculated -->
+          <div class="calculation-info">
+            <h4>How Costs and Benefits are Calculated:</h4>
+            <p>
+              <strong>Costs:</strong> Each cost item has a predefined unit cost based on literature reviews. Fixed costs are added directly, while variable costs are scaled based on the predicted Health Plan Uptake Probability. The total treatment cost is the sum of all these costs.
+            </p>
+            <p>
+              <strong>Benefits:</strong> Benefits are calculated by multiplying the number of participants (based on uptake probability) by the selected QALY gain per participant. These QALYs are then monetized using a standard value per QALY (USD 50,000) to derive the monetized benefits.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -396,7 +406,7 @@
         <!-- Removed Filter by Uptake Probability as per user request -->
       </div>
       <div class="buttons-row">
-        <button onclick="renderWTPComparison()">Compare Risk Attributes Across Experiments</button>
+        <button onclick="renderWTPComparison()">Compare Average WTP for Risk Across Experiments</button>
         <button onclick="exportToPDF()">Export Comparison to PDF</button>
       </div>
       <table id="scenarioTable" aria-describedby="scenarioTable-description">
@@ -419,7 +429,7 @@
 
       <!-- WTP Comparison Chart -->
       <div id="wtpComparisonContainer" style="margin-top: 40px; display: none;">
-        <h3>WTP Comparison for Risk Attributes Across Experiments</h3>
+        <h3>Average WTP for Risk Attributes Across Experiments</h3>
         <canvas id="wtpComparisonChart"></canvas>
         <p id="wtpComparisonConclusion" class="conclusion-section"></p>
       </div>
