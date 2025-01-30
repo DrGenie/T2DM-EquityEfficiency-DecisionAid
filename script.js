@@ -60,6 +60,22 @@ function updateCostOthersDisplay(val) {
   document.getElementById("costOthersValue").textContent = `$${val}`;
 }
 
+function updateEfficacyDisplay(val) {
+  document.getElementById("efficacyValue").textContent = `${val}%`;
+}
+
+function updateEfficacyOthersDisplay(val) {
+  document.getElementById("efficacyOthersValue").textContent = `${val}%`;
+}
+
+function updateRiskDisplay(val) {
+  document.getElementById("riskValue").textContent = `${val}%`;
+}
+
+function updateRiskOthersDisplay(val) {
+  document.getElementById("riskOthersValue").textContent = `${val}%`;
+}
+
 /***************************************************************************
  * MAIN DCE COEFFICIENTS
  * Updated cost coefficients as per instructions
@@ -194,13 +210,13 @@ const wtpData = {
   ],
   '3': [ // Experiment 3
     // Self Attributes
-    { attribute: "Risk 8% (Self)", wtp: coefficients['3'].risk_8 / Math.abs(coefficients['3'].cost), pVal: 0.200, se: 0.084 / Math.abs(coefficients['3'].cost) }, // Corrected
-    { attribute: "Risk 16% (Self)", wtp: coefficients['3'].risk_16 / Math.abs(coefficients['3'].cost), pVal: 0.013, se: 0.088 / Math.abs(coefficients['3'].cost) }, // Corrected
-    { attribute: "Risk 30% (Self)", wtp: coefficients['3'].risk_30 / Math.abs(coefficients['3'].cost), pVal: 0.000, se: 0.085 / Math.abs(coefficients['3'].cost) }, // Corrected
+    { attribute: "Risk 8% (Self)", wtp: coefficients['3'].risk_8 / Math.abs(coefficients['3'].cost), pVal: 0.200, se: 0.084 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk 16% (Self)", wtp: coefficients['3'].risk_16 / Math.abs(coefficients['3'].cost), pVal: 0.013, se: 0.088 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk 30% (Self)", wtp: coefficients['3'].risk_30 / Math.abs(coefficients['3'].cost), pVal: 0.000, se: 0.085 / Math.abs(coefficients['3'].cost) },
     // Others Attributes
-    { attribute: "Risk 8% (Others)", wtp: coefficients['3'].riskOthers_8 / Math.abs(coefficients['3'].cost), pVal: 0.190, se: 0.085 / Math.abs(coefficients['3'].cost) }, // **Corrected**
-    { attribute: "Risk 16% (Others)", wtp: coefficients['3'].riskOthers_16 / Math.abs(coefficients['3'].cost), pVal: 0.227, se: 0.085 / Math.abs(coefficients['3'].cost) }, // **Corrected**
-    { attribute: "Risk 30% (Others)", wtp: coefficients['3'].riskOthers_30 / Math.abs(coefficients['3'].cost), pVal: 0.017, se: 0.083 / Math.abs(coefficients['3'].cost) } // **Corrected**
+    { attribute: "Risk 8% (Others)", wtp: coefficients['3'].riskOthers_8 / Math.abs(coefficients['3'].cost), pVal: 0.190, se: 0.085 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk 16% (Others)", wtp: coefficients['3'].riskOthers_16 / Math.abs(coefficients['3'].cost), pVal: 0.227, se: 0.085 / Math.abs(coefficients['3'].cost) },
+    { attribute: "Risk 30% (Others)", wtp: coefficients['3'].riskOthers_30 / Math.abs(coefficients['3'].cost), pVal: 0.017, se: 0.083 / Math.abs(coefficients['3'].cost) }
   ]
 };
 
@@ -264,8 +280,8 @@ function predictUptake() {
       utility += coefs.riskOthers_30;
     }
 
-    // **Removed costOthers from utility calculation as per user instruction**
-    utility += coefs.costOthers * scenario.costOthers; // Retained if needed elsewhere
+    // Retain costOthers for other calculations
+    utility += coefs.costOthers * scenario.costOthers;
   }
 
   // Compute probabilities using Error-Component Logit
@@ -1035,10 +1051,6 @@ function getColor(index) {
 /***************************************************************************
  * RENDER WTP COMPARISON CONCLUSION
  ***************************************************************************/
-function renderWTPConclusion(experiment) {
-  // You can customize this function to include specific conclusions if needed
-}
-
 function renderWTPComparisonConclusion(computedAvgWTP) {
   const conclusion = document.getElementById("wtpComparisonConclusion");
   let conclusionText = `<strong>Conclusion:</strong> 
@@ -1080,31 +1092,31 @@ function renderWTPComparisonConclusion(computedAvgWTP) {
  ***************************************************************************/
 document.addEventListener("DOMContentLoaded", function() {
   // Handle tooltip display on hover and focus for accessibility
-  const infoButtons = document.querySelectorAll('.info-button');
+  const infoButtons = document.querySelectorAll('.attribute-icon svg');
   infoButtons.forEach(button => {
     button.addEventListener('mouseover', function() {
-      const tooltip = this.nextElementSibling;
+      const tooltip = this.parentElement.querySelector('.tooltip');
       if (tooltip) {
         tooltip.style.visibility = 'visible';
         tooltip.style.opacity = '1';
       }
     });
     button.addEventListener('mouseout', function() {
-      const tooltip = this.nextElementSibling;
+      const tooltip = this.parentElement.querySelector('.tooltip');
       if (tooltip) {
         tooltip.style.visibility = 'hidden';
         tooltip.style.opacity = '0';
       }
     });
     button.addEventListener('focus', function() {
-      const tooltip = this.nextElementSibling;
+      const tooltip = this.parentElement.querySelector('.tooltip');
       if (tooltip) {
         tooltip.style.visibility = 'visible';
         tooltip.style.opacity = '1';
       }
     });
     button.addEventListener('blur', function() {
-      const tooltip = this.nextElementSibling;
+      const tooltip = this.parentElement.querySelector('.tooltip');
       if (tooltip) {
         tooltip.style.visibility = 'hidden';
         tooltip.style.opacity = '0';
