@@ -148,7 +148,7 @@
       <ol>
         <li><strong>Experiment 1: Self-focused Outcomes</strong> – Preferences based solely on personal efficacy, risk, and cost.</li>
         <li><strong>Experiment 2: Equal Health Outcomes for Self and Others</strong> – Incorporates societal influences by considering equal health outcomes for self and other patients with poorer health.</li>
-        <li><strong>Experiment 3: Varying Health Outcomes for Self and Others</strong> – Exams preferences when health outcomes and costs vary between self and other patients with poorer health.</li>
+        <li><strong>Experiment 3: Varying Health Outcomes for Self and Others</strong> – Examines preferences when health outcomes and costs vary between self and other patients with poorer health.</li>
       </ol>
     </div>
 
@@ -182,7 +182,7 @@
                 </svg>
               </button>
             </label>
-            <span id="efficacy-tooltip" class="tooltip-text">The probability of achieving target A1C after 6 months of treatment.</span>
+            <span class="tooltip-text">The probability of achieving target A1C after 6 months of treatment.</span>
             <select id="efficacy" name="efficacy" required aria-required="true">
               <option value="">--Select Efficacy--</option>
               <option value="10">10%</option>
@@ -203,7 +203,7 @@
                 </svg>
               </button>
             </label>
-            <span id="risk-tooltip" class="tooltip-text">The risk of experiencing side effects from the treatment.</span>
+            <span class="tooltip-text">The risk of experiencing side effects from the treatment.</span>
             <select id="risk" name="risk" required aria-required="true">
               <option value="">--Select Risk Level--</option>
               <option value="0">0%</option>
@@ -225,7 +225,7 @@
                 </svg>
               </button>
             </label>
-            <span id="cost-tooltip" class="tooltip-text">The amount patients are required to pay monthly out-of-pocket for the treatment.</span>
+            <span class="tooltip-text">The amount patients are required to pay monthly out-of-pocket for the treatment.</span>
             <input 
               type="range" 
               id="cost" 
@@ -253,7 +253,7 @@
                 </svg>
               </button>
             </label>
-            <span id="efficacyOthers-tooltip" class="tooltip-text">The probability of achieving target A1C for other patients after 6 months of treatment.</span>
+            <span class="tooltip-text">The probability of achieving target A1C for other patients after 6 months of treatment.</span>
             <select id="efficacyOthers" name="efficacyOthers" aria-required="false">
               <option value="">--Select Efficacy for Others--</option>
               <option value="10">10%</option>
@@ -274,7 +274,7 @@
                 </svg>
               </button>
             </label>
-            <span id="riskOthers-tooltip" class="tooltip-text">The risk of experiencing side effects for other patients from the treatment.</span>
+            <span class="tooltip-text">The risk of experiencing side effects for other patients from the treatment.</span>
             <select id="riskOthers" name="riskOthers" aria-required="false">
               <option value="">--Select Risk Level for Others--</option>
               <option value="0">0%</option>
@@ -297,7 +297,7 @@
                 </svg>
               </button>
             </label>
-            <span id="costOthers-tooltip" class="tooltip-text">The amount other patients are required to pay monthly out-of-pocket for the treatment.</span>
+            <span class="tooltip-text">The amount other patients are required to pay monthly out-of-pocket for the treatment.</span>
             <input 
               type="range" 
               id="costOthers" 
@@ -313,7 +313,7 @@
           </div>
         </div>
         <div class="buttons-row">
-          <button type="button" onclick="predictUptake()">Predict Health Plan Uptake</button>
+          <button type="button" onclick="renderProbChart()">Show Probability Plot</button>
           <button type="button" onclick="saveScenario()">Save Result</button>
         </div>
       </form>
@@ -334,11 +334,7 @@
           <canvas id="wtpChartMain"></canvas>
         </div>
       </div>
-      <!-- Conclusion Section -->
-      <div id="wtpConclusionSection" class="conclusion-section" style="display: none;">
-        <h3>Conclusion</h3>
-        <p id="wtpConclusion"></p>
-      </div>
+      <!-- Conclusion Section Removed as per user request -->
     </div>
 
     <!-- Health Plan Uptake Probability Tab -->
@@ -397,9 +393,7 @@
           <option value="Experiment 2">Experiment 2</option>
           <option value="Experiment 3">Experiment 3</option>
         </select>
-
-        <label for="filterUptake"><strong>Filter by Uptake Probability:</strong></label>
-        <input type="number" id="filterUptake" placeholder="Minimum Uptake (%)" min="0" max="100" oninput="filterScenarios()" />
+        <!-- Removed Filter by Uptake Probability as per user request -->
       </div>
       <div class="buttons-row">
         <button onclick="renderWTPComparison()">Compare Risk Attributes Across Experiments</button>
