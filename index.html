@@ -5,145 +5,129 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>T2DM Equity-Efficiency Decision Aid Tool</title>
   <link rel="stylesheet" href="styles.css"/>
-  <!-- Include Chart.js CDN -->
+  <!-- Include Chart.js from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Include jsPDF CDN for PDF export -->
+  <!-- Include jsPDF from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <div class="container">
     <header>
       <h1>T2DM Equity-Efficiency Decision Aid Tool</h1>
-      <p>Assessing Health Plan Choices Based on Cost, Efficacy, and Risk Attributes</p>
+      <p>Assessing Health Plan Uptake and Willingness to Pay (WTP) for Risk Attributes</p>
     </header>
 
+    <!-- Navigation Tabs -->
     <nav>
       <div class="tabs" role="tablist">
-        <button class="tablink active" onclick="openTab('introTab', this)" role="tab" aria-selected="true" aria-controls="introTab" id="tab-intro">Introduction</button>
-        <button class="tablink" onclick="openTab('wtpTab', this)" role="tab" aria-selected="false" aria-controls="wtpTab" id="tab-wtp">WTP Results</button>
-        <button class="tablink" onclick="openTab('inputsTab', this)" role="tab" aria-selected="false" aria-controls="inputsTab" id="tab-inputs">Inputs</button>
-        <button class="tablink" onclick="openTab('attributesTab', this)" role="tab" aria-selected="false" aria-controls="attributesTab" id="tab-attributes">Attributes</button>
-        <button class="tablink" onclick="openTab('costsTab', this)" role="tab" aria-selected="false" aria-controls="costsTab" id="tab-costs">Costs & Benefits</button>
-        <button class="tablink" onclick="openTab('scenariosTab', this)" role="tab" aria-selected="false" aria-controls="scenariosTab" id="tab-scenarios">Saved Scenarios</button>
+        <button class="tablink active" onclick="openTab('introTab', this)" role="tab" aria-selected="true">Introduction</button>
+        <button class="tablink" onclick="openTab('instructionsTab', this)" role="tab" aria-selected="false">Instructions</button>
+        <button class="tablink" onclick="openTab('attributesTab', this)" role="tab" aria-selected="false">Attributes</button>
+        <button class="tablink" onclick="openTab('inputsTab', this)" role="tab" aria-selected="false">Inputs</button>
+        <button class="tablink" onclick="openTab('wtpTab', this)" role="tab" aria-selected="false">WTP Results</button>
+        <button class="tablink" onclick="openTab('scenariosTab', this)" role="tab" aria-selected="false">Scenarios</button>
+        <button class="tablink" onclick="openTab('costsTab', this)" role="tab" aria-selected="false">Costs & Benefits</button>
       </div>
     </nav>
 
-    <!-- Introduction Tab -->
-    <div id="introTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-intro" style="display: block;">
-      <h2>Introduction</h2>
-      <p>Welcome to the T2DM Equity-Efficiency Decision Aid Tool. This tool helps evaluate health plan choices based on various attributes such as cost, efficacy, and risk. Navigate through the tabs to explore different functionalities.</p>
+    <!-- Tab Contents -->
+    <!-- 1. Introduction Tab -->
+    <div id="introTab" class="tabcontent" style="display: block;" role="tabpanel">
+      <h2>Welcome to the T2DM Equity-Efficiency Decision Aid Tool</h2>
+      <p>
+        This tool is designed to help healthcare professionals and policymakers assess the uptake of different health plans among individuals with Type 2 Diabetes Mellitus (T2DM). By evaluating various attributes of health plans and understanding individuals' willingness to pay (WTP) for specific risk attributes, this tool facilitates informed decision-making that balances equity and efficiency.
+      </p>
+      <p>
+        Navigate through the tabs to explore detailed instructions, define and adjust attributes, input different scenarios, view WTP results, analyze costs and benefits, and compare various scenarios to determine the most effective and equitable health plan options.
+      </p>
     </div>
 
-    <!-- WTP Results Tab -->
-    <div id="wtpTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-wtp">
-      <h2>Willingness to Pay (WTP) Results</h2>
-      <button onclick="renderWTPChart()">Show WTP Plots</button>
-      <div class="chart-grid">
-        <div class="chart-box">
-          <h3>WTP for Risk Attributes</h3>
-          <canvas id="wtpChartMain"></canvas>
-        </div>
-      </div>
+    <!-- 2. Instructions Tab -->
+    <div id="instructionsTab" class="tabcontent" role="tabpanel">
+      <h2>Instructions</h2>
+      <p>
+        Follow these steps to effectively use the T2DM Equity-Efficiency Decision Aid Tool:
+      </p>
+      <ol>
+        <li>
+          <strong>Review Attributes:</strong> Navigate to the "Attributes" tab to understand the different attributes that influence health plan decisions, including their definitions and impact.
+        </li>
+        <li>
+          <strong>Input Scenario:</strong> Go to the "Inputs" tab to select an experiment and input the relevant attributes. Use the sliders and dropdowns to customize the scenario according to your requirements.
+        </li>
+        <li>
+          <strong>Predict Uptake Probability:</strong> After inputting the scenario, click on "Show Probability Plot" to visualize the predicted uptake probability of the selected health plan.
+        </li>
+        <li>
+          <strong>Save Scenario:</strong> Once satisfied with the inputs and predicted uptake, save the scenario for future reference and comparison in the "Scenarios" tab.
+        </li>
+        <li>
+          <strong>View WTP Results:</strong> Navigate to the "WTP Results" tab to view the willingness to pay for different risk attributes across all experiments.
+        </li>
+        <li>
+          <strong>Analyze Costs & Benefits:</strong> In the "Costs & Benefits" tab, select different QALY gain scenarios to analyze the cost-effectiveness of each saved scenario.
+        </li>
+        <li>
+          <strong>Compare and Export:</strong> Use the "Scenarios" tab to compare different saved scenarios and export the comparison to PDF for reporting and further analysis.
+        </li>
+      </ol>
     </div>
 
-    <!-- Inputs Tab -->
-    <div id="inputsTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-inputs">
-      <h2>Inputs</h2>
-      <div class="form-grid">
-        <div class="form-item">
-          <label for="experimentSelect">Select Experiment:</label>
-          <select id="experimentSelect" onchange="toggleExperimentAttributes()">
-            <option value="">--Select Experiment--</option>
-            <option value="1">Experiment 1</option>
-            <option value="2">Experiment 2</option>
-            <option value="3">Experiment 3</option>
-          </select>
-        </div>
-        <div class="form-item">
-          <label for="efficacy">Efficacy (%):</label>
-          <input type="range" id="efficacy" min="0" max="100" value="50" onchange="updateEfficacyDisplay(this.value); predictUptake();">
-          <span id="efficacyValue">50%</span>
-        </div>
-        <div class="form-item">
-          <label for="risk">Risk (%):</label>
-          <input type="range" id="risk" min="0" max="100" value="8" onchange="updateRiskDisplay(this.value); predictUptake();">
-          <span id="riskValue">8%</span>
-        </div>
-        <div class="form-item">
-          <label for="cost">Monthly Out-of-Pocket Cost (USD):</label>
-          <input type="range" id="cost" min="0" max="1000" step="10" value="500" onchange="updateCostDisplay(this.value); predictUptake();">
-          <span id="costValue">$500</span>
-        </div>
-        <!-- Experiment 3 Additional Attributes -->
-        <div class="form-item" id="efficacyOthersDiv" style="display: none;">
-          <label for="efficacyOthers">Efficacy Others (%):</label>
-          <input type="range" id="efficacyOthers" min="0" max="100" value="50" onchange="updateEfficacyOthersDisplay(this.value); predictUptake();">
-          <span id="efficacyOthersValue">50%</span>
-        </div>
-        <div class="form-item" id="riskOthersDiv" style="display: none;">
-          <label for="riskOthers">Risk Others (%):</label>
-          <input type="range" id="riskOthers" min="0" max="100" value="8" onchange="updateRiskOthersDisplay(this.value); predictUptake();">
-          <span id="riskOthersValue">8%</span>
-        </div>
-        <div class="form-item" id="costOthersDiv" style="display: none;">
-          <label for="costOthers">Monthly Out-of-Pocket Cost Others (USD):</label>
-          <input type="range" id="costOthers" min="0" max="1000" step="10" value="500" onchange="updateCostOthersDisplay(this.value); predictUptake();">
-          <span id="costOthersValue">$500</span>
-        </div>
-      </div>
-      <button onclick="predictUptake()">Predict Health Plan Uptake Probability</button>
-      <div class="chart-grid">
-        <div class="chart-box">
-          <h3>Health Plan Uptake Probability</h3>
-          <canvas id="probChartMain"></canvas>
-        </div>
-      </div>
-      <div class="buttons-row">
-        <button onclick="saveScenario()">Save Scenario</button>
-      </div>
-    </div>
-
-    <!-- Attributes Tab -->
-    <div id="attributesTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-attributes">
+    <!-- 3. Attributes Tab -->
+    <div id="attributesTab" class="tabcontent" role="tabpanel">
       <h2>Attributes</h2>
       <div class="attributes-list">
+        <!-- Example Attribute Card -->
         <div class="attribute-card">
-          <div class="attribute-icon">
-            <!-- Info Icon SVG -->
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
-              <line x1="12" y1="16" x2="12" y2="12" stroke="#2980b9" stroke-width="2"/>
-              <circle cx="12" cy="8" r="1" fill="#2980b9"/>
+          <div class="attribute-icon" tabindex="0" aria-describedby="tooltip-efficacy">
+            <!-- SVG Icon for Efficacy -->
+            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="#2980b9">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 
+              10-4.48 10-10S17.52 2 12 2zm-1 15l-5-5 
+              1.41-1.41L11 14.17l7.59-7.59L20 
+              8l-9 9z"/>
             </svg>
-            <div class="tooltip">
-              <strong>Efficacy:</strong> The effectiveness of the health plan in managing T2DM.
+            <div class="tooltip" role="tooltip" id="tooltip-efficacy">
+              <strong>Efficacy</strong>
+              <p>The effectiveness of the health plan in managing T2DM.</p>
+              <ul>
+                <li>50% Efficacy: Moderate effectiveness.</li>
+                <li>90% Efficacy: High effectiveness.</li>
+              </ul>
             </div>
           </div>
           <div class="attribute-content">
             <h4>Efficacy</h4>
-            <p>Measures how well the health plan manages T2DM.</p>
+            <p>Effectiveness of the health plan in managing T2DM.</p>
             <ul>
               <li>50% Efficacy</li>
               <li>90% Efficacy</li>
             </ul>
           </div>
         </div>
-        <!-- Repeat similar blocks for Risk and Cost Attributes -->
+
+        <!-- Attribute Card 2 -->
         <div class="attribute-card">
-          <div class="attribute-icon">
-            <!-- Info Icon SVG -->
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
-              <line x1="12" y1="16" x2="12" y2="12" stroke="#2980b9" stroke-width="2"/>
-              <circle cx="12" cy="8" r="1" fill="#2980b9"/>
+          <div class="attribute-icon" tabindex="0" aria-describedby="tooltip-risk">
+            <!-- SVG Icon for Risk -->
+            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="#e74c3c">
+              <path d="M12 2C6.48 2 2 6.48 2 
+              12s4.48 10 10 10 10-4.48 
+              10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
             </svg>
-            <div class="tooltip">
-              <strong>Risk:</strong> The probability of adverse effects associated with the health plan.
+            <div class="tooltip" role="tooltip" id="tooltip-risk">
+              <strong>Risk</strong>
+              <p>The probability of experiencing side effects from the health plan.</p>
+              <ul>
+                <li>8% Risk: Low risk of side effects.</li>
+                <li>16% Risk: Moderate risk of side effects.</li>
+                <li>30% Risk: High risk of side effects.</li>
+              </ul>
             </div>
           </div>
           <div class="attribute-content">
             <h4>Risk</h4>
-            <p>Represents the likelihood of experiencing side effects.</p>
+            <p>The probability of experiencing side effects from the health plan.</p>
             <ul>
               <li>8% Risk</li>
               <li>16% Risk</li>
@@ -151,71 +135,118 @@
             </ul>
           </div>
         </div>
+
+        <!-- Attribute Card 3 -->
         <div class="attribute-card">
-          <div class="attribute-icon">
-            <!-- Info Icon SVG -->
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
-              <line x1="12" y1="16" x2="12" y2="12" stroke="#2980b9" stroke-width="2"/>
-              <circle cx="12" cy="8" r="1" fill="#2980b9"/>
+          <div class="attribute-icon" tabindex="0" aria-describedby="tooltip-cost">
+            <!-- SVG Icon for Cost -->
+            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="#f39c12">
+              <path d="M12 2C8.13 2 5 5.13 5 
+              9c0 5.25 7 13 7 13s7-7.75 
+              7-13c0-3.87-3.13-7-7-7zm0 
+              9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 
+              6.5 12 6.5s2.5 1.12 2.5 
+              2.5S13.38 11.5 12 11.5z"/>
             </svg>
-            <div class="tooltip">
-              <strong>Cost:</strong> The monthly out-of-pocket expense for the health plan.
+            <div class="tooltip" role="tooltip" id="tooltip-cost">
+              <strong>Cost</strong>
+              <p>The monthly out-of-pocket cost associated with the health plan.</p>
+              <ul>
+                <li>0 - 1000 USD: Adjustable via slider.</li>
+              </ul>
             </div>
           </div>
           <div class="attribute-content">
-            <h4>Cost</h4>
-            <p>The financial burden of the health plan on the participant.</p>
-            <ul>
-              <li>$0 - $1000</li>
-            </ul>
+            <h4>Monthly Out-of-Pocket Cost</h4>
+            <p>The amount individuals need to pay monthly for the health plan.</p>
+            <input type="range" id="cost" name="cost" min="0" max="1000" step="50" oninput="updateCostDisplay(this.value)" value="500"/>
+            <span id="costValue">$500</span>
           </div>
         </div>
+
+        <!-- Add more attribute cards as needed -->
       </div>
     </div>
 
-    <!-- Costs & Benefits Tab -->
-    <div id="costsTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-costs">
-      <h2>Costs &amp; Benefits</h2>
-      <div id="costsBenefitsContainer">
-        <div class="qaly-selector">
-          <label for="qalySelect"><strong>Select QALY Gain Scenario:</strong></label>
-          <select id="qalySelect" onchange="renderCostsBenefits()">
-            <option value="low">Low (0.02 QALYs per participant)</option>
-            <option value="moderate" selected>Moderate (0.05 QALYs per participant)</option>
-            <option value="high">High (0.1 QALYs per participant)</option>
+    <!-- 4. Inputs Tab -->
+    <div id="inputsTab" class="tabcontent" role="tabpanel">
+      <h2>Inputs</h2>
+      <div class="form-grid">
+        <div class="form-item">
+          <label for="experimentSelect">Select Experiment:</label>
+          <select id="experimentSelect">
+            <option value="1">Experiment 1</option>
+            <option value="2">Experiment 2</option>
+            <option value="3">Experiment 3</option>
           </select>
         </div>
-        <div id="costsBenefitsResults">
-          <!-- Results will be injected here -->
-          <p class="description">
-            The cost components are derived from a targeted literature review focusing on various aspects such as advertisement, training, medication, and healthcare provider visits. Benefits are calculated based on the selected Quality-Adjusted Life Year (QALY) gain scenario and monetized using a standard value per QALY.
-          </p>
-          <!-- Added info about how costs and benefits are calculated -->
-          <div class="calculation-info">
-            <h4>How Costs and Benefits are Calculated:</h4>
-            <p>
-              <strong>Costs:</strong> Each cost item has a predefined unit cost based on literature reviews. Fixed costs are added directly, while variable costs are scaled based on the predicted Health Plan Uptake Probability. The total treatment cost is the sum of all these costs.
-            </p>
-            <p>
-              <strong>Benefits:</strong> Benefits are calculated by multiplying the number of participants (based on uptake probability) by the selected QALY gain per participant. These QALYs are then monetized using a standard value per QALY (USD 50,000) to derive the monetized benefits.
-            </p>
-          </div>
+        <div class="form-item">
+          <label for="efficacy">Efficacy (%):</label>
+          <select id="efficacy">
+            <option value="">--Select Efficacy--</option>
+            <option value="50">50%</option>
+            <option value="90">90%</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <label for="risk">Risk (%):</label>
+          <select id="risk">
+            <option value="">--Select Risk--</option>
+            <option value="8">8%</option>
+            <option value="16">16%</option>
+            <option value="30">30%</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <label for="cost">Monthly Out-of-Pocket Cost (USD):</label>
+          <input type="range" id="cost" name="cost" min="0" max="1000" step="50" oninput="updateCostDisplay(this.value)" value="500"/>
+          <span id="costValue">$500</span>
+        </div>
+        <!-- Additional attributes for Experiment 3 -->
+        <div class="form-item" id="efficacyOthersDiv" style="display: none;">
+          <label for="efficacyOthers">Efficacy Others (%):</label>
+          <select id="efficacyOthers">
+            <option value="">--Select Efficacy Others--</option>
+            <option value="50">50%</option>
+            <option value="90">90%</option>
+          </select>
+        </div>
+        <div class="form-item" id="riskOthersDiv" style="display: none;">
+          <label for="riskOthers">Risk Others (%):</label>
+          <select id="riskOthers">
+            <option value="">--Select Risk Others--</option>
+            <option value="8">8%</option>
+            <option value="16">16%</option>
+            <option value="30">30%</option>
+          </select>
+        </div>
+        <div class="form-item" id="costOthersDiv" style="display: none;">
+          <label for="costOthers">Monthly Out-of-Pocket Cost Others (USD):</label>
+          <input type="range" id="costOthers" name="costOthers" min="0" max="1000" step="50" oninput="updateCostOthersDisplay(this.value)" value="500"/>
+          <span id="costOthersValue">$500</span>
         </div>
       </div>
+      <div class="buttons-row">
+        <button onclick="renderProbChart()">Show Probability Plot</button>
+        <button onclick="saveScenario()">Save Scenario</button>
+      </div>
+      <canvas id="probChartMain" width="400" height="200" aria-label="Health Plan Uptake Probability Chart" role="img"></canvas>
     </div>
 
-    <!-- Scenarios Tab -->
-    <div id="scenariosTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-scenarios">
-      <h2>Saved Scenarios</h2>
-      <p>
-        Save your scenario from <strong>Inputs</strong> and compare or export multiple configurations, including WTP and uptake probability charts, to PDF.
-      </p>
+    <!-- 5. WTP Results Tab -->
+    <div id="wtpTab" class="tabcontent" role="tabpanel">
+      <h2>Willingness to Pay (WTP) Results</h2>
+      <div class="buttons-row">
+        <button onclick="renderWTPChart()">Show WTP Plots</button>
+      </div>
+      <canvas id="wtpChartMain" width="400" height="200" aria-label="WTP Results Chart" role="img"></canvas>
+      <div id="wtpConclusion" class="conclusion-section"></div>
+    </div>
+
+    <!-- 6. Scenarios Tab -->
+    <div id="scenariosTab" class="tabcontent" role="tabpanel">
+      <h2>Scenarios</h2>
       <div class="filter-options">
-        <!-- Filter Icon SVG -->
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg" class="filter-icon" aria-hidden="true">
-          <polygon points="3,4 21,4 14,11 17,11 21,16 3,16 7,11 10,11"/>
-        </svg>
         <label for="filterExperiment"><strong>Filter by Experiment:</strong></label>
         <select id="filterExperiment" onchange="filterScenarios()">
           <option value="all">All Experiments</option>
@@ -250,11 +281,32 @@
       <!-- WTP Comparison Chart -->
       <div id="wtpComparisonContainer" style="margin-top: 40px; display: none;">
         <h3>Average WTP for Risk Attributes Across Experiments</h3>
-        <canvas id="wtpComparisonChart"></canvas>
+        <canvas id="wtpComparisonChart" aria-label="WTP Comparison Chart" role="img"></canvas>
         <p id="wtpComparisonConclusion" class="conclusion-section"></p>
       </div>
     </div>
 
+    <!-- 7. Costs & Benefits Tab -->
+    <div id="costsTab" class="tabcontent" role="tabpanel">
+      <h2>Costs &amp; Benefits</h2>
+      <div class="qaly-selector">
+        <label for="qalySelect"><strong>Select QALY Gain Scenario:</strong></label>
+        <select id="qalySelect" onchange="renderCostsBenefits()">
+          <option value="low">Low (0.02 QALYs)</option>
+          <option value="moderate" selected>Moderate (0.05 QALYs)</option>
+          <option value="high">High (0.10 QALYs)</option>
+        </select>
+      </div>
+      <div class="calculation-info">
+        <h4>How Costs &amp; Benefits are Calculated:</h4>
+        <p>
+          The tool aggregates both fixed and variable costs based on a literature review of costs associated with T2DM management. Fixed costs include expenses like advertisements and training, while variable costs scale with the predicted uptake probability. Benefits are quantified in terms of Quality-Adjusted Life Years (QALYs) gained and monetized using a standard value per QALY ($50,000 USD).
+        </p>
+      </div>
+      <div id="costsBenefitsResults"></div>
+    </div>
+
+    <!-- Footer -->
     <footer>
       <p>
         &copy; 2025 T2DM Equity-Efficiency Decision Aid Tool. All Rights Reserved. <br/>
