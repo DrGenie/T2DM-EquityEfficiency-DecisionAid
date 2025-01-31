@@ -19,7 +19,6 @@
       <p>
         This interactive tool helps researchers and policymakers evaluate how changes in risk, efficacy, 
         and monthly costs can shape preferences for T2DM treatments across different equity-efficiency scenarios.
-        The tool is built for US-based cost assumptions and health outcome valuations.
       </p>
     </header>
 
@@ -51,12 +50,12 @@
           Health outcomes are shared equally between the individual and others with poorer health.
         </li>
         <li><strong>Experiment 3 (Unequal Outcomes):</strong> 
-          Disparate outcomes for self and others, allowing complex trade-offs for equity considerations.
+          Disparate outcomes for self and others, allowing more complex equity trade-offs.
         </li>
       </ol>
       <p>
         By adjusting risk, efficacy, and monthly out-of-pocket cost, you can see how these attributes affect plan 
-        uptake probability, willingness to pay (WTP), and the net cost-benefit of adopting specific T2DM interventions.
+        uptake probability, willingness to pay (WTP), and overall cost-benefit of adopting certain T2DM treatments.
       </p>
     </div>
 
@@ -64,19 +63,18 @@
     <div id="instructionsTab" class="tabcontent">
       <h2>Instructions</h2>
       <ol>
-        <li><strong>Attributes:</strong> Review the "Attributes" tab for details and references. Risk references 0%, while Efficacy references 10% baseline.</li>
-        <li><strong>Inputs:</strong> In the "Inputs" tab, choose an experiment, then specify risk, efficacy, and cost values for “self.” 
-          If Experiment 3 is chosen, also provide "others" attributes.</li>
-        <li><strong>Predicted Uptake:</strong> Click “Show Probability Plot” in the "Inputs" tab. Then switch to “Predicted Health Plan Uptake” to see the chart.</li>
-        <li><strong>WTP Results:</strong> Generate bar charts in the "WTP Results" tab. Negative WTP indicates disutility requiring compensation; positive WTP is a willingness to pay for improvements.</li>
-        <li><strong>Scenarios:</strong> Save multiple scenarios, compare them, or export them as PDF in the "Scenarios" tab.</li>
-        <li><strong>Costs &amp; Benefits:</strong> Detailed US-based cost components are listed under "Costs &amp; Benefits," with QALYs monetized at $50,000/QALY. Net benefit is benefits minus costs, factoring uptake.</li>
+        <li><strong>Attributes:</strong> Check "Attributes" for definitions. Risk references 0% baseline, Efficacy references 10% baseline.</li>
+        <li><strong>Inputs:</strong> In the "Inputs" tab, select an experiment and configure risk, efficacy, and cost. If choosing Experiment 3, also provide "others" attributes.</li>
+        <li><strong>Predicted Uptake:</strong> Click “Show Probability Plot.” The result is displayed in the "Predicted Health Plan Uptake" tab.</li>
+        <li><strong>WTP Results:</strong> Explore bar charts for WTP in "WTP Results." Negative WTP indicates disutility; positive WTP indicates a willingness to pay for improvements.</li>
+        <li><strong>Scenarios:</strong> Save scenarios for comparison or exporting to PDF in the "Scenarios" tab.</li>
+        <li><strong>Costs &amp; Benefits:</strong> Review cost breakdown and QALY-based net benefit in the "Costs &amp; Benefits" tab.</li>
       </ol>
     </div>
 
     <!-- 3. ATTRIBUTES TAB -->
     <div id="attributesTab" class="tabcontent">
-      <h2>Key Attributes for T2DM Treatments</h2>
+      <h2>Key Attributes</h2>
       <div class="attributes-list">
 
         <!-- EFFICACY CARD -->
@@ -88,7 +86,7 @@
             </svg>
             <div class="tooltip" role="tooltip">
               <strong>Efficacy</strong>
-              <p>Chance of reaching target A1C in 6 months. E.g., 10% baseline, 50% moderate, 90% high.</p>
+              <p>Chance of achieving target A1C in 6 months. (10% baseline, 50%, 90%).</p>
             </div>
           </div>
           <div class="attribute-content">
@@ -106,12 +104,12 @@
             </svg>
             <div class="tooltip" role="tooltip">
               <strong>Risk</strong>
-              <p>Chance of side effects above a 0% baseline, set at 8%, 16%, or 30% for side-effect risk.</p>
+              <p>Probability of side effects above 0% baseline (e.g., 8%, 16%, 30%).</p>
             </div>
           </div>
           <div class="attribute-content">
             <h4>Risk</h4>
-            <p>A higher percentage risk means greater side-effect likelihood requiring compensation.</p>
+            <p>Greater risk percentages require compensation to offset disutility.</p>
           </div>
         </div>
 
@@ -124,12 +122,12 @@
             </svg>
             <div class="tooltip" role="tooltip">
               <strong>Cost</strong>
-              <p>Monthly out-of-pocket cost from $0 to $1000. Higher costs reduce uptake likelihood.</p>
+              <p>Monthly out-of-pocket cost from $0 to $1000 for T2DM coverage.</p>
             </div>
           </div>
           <div class="attribute-content">
             <h4>Monthly Out-of-Pocket Cost</h4>
-            <p>The direct monthly expenditure for T2DM treatments.</p>
+            <p>Higher cost tends to reduce likelihood of choosing the plan.</p>
           </div>
         </div>
       </div>
@@ -138,9 +136,8 @@
     <!-- 4. INPUTS TAB -->
     <div id="inputsTab" class="tabcontent">
       <h2>Scenario Inputs</h2>
-      <p>Choose an experiment, set risk and efficacy for “self,” and if needed, “others.” Then click "Show Probability Plot."</p>
+      <p>Select an experiment, set risk and efficacy for self, and if needed, for others. Then click "Show Probability Plot".</p>
       <div class="form-grid">
-
         <div class="form-item">
           <label for="experimentSelect">Select Experiment:</label>
           <select id="experimentSelect">
@@ -153,7 +150,7 @@
         <div class="form-item">
           <label for="efficacy">Efficacy (Self) % (Ref=10%):</label>
           <select id="efficacy">
-            <option value="">--Select Efficacy--</option>
+            <option value="">--Select--</option>
             <option value="50">50</option>
             <option value="90">90</option>
           </select>
@@ -161,7 +158,7 @@
         <div class="form-item">
           <label for="risk">Risk (Self) % (Ref=0%):</label>
           <select id="risk">
-            <option value="">--Select Risk--</option>
+            <option value="">--Select--</option>
             <option value="8">8</option>
             <option value="16">16</option>
             <option value="30">30</option>
@@ -207,8 +204,7 @@
     <div id="uptakeTab" class="tabcontent">
       <h2>Predicted Health Plan Uptake</h2>
       <p>
-        This chart displays the likelihood of selecting the specified plan over opting out, 
-        after clicking “Show Probability Plot” in the "Inputs" tab.
+        This chart shows the likelihood of choosing the configured plan over opting out.
       </p>
       <canvas id="probChartMain" width="600" height="300" aria-label="Probability Chart" role="img"></canvas>
     </div>
@@ -232,7 +228,7 @@
     <!-- 7. SCENARIOS TAB -->
     <div id="scenariosTab" class="tabcontent">
       <h2>Scenarios</h2>
-      <p>Save and compare multiple configurations, then export them to PDF if needed.</p>
+      <p>Save and compare multiple configurations here. You may also export them to PDF.</p>
       <div class="filter-options">
         <label for="filterExperiment"><strong>Filter by Experiment:</strong></label>
         <select id="filterExperiment" onchange="filterScenarios()">
@@ -273,18 +269,17 @@
     <div id="costsTab" class="tabcontent">
       <h2>Costs &amp; Benefits</h2>
       <p>
-        We consider a targeted list of cost components relevant to T2DM management in the USA 
-        (advertising, training, medication, monitoring, etc.). 
-        Some costs are fixed, while others scale with uptake probability. 
-        Benefits are valued in terms of Quality-Adjusted Life Years (QALYs) gained from improved 
-        T2DM control, monetized at a standard $50,000 per QALY.
+        We list cost components relevant to T2DM management (fixed vs. variable) and 
+        multiply the uptake-based fraction for variable costs. Benefits are quantified 
+        as QALYs gained (low, moderate, or high) and monetized at $50,000 per QALY. 
+        Net benefit is monetized benefits minus total costs.
       </p>
       <div class="qaly-selector">
         <label for="qalySelect"><strong>Select QALY Gain Scenario:</strong></label>
         <select id="qalySelect" onchange="renderCostsBenefits()">
-          <option value="low">Low (0.02 QALYs gained)</option>
-          <option value="moderate" selected>Moderate (0.05 QALYs gained)</option>
-          <option value="high">High (0.10 QALYs gained)</option>
+          <option value="low">Low (0.02 QALYs)</option>
+          <option value="moderate" selected>Moderate (0.05 QALYs)</option>
+          <option value="high">High (0.10 QALYs)</option>
         </select>
       </div>
       <div id="costsBenefitsResults"></div>
@@ -293,12 +288,13 @@
     <!-- FOOTER -->
     <footer>
       <p>
-        &copy; 2025 T2DM Equity-Efficiency Decision Aid. All Rights Reserved. <br/>
+        &copy; 2025 T2DM Equity-Efficiency Decision Aid. All Rights Reserved.<br/>
         Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
       </p>
     </footer>
   </div>
 
+  <!-- MAIN SCRIPT -->
   <script src="script.js"></script>
 </body>
 </html>
