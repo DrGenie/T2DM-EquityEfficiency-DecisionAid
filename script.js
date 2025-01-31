@@ -7,7 +7,7 @@
  * 4) WTP Calculation & Charts
  * 5) Cost & Benefit Analysis
  * 6) Scenario Saving & PDF Export
- * 7) Distinction for Risk Averages Across Experiments (Self/Others for Exp3)
+ * 7) Distinction for Risk Averages Across Experiments 
  *
  * Authors:
  *  - Surachat Ngorsuraches (Auburn University, USA)
