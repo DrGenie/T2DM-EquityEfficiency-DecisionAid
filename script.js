@@ -1,28 +1,30 @@
 /****************************************************************************
  * script.js
- * Ensures tabs are truly active, Probability Plot is functional,
- * and all WTP, scenario, cost-benefit features are included ok.
+ * 1) Tab navigation
+ * 2) Range slider updates
+ * 3) Predicting Health Plan Uptake with radial gauge chart
+ * 4) WTP Calculation & Bar Chart
+ * 5) Scenario saving & PDF export
+ * 6) Cost-benefit analysis
+ * 7) Experiment 3 fields for Efficacy/Others & Risk/Others always accessible
  ****************************************************************************/
 
-/** Global Variables */
-let currentUptakeProbability = 0; 
+/** Global variables for storing uptake probability and scenario data. */
+let currentUptakeProbability = 0;
 let savedResults = [];
 
 /*******************************
  * TAB NAVIGATION
  *******************************/
 function openTab(tabId, btn) {
-  // Hide all tab contents
   const allTabs = document.getElementsByClassName("tabcontent");
   for (let i = 0; i < allTabs.length; i++) {
     allTabs[i].style.display = "none";
   }
-  // Deactivate all tab links
   const tabLinks = document.getElementsByClassName("tablink");
   for (let j = 0; j < tabLinks.length; j++) {
     tabLinks[j].classList.remove("active");
   }
-  // Show selected tab
   document.getElementById(tabId).style.display = "block";
   btn.classList.add("active");
 }
@@ -118,109 +120,108 @@ const wtpData = {
 /*******************************
  * PREDICT UPTAKE
  *******************************/
-function renderProbChart() {
-  const scenario = buildScenarioFromInputs();
-  if (!scenario) return;
-  computeUptakeProbability(scenario);
+function predictUptake() {
+  const scn = buildScenarioFromInputs();
+  if (!scn) return;
+  computeUptakeProbabilityGauge(scn);
   openTab("uptakeTab", document.querySelector(".tabs button:nth-child(5)"));
 }
 
-function computeUptakeProbability(scenario) {
+/** We use a radial gauge chart to visualize the uptake probability. */
+let probGaugeChartInstance = null;
+function computeUptakeProbabilityGauge(scn) {
   let utility = 0;
-  const exp = scenario.experiment;
+  const exp = scn.experiment;
   const coefs = coefficients[exp];
   if (!coefs) return;
 
-  // ASC
   if (exp === '1') {
     utility += coefs.ASC;
   } else {
     utility += coefs.ASC_mean;
   }
+  if (scn.efficacy === '50') utility += coefs.efficacy_50;
+  if (scn.efficacy === '90') utility += coefs.efficacy_90;
+  if (scn.risk === '8')  utility += coefs.risk_8;
+  if (scn.risk === '16') utility += coefs.risk_16;
+  if (scn.risk === '30') utility += coefs.risk_30;
+  utility += coefs.cost * scn.cost;
 
-  // Efficacy
-  if (scenario.efficacy === '50') utility += coefs.efficacy_50;
-  if (scenario.efficacy === '90') utility += coefs.efficacy_90;
-
-  // Risk
-  if (scenario.risk === '8')  utility += coefs.risk_8;
-  if (scenario.risk === '16') utility += coefs.risk_16;
-  if (scenario.risk === '30') utility += coefs.risk_30;
-
-  // Cost (Self)
-  utility += coefs.cost * scenario.cost;
-
-  // If experiment 3, incorporate "others"
   if (exp === '3') {
-    if (scenario.efficacyOthers === '50') utility += coefs.efficacyOthers_50;
-    if (scenario.efficacyOthers === '90') utility += coefs.efficacyOthers_90;
-
-    if (scenario.riskOthers === '8')  utility += coefs.riskOthers_8;
-    if (scenario.riskOthers === '16') utility += coefs.riskOthers_16;
-    if (scenario.riskOthers === '30') utility += coefs.riskOthers_30;
-
-    utility += coefs.costOthers * scenario.costOthers;
+    if (scn.efficacyOthers === '50') utility += coefs.efficacyOthers_50;
+    if (scn.efficacyOthers === '90') utility += coefs.efficacyOthers_90;
+    if (scn.riskOthers === '8')  utility += coefs.riskOthers_8;
+    if (scn.riskOthers === '16') utility += coefs.riskOthers_16;
+    if (scn.riskOthers === '30') utility += coefs.riskOthers_30;
+    utility += coefs.costOthers * scn.costOthers;
   }
 
   const expU = Math.exp(utility);
   const expOpt = Math.exp(coefs.ASC_optout);
-  currentUptakeProbability = (expU / (expU + expOpt)) * 100;
+  const prob = (expU / (expU + expOpt)) * 100;
+  currentUptakeProbability = prob;
 
-  displayUptakeProbability(currentUptakeProbability);
+  displayUptakeGauge(prob);
 }
 
-function displayUptakeProbability(prob) {
-  const ctx = document.getElementById("probChartMain").getContext("2d");
-  if (window.probChartInstance) {
-    window.probChartInstance.destroy();
+/** Radial gauge chart for uptake probability. */
+function displayUptakeGauge(prob) {
+  const ctx = document.getElementById("probGaugeChart").getContext("2d");
+  if (probGaugeChartInstance) {
+    probGaugeChartInstance.destroy();
   }
 
-  window.probChartInstance = new Chart(ctx, {
-    type: "bar",
+  probGaugeChartInstance = new Chart(ctx, {
+    type: 'doughnut',
     data: {
-      labels: ["Health Plan Uptake"],
+      labels: ["Uptake Probability", "Remaining"],
       datasets: [{
-        label: "Uptake Probability (%)",
-        data: [prob],
-        backgroundColor: prob < 30 ? "rgba(231,76,60,0.6)" :
-                         prob < 70 ? "rgba(241,196,15,0.6)" :
-                                     "rgba(39,174,96,0.6)",
-        borderColor: prob < 30 ? "rgba(231,76,60,1)" :
-                     prob < 70 ? "rgba(241,196,15,1)" :
-                                 "rgba(39,174,96,1)",
+        data: [prob, 100 - prob],
+        backgroundColor: [
+          prob < 30 ? "rgba(231,76,60,0.6)" :
+            prob < 70 ? "rgba(241,196,15,0.6)" :
+                        "rgba(39,174,96,0.6)",
+          "#ecf0f1"
+        ],
+        borderColor: [
+          prob < 30 ? "rgba(231,76,60,1)" :
+            prob < 70 ? "rgba(241,196,15,1)" :
+                        "rgba(39,174,96,1)",
+          "#bdc3c7"
+        ],
         borderWidth: 1
       }]
     },
     options: {
       responsive: true,
-      indexAxis: "y",
-      scales: {
-        x: { beginAtZero: true, max: 100 }
-      },
+      cutout: '70%',
       plugins: {
         legend: { display: false },
         title: {
           display: true,
           text: `Predicted Uptake = ${prob.toFixed(2)}%`,
           font: { size: 16 }
+        },
+        tooltip: {
+          enabled: false
         }
       }
     }
   });
 
-  let note;
+  let message;
   if (prob < 30) {
-    note = "Low uptake. Consider reducing cost or boosting efficacy.";
+    message = "Low uptake. Consider reducing cost or increasing efficacy.";
   } else if (prob < 70) {
-    note = "Moderate uptake. Further improvements could enhance plan choice.";
+    message = "Moderate uptake. Additional improvements may boost plan choice further.";
   } else {
-    note = "High uptake. Maintaining these attributes is recommended.";
+    message = "High uptake. Maintaining these attributes is recommended.";
   }
-  alert(`Uptake Probability: ${prob.toFixed(2)}%. ${note}`);
+  alert(`Predicted Probability: ${prob.toFixed(2)}%. ${message}`);
 }
 
 /*******************************
- * SCENARIO MANAGEMENT
+ * SCENARIO LOGIC
  *******************************/
 function buildScenarioFromInputs() {
   const experiment = document.getElementById("experimentSelect").value;
@@ -235,24 +236,24 @@ function buildScenarioFromInputs() {
   let efficacyOthers = "N/A";
   let riskOthers = "N/A";
   let costOthers = "N/A";
-  let missingFields = [];
+  const missing = [];
 
-  if (!efficacy) missingFields.push("Efficacy (Self)");
-  if (!risk) missingFields.push("Risk (Self)");
-  if (isNaN(cost)) missingFields.push("Cost (Self)");
+  if (!efficacy) missing.push("Efficacy (Self)");
+  if (!risk) missing.push("Risk (Self)");
+  if (isNaN(cost)) missing.push("Cost (Self)");
 
   if (experiment === '3') {
     efficacyOthers = document.getElementById("efficacyOthers").value;
     riskOthers = document.getElementById("riskOthers").value;
     costOthers = parseInt(document.getElementById("costOthers").value, 10);
 
-    if (!efficacyOthers) missingFields.push("Efficacy (Others)");
-    if (!riskOthers) missingFields.push("Risk (Others)");
-    if (isNaN(costOthers)) missingFields.push("Cost (Others)");
+    if (!efficacyOthers) missing.push("Efficacy (Others)");
+    if (!riskOthers) missing.push("Risk (Others)");
+    if (isNaN(costOthers)) missing.push("Cost (Others)");
   }
 
-  if (missingFields.length > 0) {
-    alert(`Please provide: ${missingFields.join(", ")}`);
+  if (missing.length > 0) {
+    alert(`Please provide: ${missing.join(", ")}`);
     return null;
   }
 
@@ -268,13 +269,12 @@ function buildScenarioFromInputs() {
 }
 
 function saveScenario() {
-  const scn = buildScenarioFromInputs();
-  if (!scn) return;
-
   if (currentUptakeProbability <= 0) {
-    alert("Please calculate the uptake probability before saving.");
+    alert("Please predict the Health Plan Uptake before saving the scenario.");
     return;
   }
+  const scn = buildScenarioFromInputs();
+  if (!scn) return;
 
   const eName = `Experiment ${scn.experiment}`;
   const scenarioObj = {
@@ -314,40 +314,41 @@ function addScenarioToTable(s) {
 
 function loadSavedResults() {
   savedResults = [];
-  document.querySelector("#scenarioTable tbody").innerHTML = "";
-}
-
-function toggleExperimentAttributes() {
-  const exp = document.getElementById("experimentSelect").value;
-  const isExp3 = (exp === '3');
-  document.getElementById("efficacyOthersDiv").style.display = isExp3 ? 'block' : 'none';
-  document.getElementById("riskOthersDiv").style.display = isExp3 ? 'block' : 'none';
-  document.getElementById("costOthersDiv").style.display = isExp3 ? 'block' : 'none';
+  const tableBody = document.querySelector("#scenarioTable tbody");
+  if (tableBody) tableBody.innerHTML = "";
 }
 
 /*******************************
- * FILTER SCENARIOS
+ * SHOW/HIDE OTHERS FOR EXP 3
+ *******************************/
+function toggleExperimentAttributes() {
+  const exp = document.getElementById("experimentSelect").value;
+  const show = (exp === '3');
+  document.getElementById("efficacyOthersDiv").style.display = show ? 'block' : 'none';
+  document.getElementById("riskOthersDiv").style.display = show ? 'block' : 'none';
+  document.getElementById("costOthersDiv").style.display = show ? 'block' : 'none';
+}
+
+/*******************************
+ * SCENARIOS FILTER & EXPORT
  *******************************/
 function filterScenarios() {
   const filterVal = document.getElementById("filterExperiment").value;
   const rows = document.querySelectorAll("#scenarioTable tbody tr");
 
-  rows.forEach(r => {
-    const expCell = r.cells[1].textContent;
+  rows.forEach(row => {
+    const expCell = row.cells[1].textContent;
     if (filterVal === "all" || expCell === filterVal) {
-      r.style.display = "";
+      row.style.display = "";
     } else {
-      r.style.display = "none";
+      row.style.display = "none";
     }
   });
 }
 
-/*******************************
- * EXPORT TO PDF
- *******************************/
 function exportToPDF() {
   if (savedResults.length < 1) {
-    alert("No saved scenarios to export.");
+    alert("No scenarios to export.");
     return;
   }
   const { jsPDF } = window.jspdf;
@@ -407,18 +408,19 @@ function renderWTPChart() {
     alert("No WTP data available for this experiment.");
     return;
   }
+
   // Switch to WTP tab
   openTab("wtpTab", document.querySelector(".tabs button:nth-child(6)"));
 
-  const dataArr = wtpData[exp];
+  const dArr = wtpData[exp];
   const ctx = document.getElementById("wtpChartMain").getContext("2d");
   if (wtpChartInstance) {
     wtpChartInstance.destroy();
   }
 
-  const labels = dataArr.map(i => i.attribute);
-  const values = dataArr.map(i => i.wtp);
-  const errors = dataArr.map(i => i.se);
+  const labels = dArr.map(i => i.attribute);
+  const values = dArr.map(i => i.wtp);
+  const errors = dArr.map(i => i.se);
 
   wtpChartInstance = new Chart(ctx, {
     type: "bar",
@@ -427,8 +429,8 @@ function renderWTPChart() {
       datasets: [{
         label: "WTP (USD)",
         data: values,
-        backgroundColor: values.map(v => v >= 0 ? "rgba(52,152,219,0.6)" : "rgba(231,76,60,0.6)"),
-        borderColor: values.map(v => v >= 0 ? "rgba(52,152,219,1)" : "rgba(231,76,60,1)"),
+        backgroundColor: values.map(v => (v >= 0 ? "rgba(52,152,219,0.6)" : "rgba(231,76,60,0.6)")),
+        borderColor: values.map(v => (v >= 0 ? "rgba(52,152,219,1)" : "rgba(231,76,60,1)")),
         borderWidth: 1
       }]
     },
@@ -446,10 +448,10 @@ function renderWTPChart() {
         },
         tooltip: {
           callbacks: {
-            afterBody: ctx => {
-              const i = ctx[0].dataIndex;
-              const seVal = errors[i].toFixed(2);
-              const pVal = dataArr[i].pVal;
+            afterBody: function(ctx) {
+              const idx = ctx[0].dataIndex;
+              const seVal = errors[idx].toFixed(2);
+              const pVal = dArr[idx].pVal;
               return `SE: ${seVal}, p-value: ${pVal}`;
             }
           }
@@ -661,7 +663,7 @@ function renderCostsBenefits() {
 }
 
 /*******************************
- * WTP COMPARISON (RISK ONLY)
+ * WTP COMPARISON FOR RISK ONLY
  *******************************/
 let wtpComparisonChartInstance = null;
 function renderWTPComparison() {
@@ -676,7 +678,6 @@ function renderWTPComparison() {
     wtpComparisonChartInstance.destroy();
   }
 
-  // We'll compute average WTP for risk for each experiment.
   const riskAverages = {
     "Experiment 1": [],
     "Experiment 2": [],
@@ -686,12 +687,11 @@ function renderWTPComparison() {
 
   savedResults.forEach(s => {
     const eName = s.experiment; 
-    const eNumber = eName.split(" ")[1];
-    const wArr = wtpData[eNumber];
-    if (!wArr) return;
+    const eNum = eName.split(" ")[1];
+    const dataArr = wtpData[eNum];
+    if (!dataArr) return;
 
-    // Filter risk attributes
-    wArr.forEach(item => {
+    dataArr.forEach(item => {
       if (!item.attribute.toLowerCase().includes("risk")) return;
 
       if (eName === "Experiment 1") {
@@ -710,7 +710,7 @@ function renderWTPComparison() {
 
   const avg = arr => {
     if (!arr || arr.length===0) return 0;
-    return (arr.reduce((acc, v) => acc + v, 0) / arr.length).toFixed(2);
+    return (arr.reduce((a,v) => a+v, 0) / arr.length).toFixed(2);
   };
 
   const exp1Risk = avg(riskAverages["Experiment 1"]);
@@ -718,7 +718,6 @@ function renderWTPComparison() {
   const exp3RiskSelf = avg(riskAverages["Experiment 3 Self"]);
   const exp3RiskOthers = avg(riskAverages["Experiment 3 Others"]);
 
-  // We'll display these 4 bars
   const labels = ["Exp1 (Risk)", "Exp2 (Risk)", "Exp3 (Self-Risk)", "Exp3 (Others-Risk)"];
   const values = [
     parseFloat(exp1Risk),
@@ -755,7 +754,6 @@ function renderWTPComparison() {
     }
   });
 
-  // Example placeholders
   document.getElementById("wtpComparisonConclusion").innerHTML = `
     <strong>Conclusion:</strong><br/><br/>
     Across experiments, risk aversion tends to decline when participants consider equity aspects. 
@@ -765,6 +763,12 @@ function renderWTPComparison() {
     <strong>Experiment 2:</strong> Risk WTP ≈ $-168.10 (avg)<br/>
     <strong>Experiment 3 (Self):</strong> Risk WTP ≈ $-256.19 (avg)<br/>
     <strong>Experiment 3 (Others):</strong> Risk WTP ≈ $-256.19 (avg)<br/>
-    (Negative means disutility; positive means willingness to pay for risk improvement.)
+    (Negative indicates disutility; positive indicates willingness to pay for risk reduction.)
   `;
 }
+
+/** On page load, initialize scenario table. */
+window.addEventListener("load", () => {
+  loadSavedResults();
+  document.getElementById("experimentSelect").addEventListener("change", toggleExperimentAttributes);
+});
