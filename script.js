@@ -30,11 +30,11 @@ window.onload = function() {
 /** Tab switching function */
 function openTab(tabId, btn) {
   const allTabs = document.getElementsByClassName("tabcontent");
-  for (let i=0; i<allTabs.length; i++){
+  for (let i = 0; i < allTabs.length; i++) {
     allTabs[i].style.display = "none";
   }
   const allBtns = document.getElementsByClassName("tablink");
-  for (let j=0; j<allBtns.length; j++){
+  for (let j = 0; j < allBtns.length; j++) {
     allBtns[j].classList.remove("active");
     allBtns[j].setAttribute("aria-selected", "false");
   }
@@ -58,22 +58,6 @@ function updateCostDisplay(val) {
 
 function updateCostOthersDisplay(val) {
   document.getElementById("costOthersValue").textContent = `$${val}`;
-}
-
-function updateEfficacyDisplay(val) {
-  document.getElementById("efficacyValue").textContent = `${val}%`;
-}
-
-function updateEfficacyOthersDisplay(val) {
-  document.getElementById("efficacyOthersValue").textContent = `${val}%`;
-}
-
-function updateRiskDisplay(val) {
-  document.getElementById("riskValue").textContent = `${val}%`;
-}
-
-function updateRiskOthersDisplay(val) {
-  document.getElementById("riskOthersValue").textContent = `${val}%`;
 }
 
 /***************************************************************************
@@ -116,8 +100,8 @@ const coefficients = {
     riskOthers_8: -0.111,
     riskOthers_16: -0.103,
     riskOthers_30: -0.197,
-    cost: -0.0007,       // Updated
-    costOthers: -0.00041, // Updated
+    cost: -0.0007,        // Updated
+    costOthers: -0.00041, // Updated (Not used in WTP calculation as per user request)
     ASC_sd: 1.033
   }
 };
@@ -191,7 +175,7 @@ const costComponents = [
 /***************************************************************************
  * WILLINGNESS TO PAY DATA FOR ALL ATTRIBUTES
  * Updated WTP computations based on new cost coefficients
- * Corrected "Risk Others" to divide by coefficients['3'].cost instead of costOthers
+ * Corrected WTP for "Risk Others" by dividing by coefficients['3'].cost
  ***************************************************************************/
 const wtpData = {
   '1': [ // Experiment 1
@@ -280,7 +264,6 @@ function predictUptake() {
       utility += coefs.riskOthers_30;
     }
 
-    // Retain costOthers for other calculations
     utility += coefs.costOthers * scenario.costOthers;
   }
 
@@ -435,7 +418,7 @@ function renderWTPChart() {
   const labels = data.map(item => item.attribute);
   const values = data.map(item => item.wtp);
   const errors = data.map(item => item.se);
-  const colors = data.map(item => item.wtp >=0 ? 'rgba(52, 152, 219, 0.6)' : 'rgba(231,76,60,0.6)');
+  const colors = data.map(item => item.wtp >= 0 ? 'rgba(52, 152, 219, 0.6)' : 'rgba(231,76,60,0.6)');
 
   const dataConfig = {
     labels: labels,
@@ -443,7 +426,7 @@ function renderWTPChart() {
       label: "WTP (USD)",
       data: values,
       backgroundColor: colors,
-      borderColor: values.map(v => v >=0 ? 'rgba(52, 152, 219, 1)' : 'rgba(231,76,60,1)'),
+      borderColor: values.map(v => v >= 0 ? 'rgba(52, 152, 219, 1)' : 'rgba(231,76,60,1)'),
       borderWidth: 1
     }]
   };
@@ -908,9 +891,9 @@ function renderWTPComparison() {
 
   // Calculate average WTP for risk attributes across experiments
   const avgWTP = {
-    "Experiment 1": { "Risk 8%": [], "Risk 16%": [], "Risk 30%": [] },
-    "Experiment 2": { "Risk 8%": [], "Risk 16%": [], "Risk 30%": [] },
-    "Experiment 3": { "Risk 8% (Self)": [], "Risk 16% (Self)": [], "Risk 30% (Self)": [], "Risk 8% (Others)": [], "Risk 16% (Others)": [], "Risk 30% (Others)": [] }
+    "Experiment 1": { Risk: [] },
+    "Experiment 2": { Risk: [] },
+    "Experiment 3": { "Risk (Self)": [], "Risk (Others)": [] }
   };
 
   savedResults.forEach(scenario => {
@@ -923,11 +906,11 @@ function renderWTPComparison() {
     if (!data) return;
 
     data.forEach(item => {
-      if (item.attribute.startsWith("Risk ") && !item.attribute.includes("(Others)")) {
-        avgWTP[experiment][item.attribute].push(item.wtp);
+      if (item.attribute.startsWith("Risk") && !item.attribute.includes("(Others)")) {
+        avgWTP[experiment]["Risk"].push(item.wtp);
       }
-      if (item.attribute.startsWith("Risk ") && item.attribute.includes("(Others)")) {
-        avgWTP[experiment][item.attribute].push(item.wtp);
+      if (item.attribute.startsWith("Risk") && item.attribute.includes("(Others)")) {
+        avgWTP[experiment]["Risk (Others)"].push(item.wtp);
       }
     });
   });
@@ -935,22 +918,28 @@ function renderWTPComparison() {
   // Compute average WTP
   const computedAvgWTP = {
     "Experiment 1": {
-      "Risk 8%": avgWTP["Experiment 1"]["Risk 8%"].length > 0 ? (avgWTP["Experiment 1"]["Risk 8%"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"]["Risk 8%"].length).toFixed(2) : 0,
-      "Risk 16%": avgWTP["Experiment 1"]["Risk 16%"].length > 0 ? (avgWTP["Experiment 1"]["Risk 16%"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"]["Risk 16%"].length).toFixed(2) : 0,
-      "Risk 30%": avgWTP["Experiment 1"]["Risk 30%"].length > 0 ? (avgWTP["Experiment 1"]["Risk 30%"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"]["Risk 30%"].length).toFixed(2) : 0
+      "Risk 8%": avgWTP["Experiment 1"].Risk.length > 0 ? (avgWTP["Experiment 1"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"].Risk.length).toFixed(2) : 0,
+      "Risk 16%": avgWTP["Experiment 1"].Risk.length > 0 ? (avgWTP["Experiment 1"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"].Risk.length).toFixed(2) : 0,
+      "Risk 30%": avgWTP["Experiment 1"].Risk.length > 0 ? (avgWTP["Experiment 1"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 1"].Risk.length).toFixed(2) : 0
     },
     "Experiment 2": {
-      "Risk 8%": avgWTP["Experiment 2"]["Risk 8%"].length > 0 ? (avgWTP["Experiment 2"]["Risk 8%"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"]["Risk 8%"].length).toFixed(2) : 0,
-      "Risk 16%": avgWTP["Experiment 2"]["Risk 16%"].length > 0 ? (avgWTP["Experiment 2"]["Risk 16%"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"]["Risk 16%"].length).toFixed(2) : 0,
-      "Risk 30%": avgWTP["Experiment 2"]["Risk 30%"].length > 0 ? (avgWTP["Experiment 2"]["Risk 30%"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"]["Risk 30%"].length).toFixed(2) : 0
+      "Risk 8%": avgWTP["Experiment 2"].Risk.length > 0 ? (avgWTP["Experiment 2"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"].Risk.length).toFixed(2) : 0,
+      "Risk 16%": avgWTP["Experiment 2"].Risk.length > 0 ? (avgWTP["Experiment 2"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"].Risk.length).toFixed(2) : 0,
+      "Risk 30%": avgWTP["Experiment 2"].Risk.length > 0 ? (avgWTP["Experiment 2"].Risk.reduce((a, b) => a + b, 0) / avgWTP["Experiment 2"].Risk.length).toFixed(2) : 0
     },
     "Experiment 3": {
-      "Risk 8% (Self)": avgWTP["Experiment 3"]["Risk 8% (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk 8% (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk 8% (Self)"].length).toFixed(2) : 0,
-      "Risk 16% (Self)": avgWTP["Experiment 3"]["Risk 16% (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk 16% (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk 16% (Self)"].length).toFixed(2) : 0,
-      "Risk 30% (Self)": avgWTP["Experiment 3"]["Risk 30% (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk 30% (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk 30% (Self)"].length).toFixed(2) : 0,
-      "Risk 8% (Others)": avgWTP["Experiment 3"]["Risk 8% (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk 8% (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk 8% (Others)"].length).toFixed(2) : 0,
-      "Risk 16% (Others)": avgWTP["Experiment 3"]["Risk 16% (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk 16% (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk 16% (Others)"].length).toFixed(2) : 0,
-      "Risk 30% (Others)": avgWTP["Experiment 3"]["Risk 30% (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk 30% (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk 30% (Others)"].length).toFixed(2) : 0
+      "Risk 8%": (
+        (avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length) : 0) +
+        (avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length) : 0)
+      ) / 2).toFixed(2),
+      "Risk 16%": (
+        (avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length) : 0) +
+        (avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length) : 0)
+      ) / 2).toFixed(2),
+      "Risk 30%": (
+        (avgWTP["Experiment 3"]["Risk (Self)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Self)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Self)"].length) : 0) +
+        (avgWTP["Experiment 3"]["Risk (Others)"].length > 0 ? (avgWTP["Experiment 3"]["Risk (Others)"].reduce((a, b) => a + b, 0) / avgWTP["Experiment 3"]["Risk (Others)"].length) : 0)
+      ) / 2).toFixed(2)
     }
   };
 
@@ -985,17 +974,12 @@ function renderWTPComparison() {
   });
 
   // Experiment 3
-  // To average Self and Others, we'll average their WTPs
-  const avgRisk8 = (parseFloat(computedAvgWTP["Experiment 3"]["Risk 8% (Self)"]) + parseFloat(computedAvgWTP["Experiment 3"]["Risk 8% (Others)"])) / 2;
-  const avgRisk16 = (parseFloat(computedAvgWTP["Experiment 3"]["Risk 16% (Self)"]) + parseFloat(computedAvgWTP["Experiment 3"]["Risk 16% (Others)"])) / 2;
-  const avgRisk30 = (parseFloat(computedAvgWTP["Experiment 3"]["Risk 30% (Self)"]) + parseFloat(computedAvgWTP["Experiment 3"]["Risk 30% (Others)"])) / 2;
-
   datasets.push({
     label: "Experiment 3",
     data: [
-      isNaN(avgRisk8) ? 0 : avgRisk8.toFixed(2),
-      isNaN(avgRisk16) ? 0 : avgRisk16.toFixed(2),
-      isNaN(avgRisk30) ? 0 : avgRisk30.toFixed(2)
+      parseFloat(computedAvgWTP["Experiment 3"]["Risk 8%"]),
+      parseFloat(computedAvgWTP["Experiment 3"]["Risk 16%"]),
+      parseFloat(computedAvgWTP["Experiment 3"]["Risk 30%"])
     ],
     backgroundColor: 'rgba(231, 76, 60, 0.6)',
     borderColor: 'rgba(231, 76, 60, 1)',
@@ -1087,35 +1071,42 @@ function renderWTPComparisonConclusion(computedAvgWTP) {
 }
 
 /***************************************************************************
+ * DEFINE RENDER PROBABILITY CHART FUNCTION
+ ***************************************************************************/
+function renderProbChart() {
+  predictUptake();
+}
+
+/***************************************************************************
  * INITIALIZE TOOLTIP FUNCTIONALITY
  ***************************************************************************/
 document.addEventListener("DOMContentLoaded", function() {
   // Handle tooltip display on hover and focus for accessibility
-  const infoIcons = document.querySelectorAll('.attribute-icon svg');
-  infoIcons.forEach(icon => {
+  const attributeIcons = document.querySelectorAll('.attribute-icon');
+  attributeIcons.forEach(icon => {
     icon.addEventListener('mouseover', function() {
-      const tooltip = this.parentElement.querySelector('.tooltip');
+      const tooltip = this.querySelector('.tooltip');
       if (tooltip) {
         tooltip.style.visibility = 'visible';
         tooltip.style.opacity = '1';
       }
     });
     icon.addEventListener('mouseout', function() {
-      const tooltip = this.parentElement.querySelector('.tooltip');
+      const tooltip = this.querySelector('.tooltip');
       if (tooltip) {
         tooltip.style.visibility = 'hidden';
         tooltip.style.opacity = '0';
       }
     });
     icon.addEventListener('focus', function() {
-      const tooltip = this.parentElement.querySelector('.tooltip');
+      const tooltip = this.querySelector('.tooltip');
       if (tooltip) {
         tooltip.style.visibility = 'visible';
         tooltip.style.opacity = '1';
       }
     });
     icon.addEventListener('blur', function() {
-      const tooltip = this.parentElement.querySelector('.tooltip');
+      const tooltip = this.querySelector('.tooltip');
       if (tooltip) {
         tooltip.style.visibility = 'hidden';
         tooltip.style.opacity = '0';
@@ -1123,10 +1114,3 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 });
-
-/***************************************************************************
- * DEFINE RENDER PROBABILITY CHART FUNCTION
- ***************************************************************************/
-function renderProbChart() {
-  predictUptake();
-}
