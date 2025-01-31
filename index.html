@@ -31,7 +31,7 @@
     <!-- Introduction Tab -->
     <div id="introTab" class="tabcontent" role="tabpanel" aria-labelledby="tab-intro" style="display: block;">
       <h2>Introduction</h2>
-      <p>Welcome to the T2DM Equity-Efficiency Decision Aid Tool. This tool helps evaluate health plan choices based on various attributes such as cost, efficacy, and risk. Navigate through the tabs to explore different functionalities.</p>
+      <p>Welcome to the T2DM Equity-Efficiency Decision Aid Tool. This tool helps assess health plan choices based on various attributes such as cost, efficacy, and risk. Navigate through the tabs to explore different functionalities.</p>
     </div>
 
     <!-- WTP Results Tab -->
@@ -92,6 +92,12 @@
         </div>
       </div>
       <button onclick="predictUptake()">Predict Health Plan Uptake Probability</button>
+      <div class="chart-grid">
+        <div class="chart-box">
+          <h3>Health Plan Uptake Probability</h3>
+          <canvas id="probChartMain"></canvas>
+        </div>
+      </div>
       <div class="buttons-row">
         <button onclick="saveScenario()">Save Scenario</button>
       </div>
