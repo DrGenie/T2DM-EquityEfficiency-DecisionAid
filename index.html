@@ -18,22 +18,20 @@
       <h1>T2DM Equity-Efficiency Decision Aid Tool</h1>
       <p>
         This interactive tool helps researchers and policymakers evaluate how changes in risk, efficacy, 
-        and monthly costs impact preferences for T2DM treatments across different equity-efficiency scenarios.
+        and monthly costs can shape preferences for T2DM treatments across different equity-efficiency scenarios.
       </p>
     </header>
 
     <!-- NAVIGATION TABS -->
-    <nav>
-      <div class="tabs" role="tablist">
-        <button class="tablink active" onclick="openTab('introTab', this)" role="tab" aria-selected="true">Introduction</button>
-        <button class="tablink" onclick="openTab('instructionsTab', this)" role="tab" aria-selected="false">Instructions</button>
-        <button class="tablink" onclick="openTab('attributesTab', this)" role="tab" aria-selected="false">Attributes</button>
-        <button class="tablink" onclick="openTab('inputsTab', this)" role="tab" aria-selected="false">Inputs</button>
-        <button class="tablink" onclick="openTab('uptakeTab', this)" role="tab" aria-selected="false">Predicted Health Plan Uptake</button>
-        <button class="tablink" onclick="openTab('wtpTab', this)" role="tab" aria-selected="false">WTP Results</button>
-        <button class="tablink" onclick="openTab('scenariosTab', this)" role="tab" aria-selected="false">Scenarios</button>
-        <button class="tablink" onclick="openTab('costsTab', this)" role="tab" aria-selected="false">Costs &amp; Benefits</button>
-      </div>
+    <nav class="tabs">
+      <button class="tablink active" onclick="openTab('introTab', this)">Introduction</button>
+      <button class="tablink" onclick="openTab('instructionsTab', this)">Instructions</button>
+      <button class="tablink" onclick="openTab('attributesTab', this)">Attributes</button>
+      <button class="tablink" onclick="openTab('inputsTab', this)">Inputs</button>
+      <button class="tablink" onclick="openTab('uptakeTab', this)">Predicted Health Plan Uptake</button>
+      <button class="tablink" onclick="openTab('wtpTab', this)">WTP Results</button>
+      <button class="tablink" onclick="openTab('scenariosTab', this)">Scenarios</button>
+      <button class="tablink" onclick="openTab('costsTab', this)">Costs &amp; Benefits</button>
     </nav>
 
     <!-- 1. INTRODUCTION TAB -->
@@ -206,7 +204,7 @@
       <p>
         This chart shows the likelihood of choosing the configured plan over opting out.
       </p>
-      <canvas id="probChartMain" width="600" height="300" aria-label="Probability Chart" role="img"></canvas>
+      <canvas id="probChartMain" width="600" height="300"></canvas>
     </div>
 
     <!-- 6. WTP RESULTS TAB -->
@@ -221,7 +219,7 @@
       <div class="buttons-row">
         <button onclick="renderWTPChart()">Show WTP Plots</button>
       </div>
-      <canvas id="wtpChartMain" width="600" height="300" aria-label="WTP Chart" role="img"></canvas>
+      <canvas id="wtpChartMain" width="600" height="300"></canvas>
       <div id="wtpConclusion" class="conclusion-section"></div>
     </div>
 
