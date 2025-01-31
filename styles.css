@@ -40,6 +40,8 @@ header h1 {
 header p {
   font-size: 1.1em;
   color: #7f8c8d;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* --------------------------
@@ -204,6 +206,7 @@ canvas {
   background-color: #ffffff;
   border-radius: 6px;
   border: 1px solid #ccc;
+  margin-top: 10px;
 }
 
 /* Chart layout containers */
