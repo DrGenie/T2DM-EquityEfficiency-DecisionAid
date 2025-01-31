@@ -1,18 +1,14 @@
-/* ------------------------
-   RESET & BASE
-------------------------- */
+/* RESET & BASE */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f0f2f5;
   color: #333;
 }
-
 .container {
   width: 95%;
   max-width: 1200px;
@@ -23,15 +19,12 @@ body {
   padding: 20px 30px;
 }
 
-/* ------------------------
-   HEADER
-------------------------- */
+/* HEADER */
 header h1 {
   text-align: center;
   margin-bottom: 15px;
   color: #2c3e50;
 }
-
 header p {
   font-size: 1.05em;
   color: #7f8c8d;
@@ -40,9 +33,7 @@ header p {
   margin: 0 auto;
 }
 
-/* ------------------------
-   NAVIGATION TABS
-------------------------- */
+/* NAVIGATION TABS */
 .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -69,9 +60,7 @@ header p {
   background: #bdc3c7;
 }
 
-/* ------------------------
-   TAB CONTENT
-------------------------- */
+/* TAB CONTENT */
 .tabcontent {
   display: none;
   margin-top: 10px;
@@ -84,9 +73,7 @@ header p {
   line-height: 1.4;
 }
 
-/* ------------------------
-   FORM & BUTTONS
-------------------------- */
+/* FORM & BUTTONS */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -115,7 +102,6 @@ header p {
   font-weight: 600;
   color: #e74c3c;
 }
-
 .buttons-row {
   display: flex;
   flex-wrap: wrap;
@@ -137,9 +123,7 @@ header p {
   transform: translateY(-2px);
 }
 
-/* ------------------------
-   ATTRIBUTES
-------------------------- */
+/* ATTRIBUTES */
 .attributes-list {
   display: flex;
   flex-wrap: wrap;
@@ -197,9 +181,7 @@ header p {
   font-size: 0.95em;
 }
 
-/* ------------------------
-   CHARTS
-------------------------- */
+/* CHARTS */
 canvas {
   margin-top: 10px;
   background-color: #fff;
@@ -225,9 +207,7 @@ canvas {
   color: #2c3e50;
 }
 
-/* ------------------------
-   SCENARIOS TABLE
-------------------------- */
+/* SCENARIOS TABLE */
 #scenarioTable {
   width: 100%;
   border-collapse: collapse;
@@ -248,9 +228,7 @@ canvas {
   background-color: #f2f2f2;
 }
 
-/* ------------------------
-   FILTER OPTIONS
-------------------------- */
+/* FILTER OPTIONS */
 .filter-options {
   display: flex;
   align-items: center;
@@ -259,9 +237,7 @@ canvas {
   flex-wrap: wrap;
 }
 
-/* ------------------------
-   CONCLUSION SECTION
-------------------------- */
+/* CONCLUSION SECTION */
 .conclusion-section {
   margin-top: 20px;
   font-size: 1em;
@@ -272,9 +248,7 @@ canvas {
   font-weight: bold;
 }
 
-/* ------------------------
-   COSTS & BENEFITS
-------------------------- */
+/* COSTS & BENEFITS */
 .calculation-info {
   background-color: #f9f9f9;
   border-left: 4px solid #2980b9;
@@ -287,15 +261,12 @@ canvas {
   color: #2c3e50;
 }
 
-/* ------------------------
-   RESPONSIVE DESIGN
-------------------------- */
+/* RESPONSIVE DESIGN */
 @media (max-width: 992px) {
   .attribute-card {
     width: calc(50% - 20px);
   }
 }
-
 @media (max-width: 768px) {
   .tabs {
     flex-direction: column;
@@ -316,9 +287,7 @@ canvas {
   }
 }
 
-/* ------------------------
-   FOOTER
-------------------------- */
+/* FOOTER */
 footer {
   margin-top: 20px;
   text-align: center;
