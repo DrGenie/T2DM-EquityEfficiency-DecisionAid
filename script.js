@@ -9,7 +9,7 @@
  *  - Scenario saving & PDF export
  * Authors:
  *  - Surachat Ngorsuraches (Auburn University, USA)
- *  - Mesfin Genie (The University of Newcastle, Australia)
+ *  - Mesfin Genie (NBS, The University of Newcastle, Australia)
  ****************************************************************************/
 
 /** Global variable for storing the current uptake probability */
