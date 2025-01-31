@@ -17,7 +17,9 @@
     <header>
       <h1>T2DM Equity-Efficiency Decision Aid Tool</h1>
       <p>
-        This interactive tool helps health policymakers and researchers assess how varying risk, efficacy, and cost attributes influence patient preferences for T2DM treatments under different equity-efficiency scenarios in the USA.
+        This interactive tool helps researchers and policymakers evaluate how changes in risk, efficacy, 
+        and monthly costs can shape preferences for T2DM treatments across different equity-efficiency scenarios.
+        The tool is built for US-based cost assumptions and health outcome valuations.
       </p>
     </header>
 
@@ -35,83 +37,67 @@
       </div>
     </nav>
 
-    <!-- TAB CONTENTS -->
-
     <!-- 1. INTRODUCTION TAB -->
     <div id="introTab" class="tabcontent" style="display: block;">
       <h2>Introduction</h2>
       <p>
-        This tool evaluates how individuals with Type 2 Diabetes Mellitus (T2DM) might prefer different treatment plans based on:
-      </p>
-      <ul>
-        <li><strong>Risk of Side Effects</strong></li>
-        <li><strong>Efficacy (Chance of Reaching Target A1C)</strong></li>
-        <li><strong>Monthly Out-of-Pocket Cost</strong></li>
-      </ul>
-      <p>
-        Three experimental conditions are considered:
+        This tool evaluates how patients choose among T2DM treatment plans under three experimental conditions:
       </p>
       <ol>
         <li><strong>Experiment 1 (Self-Focused Outcomes):</strong> 
-          Individuals consider only personal attributes (risk, efficacy, cost).
+          Focus solely on personal risk, efficacy, and cost.
         </li>
         <li><strong>Experiment 2 (Equal Health Outcomes):</strong> 
-          Shared/identical health outcomes between the respondent and others with poorer health.
+          Health outcomes are shared equally between the individual and others with poorer health.
         </li>
         <li><strong>Experiment 3 (Unequal Outcomes):</strong> 
-          Disparate health outcomes for self and others with poorer health conditions.
+          Disparate outcomes for self and others, allowing complex trade-offs for equity considerations.
         </li>
       </ol>
+      <p>
+        By adjusting risk, efficacy, and monthly out-of-pocket cost, you can see how these attributes affect plan 
+        uptake probability, willingness to pay (WTP), and the net cost-benefit of adopting specific T2DM interventions.
+      </p>
     </div>
 
     <!-- 2. INSTRUCTIONS TAB -->
     <div id="instructionsTab" class="tabcontent">
       <h2>Instructions</h2>
       <ol>
-        <li><strong>Review Attributes:</strong> Visit the "Attributes" tab to understand the definitions and references for risk (0% as baseline) and efficacy (10% as baseline).</li>
-        <li><strong>Set Inputs:</strong> In the "Inputs" tab, select an experiment, then configure risk, efficacy, and monthly costs. If Experiment 3 is chosen, you can also specify risk and efficacy for "others."</li>
-        <li><strong>Predict Uptake:</strong> Click "Show Probability Plot" in the "Inputs" tab to compute the predicted health plan uptake vs. opt-out.</li>
-        <li><strong>Uptake &amp; WTP Results:</strong> Navigate to "Predicted Health Plan Uptake" or "WTP Results" tabs to see corresponding charts. For WTP, you can explore how changes in risk or efficacy translate into willingness to pay in USD.</li>
-        <li><strong>Scenarios:</strong> Save multiple configurations and filter or export them to PDF under the "Scenarios" tab.</li>
-        <li><strong>Costs &amp; Benefits:</strong> In the "Costs &amp; Benefits" tab, view a list of cost components (derived from literature on T2DM management in the USA) and estimate net benefits based on monetized benefits of improved health outcomes.</li>
+        <li><strong>Attributes:</strong> Review the "Attributes" tab for details and references. Risk references 0%, while Efficacy references 10% baseline.</li>
+        <li><strong>Inputs:</strong> In the "Inputs" tab, choose an experiment, then specify risk, efficacy, and cost values for “self.” 
+          If Experiment 3 is chosen, also provide "others" attributes.</li>
+        <li><strong>Predicted Uptake:</strong> Click “Show Probability Plot” in the "Inputs" tab. Then switch to “Predicted Health Plan Uptake” to see the chart.</li>
+        <li><strong>WTP Results:</strong> Generate bar charts in the "WTP Results" tab. Negative WTP indicates disutility requiring compensation; positive WTP is a willingness to pay for improvements.</li>
+        <li><strong>Scenarios:</strong> Save multiple scenarios, compare them, or export them as PDF in the "Scenarios" tab.</li>
+        <li><strong>Costs &amp; Benefits:</strong> Detailed US-based cost components are listed under "Costs &amp; Benefits," with QALYs monetized at $50,000/QALY. Net benefit is benefits minus costs, factoring uptake.</li>
       </ol>
     </div>
 
     <!-- 3. ATTRIBUTES TAB -->
     <div id="attributesTab" class="tabcontent">
-      <h2>Key Attributes</h2>
-      <p>
-        Below are the primary attributes considered in each experiment. 
-        Reference categories:
-        <ul>
-          <li><strong>Risk:</strong> 0% as the baseline; increases to 8%, 16%, 30% in choices.</li>
-          <li><strong>Efficacy:</strong> 10% as the baseline; choices at 50%, 90% efficacy.</li>
-          <li><strong>Cost:</strong> Continuous slider from $0 to $1000 monthly.</li>
-        </ul>
-      </p>
+      <h2>Key Attributes for T2DM Treatments</h2>
       <div class="attributes-list">
 
-        <!-- EFFICACY ATTRIBUTE CARD -->
+        <!-- EFFICACY CARD -->
         <div class="attribute-card">
           <div class="attribute-icon" tabindex="0">
             <svg width="24" height="24" fill="#2980b9" xmlns="http://www.w3.org/2000/svg">
               <circle cx="12" cy="12" r="10" stroke="#2980b9" stroke-width="2" fill="none"/>
-              <path d="M12 2a10 10 0 100 20 
-              10 10 0 000-20zm2.25 13.4l-3 
-              3-1.5-1.5"/>
+              <path d="M10 15l-3-3 1.4-1.4 1.6 1.6L15 7l1.4 1.4-6.4 6.4z"/>
             </svg>
             <div class="tooltip" role="tooltip">
               <strong>Efficacy</strong>
-              <p>Probability of achieving target A1C in 6 months (e.g., 10% baseline, 50% or 90% in scenarios).</p>
+              <p>Chance of reaching target A1C in 6 months. E.g., 10% baseline, 50% moderate, 90% high.</p>
             </div>
           </div>
           <div class="attribute-content">
             <h4>Efficacy</h4>
-            <p>Higher efficacy implies a greater chance of controlling T2DM effectively.</p>
+            <p>Higher efficacy suggests stronger T2DM control outcomes.</p>
           </div>
         </div>
 
-        <!-- RISK ATTRIBUTE CARD -->
+        <!-- RISK CARD -->
         <div class="attribute-card">
           <div class="attribute-icon" tabindex="0">
             <svg width="24" height="24" fill="#e74c3c" xmlns="http://www.w3.org/2000/svg">
@@ -120,16 +106,16 @@
             </svg>
             <div class="tooltip" role="tooltip">
               <strong>Risk</strong>
-              <p>Chance of experiencing side effects above the baseline of 0% risk.</p>
+              <p>Chance of side effects above a 0% baseline, set at 8%, 16%, or 30% for side-effect risk.</p>
             </div>
           </div>
           <div class="attribute-content">
             <h4>Risk</h4>
-            <p>Possible increases to 8%, 16%, or 30% chance of side effects.</p>
+            <p>A higher percentage risk means greater side-effect likelihood requiring compensation.</p>
           </div>
         </div>
 
-        <!-- COST ATTRIBUTE CARD -->
+        <!-- COST CARD -->
         <div class="attribute-card">
           <div class="attribute-icon" tabindex="0">
             <svg width="24" height="24" fill="#f1c40f" xmlns="http://www.w3.org/2000/svg">
@@ -137,13 +123,13 @@
               <text x="8" y="16" font-size="10" fill="#f1c40f" font-weight="bold">$</text>
             </svg>
             <div class="tooltip" role="tooltip">
-              <strong>Monthly Out-of-Pocket Cost</strong>
-              <p>Ranges from $0 to $1000 monthly.</p>
+              <strong>Cost</strong>
+              <p>Monthly out-of-pocket cost from $0 to $1000. Higher costs reduce uptake likelihood.</p>
             </div>
           </div>
           <div class="attribute-content">
-            <h4>Cost</h4>
-            <p>The patient’s monthly expense for T2DM medication or insurance coverage.</p>
+            <h4>Monthly Out-of-Pocket Cost</h4>
+            <p>The direct monthly expenditure for T2DM treatments.</p>
           </div>
         </div>
       </div>
@@ -151,10 +137,10 @@
 
     <!-- 4. INPUTS TAB -->
     <div id="inputsTab" class="tabcontent">
-      <h2>Inputs: Configure Your Scenario</h2>
+      <h2>Scenario Inputs</h2>
+      <p>Choose an experiment, set risk and efficacy for “self,” and if needed, “others.” Then click "Show Probability Plot."</p>
       <div class="form-grid">
 
-        <!-- Experiment Selection -->
         <div class="form-item">
           <label for="experimentSelect">Select Experiment:</label>
           <select id="experimentSelect">
@@ -164,38 +150,32 @@
             <option value="3">Experiment 3 (Unequal Outcomes)</option>
           </select>
         </div>
-
-        <!-- Efficacy (Self) -->
         <div class="form-item">
-          <label for="efficacy">Efficacy (Self) % (Ref: 10%):</label>
+          <label for="efficacy">Efficacy (Self) % (Ref=10%):</label>
           <select id="efficacy">
-            <option value="">--Select--</option>
+            <option value="">--Select Efficacy--</option>
             <option value="50">50</option>
             <option value="90">90</option>
           </select>
         </div>
-
-        <!-- Risk (Self) -->
         <div class="form-item">
-          <label for="risk">Risk (Self) % (Ref: 0%):</label>
+          <label for="risk">Risk (Self) % (Ref=0%):</label>
           <select id="risk">
-            <option value="">--Select--</option>
+            <option value="">--Select Risk--</option>
             <option value="8">8</option>
             <option value="16">16</option>
             <option value="30">30</option>
           </select>
         </div>
-
-        <!-- Cost (Self) -->
         <div class="form-item">
-          <label for="cost">Monthly Out-of-Pocket Cost (Self):</label>
-          <input type="range" id="cost" name="cost" min="0" max="1000" step="50" value="100" oninput="updateCostDisplay(this.value)"/>
-          <span id="costValue">$100</span>
+          <label for="cost">Monthly Out-of-Pocket (Self):</label>
+          <input type="range" id="cost" name="cost" min="0" max="1000" step="50" value="200" oninput="updateCostDisplay(this.value)"/>
+          <span id="costValue">$200</span>
         </div>
 
-        <!-- Additional for Experiment 3 -->
+        <!-- For Experiment 3 -->
         <div class="form-item" id="efficacyOthersDiv" style="display: none;">
-          <label for="efficacyOthers">Efficacy (Others) % (Ref: 10%):</label>
+          <label for="efficacyOthers">Efficacy (Others) % (Ref=10%):</label>
           <select id="efficacyOthers">
             <option value="">--Select--</option>
             <option value="50">50</option>
@@ -203,7 +183,7 @@
           </select>
         </div>
         <div class="form-item" id="riskOthersDiv" style="display: none;">
-          <label for="riskOthers">Risk (Others) % (Ref: 0%):</label>
+          <label for="riskOthers">Risk (Others) % (Ref=0%):</label>
           <select id="riskOthers">
             <option value="">--Select--</option>
             <option value="8">8</option>
@@ -212,12 +192,11 @@
           </select>
         </div>
         <div class="form-item" id="costOthersDiv" style="display: none;">
-          <label for="costOthers">Monthly Cost (Others):</label>
-          <input type="range" id="costOthers" name="costOthers" min="0" max="1000" step="50" value="100" oninput="updateCostOthersDisplay(this.value)"/>
-          <span id="costOthersValue">$100</span>
+          <label for="costOthers">Monthly Out-of-Pocket (Others):</label>
+          <input type="range" id="costOthers" name="costOthers" min="0" max="1000" step="50" value="200" oninput="updateCostOthersDisplay(this.value)"/>
+          <span id="costOthersValue">$200</span>
         </div>
       </div>
-
       <div class="buttons-row">
         <button onclick="renderProbChart()">Show Probability Plot</button>
         <button onclick="saveScenario()">Save Scenario</button>
@@ -228,32 +207,32 @@
     <div id="uptakeTab" class="tabcontent">
       <h2>Predicted Health Plan Uptake</h2>
       <p>
-        Once you select your experiment and attributes in the "Inputs" tab and click 
-        "Show Probability Plot," the chart below will display the likelihood of 
-        choosing this plan over opting out.
+        This chart displays the likelihood of selecting the specified plan over opting out, 
+        after clicking “Show Probability Plot” in the "Inputs" tab.
       </p>
-      <canvas id="probChartMain" width="600" height="300" aria-label="Predicted Health Plan Uptake Chart" role="img"></canvas>
+      <canvas id="probChartMain" width="600" height="300" aria-label="Probability Chart" role="img"></canvas>
     </div>
 
     <!-- 6. WTP RESULTS TAB -->
     <div id="wtpTab" class="tabcontent">
       <h2>Willingness to Pay (WTP) Results</h2>
       <p>
-        This section shows how much participants are willing to pay for changes 
-        in risk or efficacy attributes, based on discrete choice model estimates.
-        For <strong>Experiment 3</strong>, we also show WTP for Efficacy (Self/Others).
+        This section shows how much participants are willing to pay for changes in risk 
+        or efficacy attributes, based on discrete choice model estimates. Negative WTP indicates 
+        a disutility requiring monetary compensation, while positive WTP indicates a willingness 
+        to pay for improving that attribute.
       </p>
       <div class="buttons-row">
         <button onclick="renderWTPChart()">Show WTP Plots</button>
       </div>
-      <canvas id="wtpChartMain" width="600" height="300" aria-label="WTP Bar Chart" role="img"></canvas>
+      <canvas id="wtpChartMain" width="600" height="300" aria-label="WTP Chart" role="img"></canvas>
       <div id="wtpConclusion" class="conclusion-section"></div>
     </div>
 
     <!-- 7. SCENARIOS TAB -->
     <div id="scenariosTab" class="tabcontent">
       <h2>Scenarios</h2>
-      <p>After configuring and predicting results in the "Inputs" tab, save scenarios here. You can filter or export them to PDF.</p>
+      <p>Save and compare multiple configurations, then export them to PDF if needed.</p>
       <div class="filter-options">
         <label for="filterExperiment"><strong>Filter by Experiment:</strong></label>
         <select id="filterExperiment" onchange="filterScenarios()">
@@ -264,10 +243,9 @@
         </select>
       </div>
       <div class="buttons-row">
-        <button onclick="renderWTPComparison()">Compare Average WTP for Risk Across Experiments</button>
+        <button onclick="renderWTPComparison()">Compare Average WTP for Risk</button>
         <button onclick="exportToPDF()">Export Comparison to PDF</button>
       </div>
-
       <table id="scenarioTable">
         <thead>
           <tr>
@@ -284,7 +262,6 @@
         </thead>
         <tbody></tbody>
       </table>
-
       <div id="wtpComparisonContainer" style="margin-top: 40px; display: none;">
         <h3>Average WTP for Risk Attributes Across Experiments</h3>
         <canvas id="wtpComparisonChart" width="600" height="300"></canvas>
@@ -296,17 +273,14 @@
     <div id="costsTab" class="tabcontent">
       <h2>Costs &amp; Benefits</h2>
       <p>
-        We incorporate major T2DM cost components based on a targeted literature review in the USA. 
-        Benefits are measured in terms of Quality-Adjusted Life Years (QALYs) gained from improved T2DM control, 
-        which are then monetized at a standard rate (e.g., $50,000/QALY).
-      </p>
-      <p>
-        Select a QALY gain scenario below (low, moderate, or high). The total cost 
-        integrates fixed (advertisement, training) and variable (scale with uptake) 
-        components. The net benefit is computed as the monetized benefits minus total costs.
+        We consider a targeted list of cost components relevant to T2DM management in the USA 
+        (advertising, training, medication, monitoring, etc.). 
+        Some costs are fixed, while others scale with uptake probability. 
+        Benefits are valued in terms of Quality-Adjusted Life Years (QALYs) gained from improved 
+        T2DM control, monetized at a standard $50,000 per QALY.
       </p>
       <div class="qaly-selector">
-        <label for="qalySelect"><strong>QALY Gain Scenario:</strong></label>
+        <label for="qalySelect"><strong>Select QALY Gain Scenario:</strong></label>
         <select id="qalySelect" onchange="renderCostsBenefits()">
           <option value="low">Low (0.02 QALYs gained)</option>
           <option value="moderate" selected>Moderate (0.05 QALYs gained)</option>
@@ -319,13 +293,12 @@
     <!-- FOOTER -->
     <footer>
       <p>
-        &copy; 2025 T2DM Equity-Efficiency Decision Aid. All Rights Reserved.<br/>
+        &copy; 2025 T2DM Equity-Efficiency Decision Aid. All Rights Reserved. <br/>
         Authors: Surachat Ngorsuraches (Auburn University, USA), Mesfin Genie (The University of Newcastle, Australia)
       </p>
     </footer>
   </div>
 
-  <!-- MAIN SCRIPT -->
   <script src="script.js"></script>
 </body>
 </html>
