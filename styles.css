@@ -153,6 +153,7 @@ header p {
   align-items: flex-start;
   width: calc(33.33% - 20px);
   position: relative;
+  margin-bottom: 20px;
 }
 .attribute-icon {
   margin-right: 15px;
