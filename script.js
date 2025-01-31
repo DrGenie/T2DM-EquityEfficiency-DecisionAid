@@ -1,7 +1,7 @@
 /****************************************************************************
  * script.js
  * Ensures tabs are truly active, Probability Plot is functional,
- * and all WTP, scenario, cost-benefit features are included.
+ * and all WTP, scenario, cost-benefit features are included ok.
  ****************************************************************************/
 
 /** Global Variables */
